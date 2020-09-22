@@ -26,7 +26,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class Work extends Fragment implements View.OnClickListener {
 
     View rootView;
-    MaterialEditText university, fieldOfStudy, qualification, workIndustry, experience, motherTongue;
+    public static MaterialEditText university, fieldOfStudy, qualification, workIndustry, experience, motherTongue;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

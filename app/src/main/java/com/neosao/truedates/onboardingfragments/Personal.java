@@ -25,7 +25,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class Personal extends Fragment implements View.OnClickListener {
 
     View rootView;
-    MaterialEditText zodiac, height, relationshipStatus, caste, religion, showMe;
+    public static MaterialEditText zodiac, height, relationshipStatus, caste, religion, showMe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

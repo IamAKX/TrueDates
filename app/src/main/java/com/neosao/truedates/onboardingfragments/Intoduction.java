@@ -44,14 +44,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
-import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 
 public class Intoduction extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
-    MaterialEditText name, email, about, gender, dob, location;
+    public static MaterialEditText name, email, about, gender, dob, location;
     View rootView;
     final Calendar calendar = Calendar.getInstance();
 
@@ -163,11 +161,11 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         location.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setCurrentLocation(charSequence.toString());
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                OnboardingData.user.setCurrentLocation(charSequence.toString());
 
             }
 

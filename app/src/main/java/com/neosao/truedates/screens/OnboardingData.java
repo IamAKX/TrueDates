@@ -95,7 +95,10 @@ public class OnboardingData extends AppCompatActivity {
                 if (viewpager.getCurrentItem() < 5)
                     viewpager.setCurrentItem(viewpager.getCurrentItem() + 1);
                 else
+                {
+                    if(validateInputs())
                     startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                }
             }
         });
 
@@ -108,7 +111,185 @@ public class OnboardingData extends AppCompatActivity {
         });
     }
 
-    int currentPage;
+    private boolean validateInputs() {
+        // Page 0 validation
+        if(null == user.getName() || user.getName().isEmpty())
+        {
+           viewpager.setCurrentItem(0);
+            Intoduction.name.setError("Enter name");
+            return false;
+        }
+        if(null == user.getEmail() || user.getEmail().isEmpty())
+        {
+            viewpager.setCurrentItem(0);
+            Intoduction.email.setError("Enter email");
+            return false;
+        }
+        if(null == user.getAboutMe() || user.getAboutMe().isEmpty())
+        {
+            viewpager.setCurrentItem(0);
+            Intoduction.about.setError("Write about yourself");
+            return false;
+        }
+        if(null == user.getGender() || user.getGender().isEmpty())
+        {
+            viewpager.setCurrentItem(0);
+            Intoduction.gender.setError("Enter gender");
+            return false;
+        }
+        if(null == user.getBirthDate() || user.getBirthDate().isEmpty())
+        {
+            viewpager.setCurrentItem(0);
+            Intoduction.dob.setError("Enter date of birth");
+            return false;
+        }
+        if(null == user.getCurrentLocation() || user.getCurrentLocation().isEmpty())
+        {
+            viewpager.setCurrentItem(0);
+            Intoduction.location.setError("Enter location");
+            return false;
+        }
+
+        // Page 1 validation
+        if(null == user.getUniversity() || user.getUniversity().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.university.setError("Enter university");
+            return false;
+        }
+        if(null == user.getFieldOfStudy() || user.getFieldOfStudy().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.fieldOfStudy.setError("Enter field of study");
+            return false;
+        }
+        if(null == user.getQualification() || user.getQualification().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.qualification.setError("Enter qualification");
+            return false;
+        }
+        if(null == user.getWorkIndustry() || user.getWorkIndustry().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.workIndustry.setError("Enter work industry");
+            return false;
+        }
+        if(null == user.getExperience() || user.getExperience().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.experience.setError("Enter experience");
+            return false;
+        }
+        if(null == user.getMotherTounge() || user.getMotherTounge().isEmpty())
+        {
+            viewpager.setCurrentItem(1);
+            Work.motherTongue.setError("Enter mother tongue");
+            return false;
+        }
+
+        // Page 2 validation
+        if(null == user.getZodiacSign() || user.getZodiacSign().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.zodiac.setError("Enter zodiac sign");
+            return false;
+        }
+        if(null == user.getHeight() || user.getHeight().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.height.setError("Enter height");
+            return false;
+        }
+        if(null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.relationshipStatus.setError("Enter relationship status");
+            return false;
+        }
+        if(null == user.getCaste() || user.getCaste().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.caste.setError("Enter caste");
+            return false;
+        }
+        if(null == user.getReligion() || user.getReligion().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.religion.setError("Enter religion");
+            return false;
+        }
+        if(null == user.getShowMe() || user.getShowMe().isEmpty())
+        {
+            viewpager.setCurrentItem(2);
+            Personal.showMe.setError("Enter show me");
+            return false;
+        }
+
+        // Page 3 validation
+        if(null == user.getDrink() || user.getDrink().isEmpty())
+        {
+            viewpager.setCurrentItem(3);
+            Habits.drinks.setError("Enter drink");
+            return false;
+        }
+
+        if(null == user.getSmoke() || user.getSmoke().isEmpty())
+        {
+            viewpager.setCurrentItem(3);
+            Habits.smoke.setError("Enter smoke");
+            return false;
+        }
+
+        if(null == user.getDiet() || user.getDiet().isEmpty())
+        {
+            viewpager.setCurrentItem(3);
+            Habits.diet.setError("Enter deit");
+            return false;
+        }
+
+        if(null == user.getPets() || user.getPets().isEmpty())
+        {
+            viewpager.setCurrentItem(3);
+            Habits.pets.setError("Enter pets");
+            return false;
+        }
+
+        if(null == user.getIntrests() || user.getIntrests().isEmpty())
+        {
+            viewpager.setCurrentItem(3);
+            Habits.interests.setError("Enter interests");
+            return false;
+        }
+
+        // Page 4 validation
+        if(null == user.getHaveKids() || user.getHaveKids().isEmpty())
+        {
+            viewpager.setCurrentItem(4);
+            Others.haveKids.setError("Enter have kids");
+            return false;
+        }
+        if(null == user.getWantKids() || user.getWantKids().isEmpty())
+        {
+            viewpager.setCurrentItem(4);
+            Others.wantKids.setError("Enter want kids");
+            return false;
+        }
+        if(null == user.getLookingFor() || user.getLookingFor().isEmpty())
+        {
+            viewpager.setCurrentItem(4);
+            Others.lookingFor.setError("Enter looking for");
+            return false;
+        }
+        if(null == user.getBodyType() || user.getBodyType().isEmpty())
+        {
+            viewpager.setCurrentItem(4);
+            Others.bodyType.setError("Enter body type");
+            return false;
+        }
+
+        return true;
+    }
 
     class PageListener extends ViewPager.SimpleOnPageChangeListener {
         public void onPageSelected(int position) {

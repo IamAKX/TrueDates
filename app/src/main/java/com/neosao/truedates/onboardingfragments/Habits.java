@@ -25,7 +25,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class Habits extends Fragment implements View.OnClickListener {
 
     View rootView;
-    MaterialEditText drinks, smoke, diet, pets, interests;
+    public static MaterialEditText drinks, smoke, diet, pets, interests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

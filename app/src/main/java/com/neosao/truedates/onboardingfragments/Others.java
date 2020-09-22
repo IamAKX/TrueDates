@@ -24,7 +24,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class Others extends Fragment implements View.OnClickListener {
 
     View rootView;
-    MaterialEditText haveKids, wantKids, lookingFor, bodyType;
+    public static MaterialEditText haveKids, wantKids, lookingFor, bodyType;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
