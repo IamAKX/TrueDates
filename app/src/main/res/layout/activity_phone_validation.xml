@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="50dp"
+    tools:context=".screens.PhoneValidation">
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/mobileNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+919804945122"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/colorAccent"/>
+
+        <ImageView
+            android:id="@+id/editPhone"
+            android:padding="5dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_pencil"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter the\nOTP"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/balsamiq_sans"
+        android:textColor="@color/colorAccent"/>
+
+    <in.aabhasjindal.otptextview.OtpTextView
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/otp_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        app:height="40dp"
+        app:width="40dp"
+        app:bar_active_color="@color/colorAccent"
+        app:bar_enabled="true"
+        app:bar_height="2dp"
+        app:length="6"
+        app:bar_success_color="#4CAF50"
+        app:bar_error_color="#F44336"
+        app:otp_text_size="24dp"/>
+
+<!--    <com.github.florent37.shapeofview.shapes.RoundRectView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="25dp"-->
+<!--        android:layout_marginLeft="20dp"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        android:elevation="4dp"-->
+<!--        android:layout_marginBottom="15dp"-->
+<!--        app:shape_roundRect_bottomLeftRadius="10dp"-->
+<!--        app:shape_roundRect_bottomRightRadius="10dp"-->
+<!--        app:shape_roundRect_topLeftRadius="10dp"-->
+<!--        app:shape_roundRect_topRightRadius="10dp">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/continueBtn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Continue"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:background="@drawable/horizontal_gradient"-->
+<!--            android:paddingLeft="50dp"-->
+<!--            android:paddingRight="50dp"-->
+<!--            android:textColor="#ffffff"/>-->
+
+<!--    </com.github.florent37.shapeofview.shapes.RoundRectView>-->
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/resendOTP"
+        android:textColor="@color/hintColor"
+        android:text="Resend OTP in 30 sec"
+        android:textStyle="bold"/>
+
+
+</LinearLayout>

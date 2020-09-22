@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    tools:context=".onboardingfragments.Intoduction">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Basic"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/gradientCenter"/>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Introduce \nYourself"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/balsamiq_sans"
+        android:textColor="@color/colorAccent"/>
+
+    <ScrollView
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Full Name"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="About"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_maxCharacters="512"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Gender"
+                android:focusable="false"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/dob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Date of Birth"
+                android:focusable="false"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Location"
+                android:focusable="false"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <CheckBox
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/gradientCenter"
+                android:text="Agree with Terms and Conditions"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

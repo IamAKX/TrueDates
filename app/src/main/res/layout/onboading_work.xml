@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    tools:context=".onboardingfragments.Work">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Work"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/gradientCenter"/>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Work\nand Study"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/balsamiq_sans"
+        android:textColor="@color/colorAccent"/>
+
+    <ScrollView
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="University Name"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Field of Study"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Qualification"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Work Industry"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Experience"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mother Tongue"
+                android:layout_marginBottom="10dp"
+                app:met_baseColor="@color/colorAccent"
+                app:met_underlineColor="@color/hintColor"
+                app:met_primaryColor="@color/gradientCenter"
+                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabel="highlight" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

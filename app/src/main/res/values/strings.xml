@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">True Dates</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_home_container">HomeContainer</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+
+
+    <string name="title_slider_1">Get True Dates GOLD</string>
+    <string name="description_slider_1">Find out who sent you Likes and more</string>
+
+    <string name="title_slider_2">Get more matches quickly</string>
+    <string name="description_slider_2">Boost your profile once a month</string>
+
+    <string name="title_slider_3">Swipe around the world</string>
+    <string name="description_slider_3">With True Dates Plus, get a passport to match worldwide</string>
+
+    <string name="title_slider_4">Stand out with Diamond Likes</string>
+    <string name="description_slider_4">Multiply your chances of matches by 3</string>
+
+    <string name="title_slider_5">I wanted to swipe to the right</string>
+    <string name="description_slider_5">Take advantage of the unlimited number of Backtracking with Tinder Plus</string>
+
+    <string name="title_slider_6">Increase your chances of matches</string>
+    <string name="description_slider_6">Enjoy unlimited Likes with True Dates Plus</string>
+
+    <string name="facebook_app_id">2850031268561599</string>
+    <string name="fb_login_protocol_scheme">fb2850031268561599</string>
+
+
+</resources>

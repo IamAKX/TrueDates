@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/defaultBackgroundColor"
+    android:fitsSystemWindows="true"
+    tools:context=".screens.EditProfile">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="5dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:title="Edit Profile" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:weightSum="3">
+
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:weightSum="3">
+
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:weightSum="3">
+
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+                <ImageView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/add_image"/>
+
+            </LinearLayout>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="4dp"
+                app:shape_roundRect_bottomLeftRadius="10dp"
+                app:shape_roundRect_bottomRightRadius="10dp"
+                app:shape_roundRect_topLeftRadius="10dp"
+                app:shape_roundRect_topRightRadius="10dp">
+
+                <Button
+                    android:id="@+id/addMediaBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add Photos"
+                    android:textAllCaps="false"
+                    android:background="@drawable/horizontal_gradient"
+                    android:paddingLeft="50dp"
+                    android:paddingRight="50dp"
+                    android:textColor="#ffffff"/>
+
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+<!--            Basic info-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add full Name"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Email"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add about yourself"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Gender"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date Of Birth"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your date of birth"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Location"
+                android:padding="10dp"/>
+
+<!--Work and Study-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="University Name"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add University Name"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Field of Study"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Field of Study"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Qualification"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Qualification"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Work Industry"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Work Industry"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Experience"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Experience"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mother Tongue"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Mother Tongue"
+                android:padding="10dp"/>
+
+            <!--Personal Info-->
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zodiac Sign"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Zodiac Sign"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Height"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Height"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Relationship Status"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Relationship Status"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Caste"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Caste"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Religion"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Religion"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show me"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Show me"
+                android:padding="10dp"/>
+
+<!--            About-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Drink"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="You Drink"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Smoke"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="You Smoke"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diet"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Diet"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pets"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Pets"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interests"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Your Interests"
+                android:padding="10dp"/>
+
+<!--            Other details-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Have Kids"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Set have kids"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Want Kids"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Set want kids"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Looking For"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add Looking For"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Body Type"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="Add body type"
+                android:padding="10dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:padding="5dp"
+                    android:text="Show images from your Instagram"
+                    android:textColor="@color/themePink"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:checked="true"
+                    android:theme="@style/SCBSwitch" />
+
+            </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="4dp"
+                app:shape_roundRect_bottomLeftRadius="10dp"
+                app:shape_roundRect_bottomRightRadius="10dp"
+                app:shape_roundRect_topLeftRadius="10dp"
+                app:shape_roundRect_topRightRadius="10dp">
+
+                <Button
+                    android:id="@+id/saveBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save Details"
+                    android:textAllCaps="false"
+                    android:background="@drawable/horizontal_gradient"
+                    android:paddingLeft="50dp"
+                    android:paddingRight="50dp"
+                    android:textColor="#ffffff"/>
+
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>

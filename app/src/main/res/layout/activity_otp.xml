@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="50dp"
+    tools:context=".screens.Otp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get OTP"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/themePink"/>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter your\nPhone Number"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/balsamiq_sans"
+        android:textColor="@color/colorAccent"/>
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textSize="20sp"
+           android:paddingLeft="20dp"
+           android:paddingRight="20dp"
+           android:paddingBottom="10dp"
+           android:layout_marginBottom="10dp"
+           android:text="+91"/>
+
+
+            android:inputType="phone"/>
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/phone_number_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_marginBottom="10dp"
+            app:met_maxCharacters="10"
+            app:met_baseColor="@color/colorAccent"
+            app:met_underlineColor="@color/hintColor"
+            app:met_primaryColor="@color/gradientCenter"
+            app:met_floatingLabelTextColor="#adadad"
+            app:met_helperText="OTP will be sent to this number"
+            app:met_floatingLabel="highlight" />
+
+    </LinearLayout>
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:elevation="4dp"
+        app:shape_roundRect_bottomLeftRadius="10dp"
+        app:shape_roundRect_bottomRightRadius="10dp"
+        app:shape_roundRect_topLeftRadius="10dp"
+        app:shape_roundRect_topRightRadius="10dp">
+
+        <Button
+            android:id="@+id/continueBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:background="@drawable/horizontal_gradient"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:textColor="#ffffff"/>
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+
+</LinearLayout>

@@ -1,0 +1,331 @@
+package com.neosao.truedates.model;
+
+public class UserModel {
+    private String id;
+    private String code;
+    private String userId;
+    private String name;
+    private String birthDate;
+    private String age;
+    private String contactNumber;
+    private String zodiacSign;
+    private String bodyType;
+    private String lookingFor;
+    private String showMe;
+    private String latitude;
+    private String longitude;
+    private String currentLocation;
+    private String currentCountry;
+    private String height;
+    private String motherTounge;
+    private String caste;
+    private String religion;
+    private String diet;
+    private String pets;
+    private String drink;
+    private String smoke;
+    private String haveKids;
+    private String wantKids;
+    private String gender;
+    private String firebaseId;
+    private String registerType;
+    private String username;
+    private String password;
+    private String isActive;
+    private String email;
+    private String maritalStatus;
+    private String uniqueId;
+    private String aboutMe;
+    private String profileImage;
+
+    public UserModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getZodiacSign() {
+        return zodiacSign;
+    }
+
+    public void setZodiacSign(String zodiacSign) {
+        this.zodiacSign = zodiacSign;
+    }
+
+    public String getBodyType() {
+        return bodyType;
+    }
+
+    public void setBodyType(String bodyType) {
+        this.bodyType = bodyType;
+    }
+
+    public String getLookingFor() {
+        return lookingFor;
+    }
+
+    public void setLookingFor(String lookingFor) {
+        this.lookingFor = lookingFor;
+    }
+
+    public String getShowMe() {
+        return showMe;
+    }
+
+    public void setShowMe(String showMe) {
+        this.showMe = showMe;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(String currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public String getCurrentCountry() {
+        return currentCountry;
+    }
+
+    public void setCurrentCountry(String currentCountry) {
+        this.currentCountry = currentCountry;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public String getMotherTounge() {
+        return motherTounge;
+    }
+
+    public void setMotherTounge(String motherTounge) {
+        this.motherTounge = motherTounge;
+    }
+
+    public String getCaste() {
+        return caste;
+    }
+
+    public void setCaste(String caste) {
+        this.caste = caste;
+    }
+
+    public String getReligion() {
+        return religion;
+    }
+
+    public void setReligion(String religion) {
+        this.religion = religion;
+    }
+
+    public String getDiet() {
+        return diet;
+    }
+
+    public void setDiet(String diet) {
+        this.diet = diet;
+    }
+
+    public String getPets() {
+        return pets;
+    }
+
+    public void setPets(String pets) {
+        this.pets = pets;
+    }
+
+    public String getDrink() {
+        return drink;
+    }
+
+    public void setDrink(String drink) {
+        this.drink = drink;
+    }
+
+    public String getSmoke() {
+        return smoke;
+    }
+
+    public void setSmoke(String smoke) {
+        this.smoke = smoke;
+    }
+
+    public String getHaveKids() {
+        return haveKids;
+    }
+
+    public void setHaveKids(String haveKids) {
+        this.haveKids = haveKids;
+    }
+
+    public String getWantKids() {
+        return wantKids;
+    }
+
+    public void setWantKids(String wantKids) {
+        this.wantKids = wantKids;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
+    }
+
+    public String getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(String registerType) {
+        this.registerType = registerType;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+}
