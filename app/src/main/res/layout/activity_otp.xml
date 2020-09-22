@@ -59,7 +59,7 @@
             app:met_baseColor="@color/colorAccent"
             app:met_underlineColor="@color/hintColor"
             app:met_primaryColor="@color/gradientCenter"
-            app:met_floatingLabelTextColor="#adadad"
+            app:met_floatingLabelTextColor="@color/gradientEnd"
             app:met_helperText="OTP will be sent to this number"
             app:met_floatingLabel="highlight" />
 

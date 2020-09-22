@@ -37,6 +37,13 @@ public class UserModel {
     private String uniqueId;
     private String aboutMe;
     private String profileImage;
+    private String university;
+    private String fieldOfStudy;
+    private String qualification;
+    private String workIndustry;
+    private String experience;
+    private String relationshipStatus;
+    private String intrests;
 
     public UserModel() {
     }
@@ -327,5 +334,61 @@ public class UserModel {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public String getFieldOfStudy() {
+        return fieldOfStudy;
+    }
+
+    public void setFieldOfStudy(String fieldOfStudy) {
+        this.fieldOfStudy = fieldOfStudy;
+    }
+
+    public String getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
+    }
+
+    public String getWorkIndustry() {
+        return workIndustry;
+    }
+
+    public void setWorkIndustry(String workIndustry) {
+        this.workIndustry = workIndustry;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+
+    public String getRelationshipStatus() {
+        return relationshipStatus;
+    }
+
+    public void setRelationshipStatus(String relationshipStatus) {
+        this.relationshipStatus = relationshipStatus;
+    }
+
+    public String getIntrests() {
+        return intrests;
+    }
+
+    public void setIntrests(String intrests) {
+        this.intrests = intrests;
     }
 }

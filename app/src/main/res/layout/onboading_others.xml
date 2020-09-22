@@ -42,6 +42,8 @@
 
 
             <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/haveKids"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Have Kids"
@@ -49,40 +51,46 @@
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/wantKids"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Want Kids"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/lookingFor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Looking For"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/bodyType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Body Type"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
         </LinearLayout>

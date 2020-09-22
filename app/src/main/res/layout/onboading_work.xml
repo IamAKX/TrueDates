@@ -44,66 +44,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="University Name"
+                android:id="@+id/university"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Field of Study"
+                android:id="@+id/fieldOfStudy"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Qualification"
+                android:id="@+id/qualification"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Work Industry"
+                android:id="@+id/workIndustry"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Experience"
+                android:id="@+id/experience"
+                android:focusable="false"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mother Tongue"
+                android:focusable="false"
+                android:id="@+id/motherTongue"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="#adadad"
+                app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
         </LinearLayout>

@@ -4,20 +4,6 @@ public interface OptionContants {
     public static final String[] GENDER_OPTIONS = {"Male", "Female", "Other"};
     public static final String[] QUALIFICATION_OPTIONS = {"Bachelors", "Masters", "PHD", "Post Doc", "Other"};
     public static final String[] EXPERIENCE_OPTIONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"};
-    public static final String[] ZODIAC_OPTIONS = {
-            "Aries",
-            "Taurus",
-            "Gemini",
-            "Cancer",
-            "Leo",
-            "Virgo",
-            "Libra",
-            "Scorpio",
-            "Sagittarius",
-            "Capricorn",
-            "Aquarius",
-            "Pisces"
-    };
     public static final String[] HEIGHT_OPTIONS = {
             "4'8\"",
             "4'8\"",
@@ -54,11 +40,7 @@ public interface OptionContants {
             "Seperated",
             "Seperated with kids",
     };
-    public static final String[] WANT_KID_OPTIONS = {
-            "Want Someday",
-            "Don't want",
-            "Undecided",
-    };
+
     public static final String[] SHOW_ME_OPTIONS = {
             "Male",
             "Female"
@@ -98,4 +80,21 @@ public interface OptionContants {
             "Don't want",
             "Undecided"
     };
+
+    public static final String[] LOOKING_FOR_OPTIONS = {
+            "Chat",
+            "Flirt",
+            "Long-term",
+            "New friends",
+            "Date"
+    };
+    public static final String[] BODY_TYPE_OPTIONS = {
+            "Average",
+            "Athletic",
+            "Slim",
+            "Curvy",
+            "A few extra pounds"
+    };
+
+
 }

@@ -2,6 +2,8 @@ package com.neosao.truedates.configs;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.Window;
@@ -15,6 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Calendar;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;
@@ -44,5 +48,13 @@ public class Utils {
         } else {
             return 0;
         }
+    }
+
+    public static SweetAlertDialog getProgress(Context context, String title){
+        SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(R.color.themePink);
+        pDialog.setContentText(title);
+        pDialog.setCancelable(false);
+        return  pDialog;
     }
 }

@@ -1,0 +1,41 @@
+JSONObject reqBody = new JSONObject();
+try {
+
+} catch (JSONException e) {
+    e.printStackTrace();
+}
+JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, API., reqBody,
+        new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        NetworkResponse networkResponse = error.networkResponse;
+        if(error.networkResponse != null && new String(networkResponse.data) != null) {
+            if(new String(networkResponse.data) != null)
+            {
+                try {
+                    JSONObject object = new JSONObject(new String(networkResponse.data));
+                    Toast.makeText(getBaseContext(), object.getString("res") , Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+});
+
+jsonObjectRequest.setShouldCache(false);
+jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+        0,
+        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+));
+RequestQueue requestQueue = RequestQueueSingleton.getInstance(getContext())
+        .getRequestQueue();
+requestQueue.getCache().clear();
+requestQueue.add(jsonObjectRequest);
+return null;

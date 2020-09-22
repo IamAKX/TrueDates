@@ -1,11 +1,17 @@
 package com.neosao.truedates.onboardingfragments;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -22,7 +28,11 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.jksiezni.permissive.PermissionsGrantedListener;
+import com.github.jksiezni.permissive.PermissionsRefusedListener;
+import com.github.jksiezni.permissive.Permissive;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.Utils;
@@ -30,9 +40,13 @@ import com.neosao.truedates.screens.OnboardingData;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
 
 
 public class Intoduction extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
@@ -168,7 +182,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.gender:
-                showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
+                 showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
                 break;
             case R.id.dob:
                 new DatePickerDialog(getActivity(), R.style.DialogTheme, this,  calendar
@@ -176,27 +190,45 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                         calendar.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.location:
-                Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                try {
-                    List<Address> addresses = geocoder.getFromLocation(22.472980, 88.347573, 1);
-                    Address address = addresses.get(0);
-                    Log.e("check",address.getAddressLine(0)); //271/1, Gangapuri, Block B and C, New Tollygunge, Aurobindo Park, South Kolkata, West Bengal 700093, India
-                    Log.e("check",address.getAdminArea()); // West Bengal
-                    Log.e("check",address.getLocality()); // South Kolkata
-                    Log.e("check",address.getPremises()); // 271/1
-                    Log.e("check",address.getSubLocality()); // Aurobindo Park
-                    Log.e("check",address.getSubAdminArea()); // Kolkata
-                    Log.e("check",address.getCountryName()); //India
-
-
-
-                    location.setText(address.getAddressLine(0));
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                }
+                getAddress();
                 break;
         }
+    }
+
+    private void getAddress() {
+        new Permissive.Request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                .whenPermissionsGranted(new PermissionsGrantedListener() {
+                    @Override
+                    public void onPermissionsGranted(String[] permissions) throws SecurityException {
+                        // given permissions are granted
+                        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+                        Location loc = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                            Address address = addresses.get(0);
+//                            Log.e("check",address.getAddressLine(0)); //271/1, Gangapuri, Block B and C, New Tollygunge, Aurobindo Park, South Kolkata, West Bengal 700093, India
+//                            Log.e("check",address.getAdminArea()); // West Bengal
+//                            Log.e("check",address.getLocality()); // South Kolkata
+//                            Log.e("check",address.getPremises()); // 271/1
+//                            Log.e("check",address.getSubLocality()); // Aurobindo Park
+//                            Log.e("check",address.getSubAdminArea()); // Kolkata
+//                            Log.e("check",address.getCountryName()); //India
+
+                            location.setText(address.getLocality()+", "+address.getCountryName());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+                })
+                .whenPermissionsRefused(new PermissionsRefusedListener() {
+                    @Override
+                    public void onPermissionsRefused(String[] permissions) {
+                        Toast.makeText(getContext(),"We need you parmission to fetch your address", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .execute(getActivity());
     }
 
     private void showOptionPopup(String title, final MaterialEditText editText, String[] options) {
@@ -246,6 +278,15 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 
         int diff = Utils.getDiffYears(personBirthDate, calendar);
         Log.e("check","Age : "+diff);
+        if(diff >= 18)
+        {
+            Toast.makeText(getContext(),"You should be atleast 18 years old", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            dob.setText(format.format(personBirthDate.getTime()));
+        }
 
     }
 }
