@@ -57,9 +57,9 @@ public class PhoneValidation extends AppCompatActivity {
 
             @Override
             public void onOTPComplete(String otp) {
-                if(otp==null || otp.isEmpty())
+                if (otp == null || otp.isEmpty())
                     return;
-                if(verificationCodeId==null)
+                if (verificationCodeId == null)
                     verificationCodeId = "111111";
                 PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCodeId, otp);
                 signInWithPhoneAuthCredential(credential);
@@ -77,15 +77,17 @@ public class PhoneValidation extends AppCompatActivity {
                             Log.e("check", "signInWithCredential:success");
                             otp_view.showSuccess();
                             FirebaseUser user = task.getResult().getUser();
-                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.MOBILE_NUMBER.name(), true, user.getDisplayName(),user.getEmail(), user.getPhoneNumber(), user.getPhotoUrl().toString(), user.getUid());
+                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.MOBILE_NUMBER.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null == user.getPhotoUrl() ? "" : user.getPhotoUrl().toString(), user.getUid());
                             Log.e("check", userModel.toString());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
+                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.e("check", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 otp_view.showError();
-                                Toast.makeText(getBaseContext(),"OTP is incorrect", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getBaseContext(), "OTP is incorrect", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -110,7 +112,7 @@ public class PhoneValidation extends AppCompatActivity {
                     @Override
                     public void onVerificationFailed(@NonNull FirebaseException e) {
                         Log.e("check", "onVerificationFailed:" + e.getLocalizedMessage());
-                        Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         otp_view.showError();
                     }
 
@@ -128,7 +130,7 @@ public class PhoneValidation extends AppCompatActivity {
         resendOTP = findViewById(R.id.resendOTP);
         mobileNumber = findViewById(R.id.mobileNumber);
 
-        mobileNumber.setText("+91 "+getIntent().getStringExtra("phone"));
+        mobileNumber.setText("+91 " + getIntent().getStringExtra("phone"));
         editPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,31 +148,30 @@ public class PhoneValidation extends AppCompatActivity {
     }
 
     private void runTimerForResendOTP() {
-        resendOTP.setText("Resend OTP in "+OTP_TIME_OUT+" sec");
+        resendOTP.setText("Resend OTP in " + OTP_TIME_OUT + " sec");
         resendOTP.setClickable(false);
         resendOTP.setTextColor(getResources().getColor(R.color.hintColor));
         Thread thread = new Thread() {
             int timeOut = OTP_TIME_OUT;
+
             @Override
             public void run() {
                 try {
-                    while (timeOut>=0) {
+                    while (timeOut >= 0) {
                         Thread.sleep(1000);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(timeOut>0)
-                                {
-                                    resendOTP.setText("Resend OTP in "+timeOut+ (timeOut>1?" seconds":" second"));
+                                if (timeOut > 0) {
+                                    resendOTP.setText("Resend OTP in " + timeOut + (timeOut > 1 ? " seconds" : " second"));
                                     resendOTP.setClickable(false);
                                     resendOTP.setTextColor(getResources().getColor(R.color.hintColor));
-                                }
-                                else {
+                                } else {
                                     resendOTP.setText("Resend OTP");
                                     resendOTP.setClickable(true);
                                     resendOTP.setTextColor(getResources().getColor(R.color.colorAccent));
                                 }
-                               timeOut--;
+                                timeOut--;
                             }
                         });
                     }

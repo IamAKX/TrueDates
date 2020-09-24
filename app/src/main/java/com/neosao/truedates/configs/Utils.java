@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -53,8 +54,22 @@ public class Utils {
     public static SweetAlertDialog getProgress(Context context, String title){
         SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(R.color.themePink);
+        pDialog.getProgressHelper().setRimColor(R.color.themePink);
         pDialog.setContentText(title);
         pDialog.setCancelable(false);
         return  pDialog;
+    }
+
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 }

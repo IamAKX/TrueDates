@@ -17,10 +17,12 @@ import android.view.WindowManager;
 
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.HomeContainer;
 import com.neosao.truedates.screens.Login;
 import com.neosao.truedates.screens.OnboardingData;
 import com.neosao.truedates.screens.Settings;
+import com.neosao.truedates.screens.UploadProfileImage;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.setStatusBarGradiant(this);
 
 //        printHashKey(getBaseContext());
-
+        final LocalPref localPref = new LocalPref(getBaseContext());
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -48,7 +50,19 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(getBaseContext(), Login.class));
+                        if(localPref.getLoginStatus())
+                        {
+                            UserModel user = localPref.getUser();
+                            if(null == user)
+                                startActivity(new Intent(getBaseContext(), Login.class));
+                            else
+                                if (null==user.getMemberPhotos() || user.getMemberPhotos().size()<1)
+                                    startActivity(new Intent(getBaseContext(), UploadProfileImage.class));
+                                else
+                                    startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                        }
+                        else
+                            startActivity(new Intent(getBaseContext(), Login.class));
                         finish();
                     }
                 });

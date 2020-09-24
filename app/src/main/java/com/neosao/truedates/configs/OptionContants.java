@@ -41,6 +41,13 @@ public interface OptionContants {
             "Seperated with kids",
     };
 
+    public static final String[] MARITAL_OPTIONS = {
+            "Married",
+            "Unmarried",
+            "Divorced",
+            "Widow"
+    };
+
     public static final String[] SHOW_ME_OPTIONS = {
             "Male",
             "Female"
@@ -94,6 +101,21 @@ public interface OptionContants {
             "Slim",
             "Curvy",
             "A few extra pounds"
+    };
+
+    public static final String[] ZODIAC_OPTIONS = {
+            "Aquarius",
+            "Pisces",
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn"
     };
 
 

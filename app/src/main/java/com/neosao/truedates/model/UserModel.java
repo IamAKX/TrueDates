@@ -1,5 +1,7 @@
 package com.neosao.truedates.model;
 
+import java.util.ArrayList;
+
 public class UserModel {
     private String id;
     private String code;
@@ -36,7 +38,8 @@ public class UserModel {
     private String maritalStatus;
     private String uniqueId;
     private String aboutMe;
-    private String profileImage;
+//    private String profileImage;
+    private ArrayList<MemberPhotos> memberPhotos;
     private String university;
     private String fieldOfStudy;
     private String qualification;
@@ -46,6 +49,52 @@ public class UserModel {
     private String intrests;
 
     public UserModel() {
+    }
+
+    public UserModel(String id, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String showMe, String latitude, String longitude, String currentLocation, String currentCountry, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String registerType, String username, String password, String isActive, String email, String maritalStatus, String uniqueId, String aboutMe, ArrayList<MemberPhotos> memberPhotos, String university, String fieldOfStudy, String qualification, String workIndustry, String experience, String relationshipStatus, String intrests) {
+        this.id = id;
+        this.code = code;
+        this.userId = userId;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.age = age;
+        this.contactNumber = contactNumber;
+        this.zodiacSign = zodiacSign;
+        this.bodyType = bodyType;
+        this.lookingFor = lookingFor;
+        this.showMe = showMe;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.currentLocation = currentLocation;
+        this.currentCountry = currentCountry;
+        this.height = height;
+        this.motherTounge = motherTounge;
+        this.caste = caste;
+        this.religion = religion;
+        this.diet = diet;
+        this.pets = pets;
+        this.drink = drink;
+        this.smoke = smoke;
+        this.haveKids = haveKids;
+        this.wantKids = wantKids;
+        this.gender = gender;
+        this.firebaseId = firebaseId;
+        this.registerType = registerType;
+        this.username = username;
+        this.password = password;
+        this.isActive = isActive;
+        this.email = email;
+        this.maritalStatus = maritalStatus;
+        this.uniqueId = uniqueId;
+        this.aboutMe = aboutMe;
+        this.memberPhotos = memberPhotos;
+        this.university = university;
+        this.fieldOfStudy = fieldOfStudy;
+        this.qualification = qualification;
+        this.workIndustry = workIndustry;
+        this.experience = experience;
+        this.relationshipStatus = relationshipStatus;
+        this.intrests = intrests;
     }
 
     public String getId() {
@@ -328,12 +377,12 @@ public class UserModel {
         this.aboutMe = aboutMe;
     }
 
-    public String getProfileImage() {
-        return profileImage;
+    public ArrayList<MemberPhotos> getMemberPhotos() {
+        return memberPhotos;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+    public void setMemberPhotos(ArrayList<MemberPhotos> memberPhotos) {
+        this.memberPhotos = memberPhotos;
     }
 
     public String getUniversity() {
@@ -390,5 +439,54 @@ public class UserModel {
 
     public void setIntrests(String intrests) {
         this.intrests = intrests;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "id='" + id + '\'' +
+                ", code='" + code + '\'' +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", age='" + age + '\'' +
+                ", contactNumber='" + contactNumber + '\'' +
+                ", zodiacSign='" + zodiacSign + '\'' +
+                ", bodyType='" + bodyType + '\'' +
+                ", lookingFor='" + lookingFor + '\'' +
+                ", showMe='" + showMe + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", currentLocation='" + currentLocation + '\'' +
+                ", currentCountry='" + currentCountry + '\'' +
+                ", height='" + height + '\'' +
+                ", motherTounge='" + motherTounge + '\'' +
+                ", caste='" + caste + '\'' +
+                ", religion='" + religion + '\'' +
+                ", diet='" + diet + '\'' +
+                ", pets='" + pets + '\'' +
+                ", drink='" + drink + '\'' +
+                ", smoke='" + smoke + '\'' +
+                ", haveKids='" + haveKids + '\'' +
+                ", wantKids='" + wantKids + '\'' +
+                ", gender='" + gender + '\'' +
+                ", firebaseId='" + firebaseId + '\'' +
+                ", registerType='" + registerType + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", isActive='" + isActive + '\'' +
+                ", email='" + email + '\'' +
+                ", maritalStatus='" + maritalStatus + '\'' +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", aboutMe='" + aboutMe + '\'' +
+                ", memberPhotos=" + memberPhotos +
+                ", university='" + university + '\'' +
+                ", fieldOfStudy='" + fieldOfStudy + '\'' +
+                ", qualification='" + qualification + '\'' +
+                ", workIndustry='" + workIndustry + '\'' +
+                ", experience='" + experience + '\'' +
+                ", relationshipStatus='" + relationshipStatus + '\'' +
+                ", intrests='" + intrests + '\'' +
+                '}';
     }
 }

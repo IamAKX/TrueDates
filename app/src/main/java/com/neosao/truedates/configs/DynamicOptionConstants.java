@@ -17,7 +17,7 @@ public class DynamicOptionConstants {
     public static ArrayList<MotherTongue> MOTHER_TONGUE_ARRAY_LIST = new ArrayList<>();
     public static ArrayList<Religion> RELIGION_ARRAY_LIST = new ArrayList<>();
     public static ArrayList<WorkIndustry> WORK_INDUSTRY_ARRAY_LIST = new ArrayList<>();
-    public static ArrayList<ZodiacSigns> ZODIAC_SIGNS_ARRAY_LIST = new ArrayList<>();
+//    public static ArrayList<ZodiacSigns> ZODIAC_SIGNS_ARRAY_LIST = new ArrayList<>();
 
     public static String[] CASTE_OPTION = null;
     public static String[] FIELD_OF_STUDY_OPTION = null;
@@ -25,5 +25,5 @@ public class DynamicOptionConstants {
     public static String[] MOTHER_TONGUE_OPTION = null;
     public static String[] RELIGION_OPTION = null;
     public static String[] WORK_INDUSTRY_OPTION = null;
-    public static String[] ZODIAC_SIGNS_OPTION = null;
+//    public static String[] ZODIAC_SIGNS_OPTION = null;
 }

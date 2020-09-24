@@ -106,19 +106,19 @@ public class ResponseParser {
             else
                 DynamicOptionConstants.WORK_INDUSTRY_OPTION = new String[]{"No data available"};
 
-            if(result.has("zodiacsignsList"))
-            {
-                JSONArray array = result.getJSONArray("zodiacsignsList");
-                DynamicOptionConstants.ZODIAC_SIGNS_OPTION = new String[array.length()];
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject item = array.getJSONObject(i);
-                    ZodiacSigns model = new Gson().fromJson(item.toString(), ZodiacSigns.class);
-                    DynamicOptionConstants.ZODIAC_SIGNS_OPTION[i] = model.getSign();
-                    DynamicOptionConstants.ZODIAC_SIGNS_ARRAY_LIST.add(model);
-                }
-            }
-            else
-                DynamicOptionConstants.ZODIAC_SIGNS_OPTION = new String[]{"No data available"};
+//            if(result.has("zodiacsignsList"))
+//            {
+//                JSONArray array = result.getJSONArray("zodiacsignsList");
+//                DynamicOptionConstants.ZODIAC_SIGNS_OPTION = new String[array.length()];
+//                for (int i = 0; i < array.length(); i++) {
+//                    JSONObject item = array.getJSONObject(i);
+//                    ZodiacSigns model = new Gson().fromJson(item.toString(), ZodiacSigns.class);
+//                    DynamicOptionConstants.ZODIAC_SIGNS_OPTION[i] = model.getSign();
+//                    DynamicOptionConstants.ZODIAC_SIGNS_ARRAY_LIST.add(model);
+//                }
+//            }
+//            else
+//                DynamicOptionConstants.ZODIAC_SIGNS_OPTION = new String[]{"No data available"};
 
 
         } catch (JSONException e) {

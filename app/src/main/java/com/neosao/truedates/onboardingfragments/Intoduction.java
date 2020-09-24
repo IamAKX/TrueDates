@@ -44,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 
@@ -202,9 +204,12 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
                         Location loc = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
                         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-                            Address address = addresses.get(0);
+                        if(loc!=null) {
+                            try {
+                                OnboardingData.user.setLatitude(String.valueOf(loc.getLatitude()));
+                                OnboardingData.user.setLongitude(String.valueOf(loc.getLongitude()));
+                                List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                                Address address = addresses.get(0);
 //                            Log.e("check",address.getAddressLine(0)); //271/1, Gangapuri, Block B and C, New Tollygunge, Aurobindo Park, South Kolkata, West Bengal 700093, India
 //                            Log.e("check",address.getAdminArea()); // West Bengal
 //                            Log.e("check",address.getLocality()); // South Kolkata
@@ -212,11 +217,17 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 //                            Log.e("check",address.getSubLocality()); // Aurobindo Park
 //                            Log.e("check",address.getSubAdminArea()); // Kolkata
 //                            Log.e("check",address.getCountryName()); //India
+                                OnboardingData.user.setCurrentLocation(address.getLocality());
+                                OnboardingData.user.setCurrentCountry(address.getCountryName());
+                                location.setText(address.getLocality() + ", " + address.getCountryName());
+                            } catch (IOException e) {
+                                e.printStackTrace();
 
-                            location.setText(address.getLocality()+", "+address.getCountryName());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(getContext(), "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -276,7 +287,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 
         int diff = Utils.getDiffYears(personBirthDate, calendar);
         Log.e("check","Age : "+diff);
-        if(diff >= 18)
+        if(diff < 18)
         {
             Toast.makeText(getContext(),"You should be atleast 18 years old", Toast.LENGTH_LONG).show();
         }

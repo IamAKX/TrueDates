@@ -25,7 +25,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class Personal extends Fragment implements View.OnClickListener {
 
     View rootView;
-    public static MaterialEditText zodiac, height, relationshipStatus, caste, religion, showMe;
+    public static MaterialEditText zodiac, height, relationshipStatus, caste, religion, showMe,maritalStatus;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +39,7 @@ public class Personal extends Fragment implements View.OnClickListener {
         caste = rootView.findViewById(R.id.caste);
         religion = rootView.findViewById(R.id.religion);
         showMe = rootView.findViewById(R.id.showMe);
+        maritalStatus = rootView.findViewById(R.id.maritalStatus);
 
         setEditTextListners();
 
@@ -48,6 +49,7 @@ public class Personal extends Fragment implements View.OnClickListener {
         caste.setOnClickListener(this);
         religion.setOnClickListener(this);
         showMe.setOnClickListener(this);
+        maritalStatus.setOnClickListener(this);
 
         return rootView;
     }
@@ -149,13 +151,29 @@ public class Personal extends Fragment implements View.OnClickListener {
 
             }
         });
+        maritalStatus.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                OnboardingData.user.setMaritalStatus(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.zodiac:
-                showOptionPopup("Zodiac Sign", (MaterialEditText) view, DynamicOptionConstants.ZODIAC_SIGNS_OPTION);
+                showOptionPopup("Zodiac Sign", (MaterialEditText) view, OptionContants.ZODIAC_OPTIONS);
                 break;
             case R.id.height:
                 showOptionPopup("Height", (MaterialEditText) view, OptionContants.HEIGHT_OPTIONS);
@@ -163,11 +181,14 @@ public class Personal extends Fragment implements View.OnClickListener {
             case R.id.relationshipStatus:
                 showOptionPopup("Relationship Status", (MaterialEditText) view, OptionContants.RELATIONSHIP_OPTIONS);
                 break;
+            case R.id.maritalStatus:
+                showOptionPopup("Marital Status", (MaterialEditText) view, OptionContants.MARITAL_OPTIONS);
+                break;
             case R.id.caste:
                 showOptionPopup("Caste", (MaterialEditText) view, DynamicOptionConstants.CASTE_OPTION);
                 break;
             case R.id.religion:
-                showOptionPopup("Religion", (MaterialEditText) view, OptionContants.RELATIONSHIP_OPTIONS);
+                showOptionPopup("Religion", (MaterialEditText) view, DynamicOptionConstants.RELIGION_OPTION);
                 break;
             case R.id.showMe:
                 showOptionPopup("Show me", (MaterialEditText) view, OptionContants.SHOW_ME_OPTIONS);

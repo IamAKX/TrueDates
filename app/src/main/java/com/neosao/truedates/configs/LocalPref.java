@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.neosao.truedates.model.FirebaseUserModel;
+import com.neosao.truedates.model.UserModel;
 
 public class LocalPref {
 
@@ -29,5 +30,30 @@ public class LocalPref {
     {
         FirebaseUserModel user = new Gson().fromJson(preferences.getString(LocalPrefKey.FIREBASE_USER,null),FirebaseUserModel.class);
         return user;
+    }
+
+    public boolean saveUser(UserModel user)
+    {
+        editor = preferences.edit();
+        editor.putString(LocalPrefKey.CURRENT_USER,new Gson().toJson(user));
+        return editor.commit();
+    }
+
+    public UserModel getUser()
+    {
+        UserModel user = new Gson().fromJson(preferences.getString(LocalPrefKey.CURRENT_USER,null),UserModel.class);
+        return user;
+    }
+
+    public boolean setLoginStatus(boolean status)
+    {
+        editor = preferences.edit();
+        editor.putBoolean(LocalPrefKey.LOGIN_STATUS,status);
+        return editor.commit();
+    }
+
+    public boolean getLoginStatus()
+    {
+        return preferences.getBoolean(LocalPrefKey.LOGIN_STATUS, false);
     }
 }
