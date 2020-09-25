@@ -59,7 +59,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
@@ -68,7 +68,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
@@ -86,7 +86,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
@@ -95,7 +95,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
@@ -113,7 +113,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
@@ -122,12 +122,23 @@
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:src="@drawable/dashed_border"/>
 
             </LinearLayout>
 
+
+            <Button
+                android:id="@+id/continueBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Upload and Continue"
+                android:textAllCaps="false"
+                android:background="@drawable/horizontal_gradient"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:textColor="#ffffff"/>
 
         </LinearLayout>
 

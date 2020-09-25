@@ -44,37 +44,40 @@
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="10dp"
                         android:elevation="4dp"
-                        android:src="@drawable/user_man"
+                        android:src="@drawable/in_love"
                         app:layout_anchorGravity="top|center_horizontal"
                         app:layout_scrollFlags="scroll" />
 
 
                     <TextView
+                        android:id="@+id/name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="John Doe, 24"
+                        android:text="*****, **"
                         android:textColor="@color/md_black_1000"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
 
                     <TextView
+                        android:id="@+id/workIndustry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="Software Engineer"
+                        android:text="***********"
                         android:textColor="@color/md_black_1000"
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/university"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
                         android:gravity="center"
-                        android:text="Institute of Cambridge"
+                        android:text="************"
                         android:textColor="@color/md_black_1000"
                         android:textSize="14sp" />
 

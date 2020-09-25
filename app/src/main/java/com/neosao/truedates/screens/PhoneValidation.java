@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +75,7 @@ public class PhoneValidation extends AppCompatActivity {
                             Log.e("check", "signInWithCredential:success");
                             otp_view.showSuccess();
                             FirebaseUser user = task.getResult().getUser();
-                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.MOBILE_NUMBER.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null == user.getPhotoUrl() ? "" : user.getPhotoUrl().toString(), user.getUid());
+                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.mobile.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null == user.getPhotoUrl() ? "" : user.getPhotoUrl().toString(), user.getUid());
                             Log.e("check", userModel.toString());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
                             startActivity(new Intent(getBaseContext(), OnboardingData.class));

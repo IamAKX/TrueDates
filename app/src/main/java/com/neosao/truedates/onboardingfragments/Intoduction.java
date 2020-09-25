@@ -289,12 +289,13 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         Log.e("check","Age : "+diff);
         if(diff < 18)
         {
-            Toast.makeText(getContext(),"You should be atleast 18 years old", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),"You should be at least 18 years old", Toast.LENGTH_LONG).show();
         }
         else
         {
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             dob.setText(format.format(personBirthDate.getTime()));
+            OnboardingData.user.setAge(String.valueOf(diff));
         }
 
     }

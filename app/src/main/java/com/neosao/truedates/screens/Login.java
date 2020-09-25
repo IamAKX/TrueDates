@@ -108,7 +108,7 @@ public class Login extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.e("check", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.FACEBOOK.name(), true, user.getDisplayName(),user.getEmail(), user.getPhoneNumber(), user.getPhotoUrl().toString(), user.getUid());
+                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.facebook.name(), true, user.getDisplayName(),user.getEmail(), user.getPhoneNumber(), user.getPhotoUrl().toString(), user.getUid());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
                             startActivity(new Intent(getBaseContext(), OnboardingData.class));
                         } else {
