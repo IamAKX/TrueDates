@@ -9,14 +9,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
+import com.neosao.truedates.model.FeatureSliderModel;
 import com.smarteist.autoimageslider.SliderViewAdapter;
+
+import java.util.ArrayList;
 
 public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderAdapterVH> {
 
     private Context context;
+    private ArrayList<FeatureSliderModel> list;
 
-    public SliderAdapter(Context context) {
+    public SliderAdapter(Context context, ArrayList<FeatureSliderModel> list) {
         this.context = context;
+        this.list = list;
     }
 
     @Override
@@ -28,60 +33,18 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderAdapter
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
 
-        switch (position) {
-            case 0:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.bolt)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_1));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_1));
-                break;
-            case 1:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.ic_like_24dp)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_2));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_2));
-                break;
-            case 2:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.ic_location_on_blue_24dp)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_3));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_3));
-                break;
-
-            case 3:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.ic_star_blue_24dp)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_4));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_4));
-                break;
-
-            case 4:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.reverse)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_5));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_5));
-                break;
-
-            case 5:
-                Glide.with(viewHolder.itemView)
-                        .load(R.drawable.ic_star_turquoise_24dp)
-                        .into(viewHolder.imageViewSlider);
-                viewHolder.textViewTitle.setText(context.getResources().getString(R.string.title_slider_6));
-                viewHolder.textViewDescription.setText(context.getResources().getString(R.string.description_slider_6));
-                break;
-        }
-
+        FeatureSliderModel model = list.get(position);
+        Glide.with(viewHolder.itemView)
+                .load(model.getFeatureLogo())
+                .into(viewHolder.imageViewSlider);
+        viewHolder.textViewTitle.setText(model.getFeatureName());
+        viewHolder.textViewDescription.setText(model.getFeatureDescription());
     }
 
     @Override
     public int getCount() {
         //slider view count could be dynamic size
-        return 6;
+        return list.size();
     }
 
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {

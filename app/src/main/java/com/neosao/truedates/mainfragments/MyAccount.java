@@ -30,6 +30,7 @@ import com.neosao.truedates.adapters.SliderAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.model.FeatureSliderModel;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.EditProfile;
 import com.neosao.truedates.screens.Settings;
@@ -38,9 +39,11 @@ import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,15 +72,6 @@ public class MyAccount extends Fragment {
         user = localPref.getUser();
 
         new LoadFeatureSlider().execute();
-
-        final SliderAdapter adapter = new SliderAdapter(getActivity());
-
-        sliderView.setSliderAdapter(adapter);
-
-        sliderView.setIndicatorAnimation(IndicatorAnimations.SLIDE); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
-        sliderView.startAutoCycle();
 
         rootLayout.findViewById(R.id.editProfileButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,7 +179,37 @@ public class MyAccount extends Fragment {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if(object.getString("status").equals("200"))
+                                {
+                                    ArrayList<FeatureSliderModel> list = new ArrayList<>();
+                                    if(object.has("result") && object.getJSONObject("result").has("features"))
+                                    {
+                                        JSONArray array = object.getJSONObject("result").getJSONArray("features");
+                                        for (int i = 0; i < array.length(); i++) {
+                                            JSONObject item = array.getJSONObject(i);
+                                            FeatureSliderModel model = new Gson().fromJson(item.toString(),FeatureSliderModel.class);
+                                            list.add(model);
+                                        }
 
+                                        final SliderAdapter adapter = new SliderAdapter(getActivity(), list);
+
+                                        sliderView.setSliderAdapter(adapter);
+
+                                        sliderView.setIndicatorAnimation(IndicatorAnimations.SLIDE); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+                                        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                                        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
+                                        sliderView.startAutoCycle();
+                                    }
+                                    else
+                                        Toast.makeText(getContext(),"Unable to load feature slider",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                    Toast.makeText(getContext(),object.getString("message"),Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     },
                     new Response.ErrorListener() {
