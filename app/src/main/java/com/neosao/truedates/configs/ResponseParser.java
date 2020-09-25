@@ -15,8 +15,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class ResponseParser {
     public static void parseGetAllOption(JSONObject response){
+
+        DynamicOptionConstants.CASTE_ARRAY_LIST.clear();
+        DynamicOptionConstants.FIELD_OF_STUDY_ARRAY_LIST.clear();
+        DynamicOptionConstants.INTEREST_ARRAY_LIST.clear();
+        DynamicOptionConstants.MOTHER_TONGUE_ARRAY_LIST.clear();
+        DynamicOptionConstants.RELIGION_ARRAY_LIST.clear();
+        DynamicOptionConstants.WORK_INDUSTRY_ARRAY_LIST.clear();
 
         try {
             JSONObject result = response.getJSONObject("result");

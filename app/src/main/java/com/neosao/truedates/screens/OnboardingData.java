@@ -434,6 +434,15 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("lookingFor", user.getLookingFor());
                     params.put("universityName", user.getUniversity());
 
+                    params.put("about", user.getAboutMe());
+                    params.put("workIndustry", user.getWorkIndustry());
+                    params.put("relationshipStatus", user.getWorkIndustry());
+                    params.put("diet", user.getDiet());
+                    params.put("pets", user.getPets());
+                    params.put("interests", user.getIntrests());
+                    params.put("haveKids", user.getHaveKids());
+                    params.put("wantKids", user.getWantKids());
+
                     Log.e("check","Reg req body : "+params.toString());
                     return params;
                 }

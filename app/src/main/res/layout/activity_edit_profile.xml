@@ -168,6 +168,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/name"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,6 +186,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/email"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,6 +204,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/about"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -219,10 +222,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/gender"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Gender"
                 android:padding="10dp"/>
 
@@ -236,11 +241,13 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/dob"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="Your date of birth"
+                android:focusable="false"
                 android:padding="10dp"/>
 
             <TextView
@@ -253,10 +260,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/location"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Location"
                 android:padding="10dp"/>
 
@@ -272,6 +281,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/university"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -289,10 +299,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/fieldOfStudy"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Field of Study"
                 android:padding="10dp"/>
 
@@ -306,10 +318,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/qualification"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Add Qualification"
                 android:padding="10dp"/>
 
@@ -323,10 +337,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/workIndustry"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Add Work Industry"
                 android:padding="10dp"/>
 
@@ -340,10 +356,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/experience"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Experience"
                 android:padding="10dp"/>
 
@@ -357,9 +375,11 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/motherTongue"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
                 android:background="@color/white"
                 android:hint="Your Mother Tongue"
                 android:padding="10dp"/>
@@ -377,10 +397,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/zodiac"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Add Zodiac Sign"
                 android:padding="10dp"/>
 
@@ -394,10 +416,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/height"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Height"
                 android:padding="10dp"/>
 
@@ -411,12 +435,34 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/relationshipStatus"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Relationship Status"
                 android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Marital Status"
+                android:fontFamily="@font/balsamiq_sans"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="1dp"/>
+            <EditText
+                android:id="@+id/maritalStatus"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:focusable="false"
+                android:hint="Your Marital Status"
+                android:padding="10dp"/>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -428,10 +474,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/caste"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Add Caste"
                 android:padding="10dp"/>
 
@@ -445,10 +493,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/religion"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Religion"
                 android:padding="10dp"/>
 
@@ -462,10 +512,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/showMe"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Show me"
                 android:padding="10dp"/>
 
@@ -481,10 +533,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/drinks"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="You Drink"
                 android:padding="10dp"/>
 
@@ -498,9 +552,11 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/smoke"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
                 android:background="@color/white"
                 android:hint="You Smoke"
                 android:padding="10dp"/>
@@ -515,10 +571,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/diet"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Diet"
                 android:padding="10dp"/>
 
@@ -532,10 +590,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/pets"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Add Pets"
                 android:padding="10dp"/>
 
@@ -549,10 +609,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/interests"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Your Interests"
                 android:padding="10dp"/>
 
@@ -568,10 +630,12 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/haveKids"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:focusable="false"
                 android:hint="Set have kids"
                 android:padding="10dp"/>
 
@@ -585,11 +649,13 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/wantKids"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="Set want kids"
+                android:focusable="false"
                 android:padding="10dp"/>
 
             <TextView
@@ -602,11 +668,13 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/lookingFor"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="Add Looking For"
+                android:focusable="false"
                 android:padding="10dp"/>
 
             <TextView
@@ -619,11 +687,13 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:id="@+id/bodyType"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="Add body type"
+                android:focusable="false"
                 android:padding="10dp"/>
 
             <androidx.cardview.widget.CardView

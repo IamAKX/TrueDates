@@ -68,6 +68,8 @@ public class MyAccount extends Fragment {
         localPref = new LocalPref(getContext());
         user = localPref.getUser();
 
+        new LoadFeatureSlider().execute();
+
         final SliderAdapter adapter = new SliderAdapter(getActivity());
 
         sliderView.setSliderAdapter(adapter);
@@ -145,6 +147,64 @@ public class MyAccount extends Fragment {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId", user.getUserId());
                     Log.e("check", "Reg req body : " + params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (null != user.getMemberPhotos() && user.getMemberPhotos().size() > 0 && null != user.getMemberPhotos().get(0).getMemberPhoto())
+            Glide.with(getContext())
+                    .load(user.getMemberPhotos().get(0).getMemberPhoto())
+                    .placeholder(R.drawable.in_love)
+                    .into(profile_image);
+        name.setText(user.getName() + ", " + user.getAge());
+        workIndustry.setText(user.getWorkIndustry());
+        university.setText(user.getUniversity());
+    }
+
+    private class LoadFeatureSlider extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.FEATURE_SLIDER,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    Log.e("check","Reg req body : "+params.toString());
                     return params;
                 }
             };
