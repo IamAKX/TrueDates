@@ -143,7 +143,7 @@ public class Personal extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setShowMe(charSequence.toString());
+                OnboardingData.user.getMembersettings().get(0).setShowMe(charSequence.toString());
             }
 
             @Override

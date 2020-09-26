@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.DynamicOptionConstants;
 import com.neosao.truedates.configs.OptionContants;
+import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.options.Interest;
 import com.neosao.truedates.screens.OnboardingData;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -124,7 +126,13 @@ public class Habits extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setIntrests(charSequence.toString());
+                Interest interest = new Utils().getInterestCode(charSequence.toString());
+                if(null != interest)
+                {
+                    OnboardingData.user.getMemberInterests().get(0).setInterestCode(interest.getCode());
+                    OnboardingData.user.getMemberInterests().get(0).setInterestName(interest.getInterestName());
+                    OnboardingData.user.getMemberInterests().get(0).setMemberInterestValue(interest.getInterestValue());
+                }
             }
 
             @Override

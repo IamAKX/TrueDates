@@ -12,6 +12,9 @@ import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
 
 import com.neosao.truedates.R;
+import com.neosao.truedates.model.options.FieldOfStudy;
+import com.neosao.truedates.model.options.Interest;
+import com.neosao.truedates.model.options.WorkIndustry;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -71,5 +74,28 @@ public class Utils {
         if (email == null)
             return false;
         return pat.matcher(email).matches();
+    }
+
+    public Interest getInterestCode(String intrests) {
+        for(Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
+            if(i.getInterestName().equalsIgnoreCase(intrests))
+                return i;
+        return null;
+    }
+
+    public WorkIndustry getWorkIndustryCode(String workIndustry) {
+        for (WorkIndustry wim : DynamicOptionConstants.WORK_INDUSTRY_ARRAY_LIST) {
+            if (wim.getIndustryName().equalsIgnoreCase(workIndustry))
+                return wim;
+        }
+        return null;
+    }
+
+    public FieldOfStudy getFieldStudyCode(String fieldOfStudy) {
+        for (FieldOfStudy fos : DynamicOptionConstants.FIELD_OF_STUDY_ARRAY_LIST) {
+            if (fos.getFieldName().equalsIgnoreCase(fieldOfStudy))
+                return fos;
+        }
+        return null;
     }
 }

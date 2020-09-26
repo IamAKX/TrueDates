@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,9 @@ import android.widget.TextView;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.DynamicOptionConstants;
 import com.neosao.truedates.configs.OptionContants;
+import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.options.FieldOfStudy;
+import com.neosao.truedates.model.options.WorkIndustry;
 import com.neosao.truedates.screens.OnboardingData;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -61,7 +63,7 @@ public class Work extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setUniversity(charSequence.toString());
+                OnboardingData.user.getMemberWork().get(0).setUniversityName(charSequence.toString());
             }
 
             @Override
@@ -77,7 +79,12 @@ public class Work extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setFieldOfStudy(charSequence.toString());
+                FieldOfStudy fieldOfStudy = new Utils().getFieldStudyCode(charSequence.toString());
+                if(null != fieldOfStudy)
+                {
+                    OnboardingData.user.getMemberWork().get(0).setFieldName(fieldOfStudy.getFieldName());
+                    OnboardingData.user.getMemberWork().get(0).setFieldStudyCode(fieldOfStudy.getCode());
+                }
             }
 
             @Override
@@ -93,7 +100,7 @@ public class Work extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setQualification(charSequence.toString());
+                OnboardingData.user.getMemberWork().get(0).setHighestQualification(charSequence.toString());
             }
 
             @Override
@@ -109,7 +116,12 @@ public class Work extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setWorkIndustry(charSequence.toString());
+                WorkIndustry industryModel = new Utils().getWorkIndustryCode(charSequence.toString());
+                if(null != industryModel)
+                {
+                    OnboardingData.user.getMemberWork().get(0).setIndustryCode(industryModel.getCode());
+                    OnboardingData.user.getMemberWork().get(0).setIndustryName(industryModel.getIndustryName());
+                }
             }
 
             @Override
@@ -125,7 +137,7 @@ public class Work extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setExperience(charSequence.toString());
+                OnboardingData.user.getMemberWork().get(0).setExperienceYears(charSequence.toString());
             }
 
             @Override

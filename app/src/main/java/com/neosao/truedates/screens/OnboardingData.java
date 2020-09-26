@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.OnboardingAdapter;
 import com.neosao.truedates.configs.API;
@@ -31,6 +32,10 @@ import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.ResponseParser;
 import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FirebaseUserModel;
+import com.neosao.truedates.model.MemberInterests;
+import com.neosao.truedates.model.MemberPhotos;
+import com.neosao.truedates.model.MemberWork;
+import com.neosao.truedates.model.Membersettings;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.FieldOfStudy;
 import com.neosao.truedates.model.options.Interest;
@@ -46,6 +51,7 @@ import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +73,18 @@ public class OnboardingData extends AppCompatActivity {
 
         firebaseUser = new LocalPref(getBaseContext()).getFirebaseUser();
         user = new UserModel();
-        user.setUsername(firebaseUser.getName());
+
+        user.setMemberInterests(new ArrayList<MemberInterests>());
+        user.setMemberPhotos(new ArrayList<MemberPhotos>());
+        user.setMembersettings(new ArrayList<Membersettings>());
+        user.setMemberWork(new ArrayList<MemberWork>());
+
+        user.getMemberInterests().add(new MemberInterests());
+        user.getMemberPhotos().add(new MemberPhotos());
+        user.getMembersettings().add(new Membersettings());
+        user.getMemberWork().add(new MemberWork());
+
+        user.setName(firebaseUser.getName());
         user.setEmail(firebaseUser.getEmail());
         user.setContactNumber(firebaseUser.getPhoneNumber());
         user.setFirebaseId(firebaseUser.getFirebaseUUID());
@@ -141,7 +158,7 @@ public class OnboardingData extends AppCompatActivity {
             Intoduction.email.setError("Invalid email");
             return false;
         }
-        if (null == user.getAboutMe() || user.getAboutMe().isEmpty()) {
+        if (null == user.getAbout() || user.getAbout().isEmpty()) {
             viewpager.setCurrentItem(0);
             Intoduction.about.setError("Write about yourself");
             return false;
@@ -156,34 +173,34 @@ public class OnboardingData extends AppCompatActivity {
             Intoduction.dob.setError("Enter date of birth");
             return false;
         }
-        if (null == user.getCurrentLocation() || user.getCurrentLocation().isEmpty()) {
+        if (null == user.getMembersettings().get(0).getCurrentLocation() || user.getMembersettings().get(0).getCurrentLocation().isEmpty()) {
             viewpager.setCurrentItem(0);
             Intoduction.location.setError("Enter location");
             return false;
         }
 
         // Page 1 validation
-        if (null == user.getUniversity() || user.getUniversity().isEmpty()) {
+        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.university.setError("Enter university");
             return false;
         }
-        if (null == user.getFieldOfStudy() || user.getFieldOfStudy().isEmpty()) {
+        if (null == user.getMemberWork().get(0).getFieldName() || user.getMemberWork().get(0).getFieldName().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.fieldOfStudy.setError("Enter field of study");
             return false;
         }
-        if (null == user.getQualification() || user.getQualification().isEmpty()) {
+        if (null == user.getMemberWork().get(0).getHighestQualification() || user.getMemberWork().get(0).getHighestQualification().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.qualification.setError("Enter qualification");
             return false;
         }
-        if (null == user.getWorkIndustry() || user.getWorkIndustry().isEmpty()) {
+        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.workIndustry.setError("Enter work industry");
             return false;
         }
-        if (null == user.getExperience() || user.getExperience().isEmpty()) {
+        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.experience.setError("Enter experience");
             return false;
@@ -220,7 +237,7 @@ public class OnboardingData extends AppCompatActivity {
             Personal.religion.setError("Enter religion");
             return false;
         }
-        if (null == user.getShowMe() || user.getShowMe().isEmpty()) {
+        if (null == user.getMembersettings().get(0).getShowMe() || user.getMembersettings().get(0).getShowMe().isEmpty()) {
             viewpager.setCurrentItem(2);
             Personal.showMe.setError("Enter show me");
             return false;
@@ -251,7 +268,7 @@ public class OnboardingData extends AppCompatActivity {
             return false;
         }
 
-        if (null == user.getIntrests() || user.getIntrests().isEmpty()) {
+        if (null == user.getMemberInterests().get(0).getInterestName() || user.getMemberInterests().get(0).getInterestName().isEmpty()) {
             viewpager.setCurrentItem(3);
             Habits.interests.setError("Enter interests");
             return false;
@@ -365,23 +382,16 @@ public class OnboardingData extends AppCompatActivity {
                                 JSONObject jsonResp = new JSONObject(response);
                                 if (jsonResp.has("status")) {
                                     if (jsonResp.getString("status").equals("200")) {
-                                        if (jsonResp.has("result") && jsonResp.getJSONObject("result").has("userData")) {
+                                        if (jsonResp.has("result") && jsonResp.getJSONObject("result").has("member")) {
                                             String successMessage = jsonResp.getString("message");
-                                            jsonResp = jsonResp.getJSONObject("result").getJSONObject("userData");
-                                            if (jsonResp.has("userId")) {
-                                                user.setUserId(jsonResp.getString("userId"));
-                                                user.setId(jsonResp.getString("id"));
-                                                user.setUniqueId(jsonResp.getString("uniqueId"));
-                                                user.setCode(jsonResp.getString("code"));
+                                            jsonResp = jsonResp.getJSONObject("result").getJSONObject("member");
+                                            user = new Gson().fromJson(jsonResp.toString(),UserModel.class);
 
-                                                Log.e("check", user.toString());
-                                                new LocalPref(getBaseContext()).saveUser(user);
-                                                new LocalPref(getBaseContext()).setLoginStatus(true);
-                                                startActivity(new Intent(getBaseContext(), UploadProfileImage.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                                                Toast.makeText(getBaseContext(), successMessage, Toast.LENGTH_LONG).show();
+                                            new LocalPref(getBaseContext()).saveUser(user);
+                                            new LocalPref(getBaseContext()).setLoginStatus(true);
+                                            startActivity(new Intent(getBaseContext(), UploadProfileImage.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            Toast.makeText(getBaseContext(), successMessage, Toast.LENGTH_LONG).show();
 
-                                            } else
-                                                Toast.makeText(getBaseContext(), "User Id is not generated", Toast.LENGTH_LONG).show();
                                         } else
                                             Toast.makeText(getBaseContext(), "Response is unparsable", Toast.LENGTH_LONG).show();
 
@@ -420,7 +430,7 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());
                     params.put("gender", user.getGender());
                     params.put("birthDate", user.getBirthDate());
-                    params.put("currentLocation", user.getCurrentLocation());
+                    params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
                     params.put("height", user.getHeight());
                     params.put("motherTounge", user.getMotherTounge());
                     params.put("maritalStatus", user.getMaritalStatus());
@@ -428,23 +438,23 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("religion", user.getReligion());
                     params.put("drink", user.getDrink());
                     params.put("smoke", user.getSmoke());
-                    params.put("fieldStudyCode", getFieldStudyCode(user.getFieldOfStudy()));
-                    params.put("highestQualification", user.getQualification());
-                    params.put("industryCode", getWorkIndustryCode(user.getWorkIndustry()));
-                    params.put("experienceYears", user.getExperience());
+                    params.put("fieldStudyCode", user.getMemberWork().get(0).getFieldStudyCode());
+                    params.put("highestQualification", user.getMemberWork().get(0).getHighestQualification());
+                    params.put("industryCode", user.getMemberWork().get(0).getIndustryCode());
+                    params.put("experienceYears", user.getMemberWork().get(0).getExperienceYears());
                     params.put("email", user.getEmail());
-                    params.put("showMe", user.getShowMe());
-                    params.put("longitude", user.getLongitude());
-                    params.put("latitude", user.getLatitude());
+                    params.put("showMe", user.getMembersettings().get(0).getShowMe());
+                    params.put("longitude", user.getMembersettings().get(0).getLongitude());
+                    params.put("latitude", user.getMembersettings().get(0).getLatitude());
                     params.put("bodyType", user.getBodyType());
                     params.put("lookingFor", user.getLookingFor());
-                    params.put("universityName", user.getUniversity());
+                    params.put("universityName", user.getMemberWork().get(0).getUniversityName());
 
-                    params.put("about", user.getAboutMe());
-                    params.put("relationshipStatus", user.getWorkIndustry());
+                    params.put("about", user.getAbout());
+                    params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
-                    params.put("interests", getInterestCode(user.getIntrests()));
+                    params.put("interestCode", user.getMemberInterests().get(0).getInterestName());
                     params.put("haveKids", user.getHaveKids());
                     params.put("wantKids", user.getWantKids());
 
@@ -467,26 +477,5 @@ public class OnboardingData extends AppCompatActivity {
         }
     }
 
-    private String getInterestCode(String intrests) {
-        for(Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
-            if(i.getInterestName().equalsIgnoreCase(intrests))
-                return i.getCode();
-        return null;
-    }
 
-    private String getWorkIndustryCode(String workIndustry) {
-        for (WorkIndustry wim : DynamicOptionConstants.WORK_INDUSTRY_ARRAY_LIST) {
-            if (wim.getIndustryName().equalsIgnoreCase(workIndustry))
-                return wim.getCode();
-        }
-        return null;
-    }
-
-    private String getFieldStudyCode(String fieldOfStudy) {
-        for (FieldOfStudy fos : DynamicOptionConstants.FIELD_OF_STUDY_ARRAY_LIST) {
-            if (fos.getFieldName().equalsIgnoreCase(fieldOfStudy))
-                return fos.getCode();
-        }
-        return null;
-    }
 }

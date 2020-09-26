@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -125,7 +126,7 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                                     Log.e("check", obj.toString());
                                     if (obj.has("message"))
                                         Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                                    ArrayList<MemberPhotos> photosArrayList = user.getMemberPhotos();
+                                    List<MemberPhotos> photosArrayList = user.getMemberPhotos();
                                     if (null == photosArrayList)
                                         photosArrayList = new ArrayList<>();
                                     photosArrayList.add(new MemberPhotos(imageToBeUploaded.getName(), imageToBeUploaded.getPath()));

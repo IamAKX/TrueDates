@@ -120,7 +120,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setAboutMe(charSequence.toString());
+                OnboardingData.user.setAbout(charSequence.toString());
             }
 
             @Override
@@ -167,7 +167,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setCurrentLocation(charSequence.toString());
+                OnboardingData.user.getMembersettings().get(0).setCurrentLocation(charSequence.toString());
 
             }
 
@@ -206,8 +206,8 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
                         if(loc!=null) {
                             try {
-                                OnboardingData.user.setLatitude(String.valueOf(loc.getLatitude()));
-                                OnboardingData.user.setLongitude(String.valueOf(loc.getLongitude()));
+                                OnboardingData.user.getMembersettings().get(0).setLatitude(String.valueOf(loc.getLatitude()));
+                                OnboardingData.user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                                 Address address = addresses.get(0);
 //                            Log.e("check",address.getAddressLine(0)); //271/1, Gangapuri, Block B and C, New Tollygunge, Aurobindo Park, South Kolkata, West Bengal 700093, India
@@ -217,8 +217,6 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
 //                            Log.e("check",address.getSubLocality()); // Aurobindo Park
 //                            Log.e("check",address.getSubAdminArea()); // Kolkata
 //                            Log.e("check",address.getCountryName()); //India
-                                OnboardingData.user.setCurrentLocation(address.getLocality());
-                                OnboardingData.user.setCurrentCountry(address.getCountryName());
                                 location.setText(address.getLocality() + ", " + address.getCountryName());
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -234,7 +232,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                 .whenPermissionsRefused(new PermissionsRefusedListener() {
                     @Override
                     public void onPermissionsRefused(String[] permissions) {
-                        Toast.makeText(getContext(),"We need you parmission to fetch your address", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"We need you permission to fetch your address", Toast.LENGTH_LONG).show();
                     }
                 })
                 .execute(getActivity());

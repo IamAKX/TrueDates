@@ -1,9 +1,10 @@
 package com.neosao.truedates.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class UserModel {
-    private String id;
+    private String isActive;
+    private Object isDelete;
     private String code;
     private String userId;
     private String name;
@@ -13,11 +14,6 @@ public class UserModel {
     private String zodiacSign;
     private String bodyType;
     private String lookingFor;
-    private String showMe;
-    private String latitude;
-    private String longitude;
-    private String currentLocation;
-    private String currentCountry;
     private String height;
     private String motherTounge;
     private String caste;
@@ -30,29 +26,24 @@ public class UserModel {
     private String wantKids;
     private String gender;
     private String firebaseId;
-    private String registerType;
-    private String username;
-    private String password;
-    private String isActive;
     private String email;
     private String maritalStatus;
     private String uniqueId;
-    private String aboutMe;
-//    private String profileImage;
-    private ArrayList<MemberPhotos> memberPhotos;
-    private String university;
-    private String fieldOfStudy;
-    private String qualification;
-    private String workIndustry;
-    private String experience;
+    private String about;
     private String relationshipStatus;
-    private String interests;
+    private List<MemberPhotos> memberPhotos;
+    private List<Membersettings> membersettings;
+    private List<MemberInterests> memberInterests;
+    private List<MemberWork> memberWork;
+
+    private String registerType;
 
     public UserModel() {
     }
 
-    public UserModel(String id, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String showMe, String latitude, String longitude, String currentLocation, String currentCountry, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String registerType, String username, String password, String isActive, String email, String maritalStatus, String uniqueId, String aboutMe, ArrayList<MemberPhotos> memberPhotos, String university, String fieldOfStudy, String qualification, String workIndustry, String experience, String relationshipStatus, String intrests) {
-        this.id = id;
+    public UserModel(String isActive, Object isDelete, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String email, String maritalStatus, String uniqueId, String about, String relationshipStatus, List<MemberPhotos> memberPhotos, List<Membersettings> membersettings, List<MemberInterests> memberInterests, List<MemberWork> memberWork, String registerType) {
+        this.isActive = isActive;
+        this.isDelete = isDelete;
         this.code = code;
         this.userId = userId;
         this.name = name;
@@ -62,11 +53,6 @@ public class UserModel {
         this.zodiacSign = zodiacSign;
         this.bodyType = bodyType;
         this.lookingFor = lookingFor;
-        this.showMe = showMe;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.currentLocation = currentLocation;
-        this.currentCountry = currentCountry;
         this.height = height;
         this.motherTounge = motherTounge;
         this.caste = caste;
@@ -79,30 +65,32 @@ public class UserModel {
         this.wantKids = wantKids;
         this.gender = gender;
         this.firebaseId = firebaseId;
-        this.registerType = registerType;
-        this.username = username;
-        this.password = password;
-        this.isActive = isActive;
         this.email = email;
         this.maritalStatus = maritalStatus;
         this.uniqueId = uniqueId;
-        this.aboutMe = aboutMe;
-        this.memberPhotos = memberPhotos;
-        this.university = university;
-        this.fieldOfStudy = fieldOfStudy;
-        this.qualification = qualification;
-        this.workIndustry = workIndustry;
-        this.experience = experience;
+        this.about = about;
         this.relationshipStatus = relationshipStatus;
-        this.interests = intrests;
+        this.memberPhotos = memberPhotos;
+        this.membersettings = membersettings;
+        this.memberInterests = memberInterests;
+        this.memberWork = memberWork;
+        this.registerType = registerType;
     }
 
-    public String getId() {
-        return id;
+    public String getIsActive() {
+        return isActive;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
+
+    public Object getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Object isDelete) {
+        this.isDelete = isDelete;
     }
 
     public String getCode() {
@@ -175,46 +163,6 @@ public class UserModel {
 
     public void setLookingFor(String lookingFor) {
         this.lookingFor = lookingFor;
-    }
-
-    public String getShowMe() {
-        return showMe;
-    }
-
-    public void setShowMe(String showMe) {
-        this.showMe = showMe;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(String currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    public String getCurrentCountry() {
-        return currentCountry;
-    }
-
-    public void setCurrentCountry(String currentCountry) {
-        this.currentCountry = currentCountry;
     }
 
     public String getHeight() {
@@ -313,38 +261,6 @@ public class UserModel {
         this.firebaseId = firebaseId;
     }
 
-    public String getRegisterType() {
-        return registerType;
-    }
-
-    public void setRegisterType(String registerType) {
-        this.registerType = registerType;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -369,60 +285,12 @@ public class UserModel {
         this.uniqueId = uniqueId;
     }
 
-    public String getAboutMe() {
-        return aboutMe;
+    public String getAbout() {
+        return about;
     }
 
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
-    }
-
-    public ArrayList<MemberPhotos> getMemberPhotos() {
-        return memberPhotos;
-    }
-
-    public void setMemberPhotos(ArrayList<MemberPhotos> memberPhotos) {
-        this.memberPhotos = memberPhotos;
-    }
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
-
-    public String getFieldOfStudy() {
-        return fieldOfStudy;
-    }
-
-    public void setFieldOfStudy(String fieldOfStudy) {
-        this.fieldOfStudy = fieldOfStudy;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(String qualification) {
-        this.qualification = qualification;
-    }
-
-    public String getWorkIndustry() {
-        return workIndustry;
-    }
-
-    public void setWorkIndustry(String workIndustry) {
-        this.workIndustry = workIndustry;
-    }
-
-    public String getExperience() {
-        return experience;
-    }
-
-    public void setExperience(String experience) {
-        this.experience = experience;
+    public void setAbout(String about) {
+        this.about = about;
     }
 
     public String getRelationshipStatus() {
@@ -433,60 +301,43 @@ public class UserModel {
         this.relationshipStatus = relationshipStatus;
     }
 
-    public String getIntrests() {
-        return interests;
+    public List<MemberPhotos> getMemberPhotos() {
+        return memberPhotos;
     }
 
-    public void setIntrests(String intrests) {
-        this.interests = intrests;
+    public void setMemberPhotos(List<MemberPhotos> memberPhotos) {
+        this.memberPhotos = memberPhotos;
     }
 
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "id='" + id + '\'' +
-                ", code='" + code + '\'' +
-                ", userId='" + userId + '\'' +
-                ", name='" + name + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", age='" + age + '\'' +
-                ", contactNumber='" + contactNumber + '\'' +
-                ", zodiacSign='" + zodiacSign + '\'' +
-                ", bodyType='" + bodyType + '\'' +
-                ", lookingFor='" + lookingFor + '\'' +
-                ", showMe='" + showMe + '\'' +
-                ", latitude='" + latitude + '\'' +
-                ", longitude='" + longitude + '\'' +
-                ", currentLocation='" + currentLocation + '\'' +
-                ", currentCountry='" + currentCountry + '\'' +
-                ", height='" + height + '\'' +
-                ", motherTounge='" + motherTounge + '\'' +
-                ", caste='" + caste + '\'' +
-                ", religion='" + religion + '\'' +
-                ", diet='" + diet + '\'' +
-                ", pets='" + pets + '\'' +
-                ", drink='" + drink + '\'' +
-                ", smoke='" + smoke + '\'' +
-                ", haveKids='" + haveKids + '\'' +
-                ", wantKids='" + wantKids + '\'' +
-                ", gender='" + gender + '\'' +
-                ", firebaseId='" + firebaseId + '\'' +
-                ", registerType='" + registerType + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", isActive='" + isActive + '\'' +
-                ", email='" + email + '\'' +
-                ", maritalStatus='" + maritalStatus + '\'' +
-                ", uniqueId='" + uniqueId + '\'' +
-                ", aboutMe='" + aboutMe + '\'' +
-                ", memberPhotos=" + memberPhotos +
-                ", university='" + university + '\'' +
-                ", fieldOfStudy='" + fieldOfStudy + '\'' +
-                ", qualification='" + qualification + '\'' +
-                ", workIndustry='" + workIndustry + '\'' +
-                ", experience='" + experience + '\'' +
-                ", relationshipStatus='" + relationshipStatus + '\'' +
-                ", interests='" + interests + '\'' +
-                '}';
+    public List<Membersettings> getMembersettings() {
+        return membersettings;
+    }
+
+    public void setMembersettings(List<Membersettings> membersettings) {
+        this.membersettings = membersettings;
+    }
+
+    public List<MemberInterests> getMemberInterests() {
+        return memberInterests;
+    }
+
+    public void setMemberInterests(List<MemberInterests> memberInterests) {
+        this.memberInterests = memberInterests;
+    }
+
+    public List<MemberWork> getMemberWork() {
+        return memberWork;
+    }
+
+    public void setMemberWork(List<MemberWork> memberWork) {
+        this.memberWork = memberWork;
+    }
+
+    public String getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(String registerType) {
+        this.registerType = registerType;
     }
 }

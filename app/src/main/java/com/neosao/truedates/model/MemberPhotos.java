@@ -9,6 +9,9 @@ public class MemberPhotos {
         this.memberPhoto = memberPhoto;
     }
 
+    public MemberPhotos() {
+    }
+
     public String getPhotoCode() {
         return photoCode;
     }

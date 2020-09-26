@@ -115,8 +115,8 @@ public class MyAccount extends Fragment {
                                                 .placeholder(R.drawable.in_love)
                                                 .into(profile_image);
                                     name.setText(user.getName() + ", " + user.getAge());
-                                    workIndustry.setText(user.getWorkIndustry());
-                                    university.setText(user.getUniversity());
+                                    workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
+                                    university.setText(user.getMemberWork().get(0).getUniversityName());
                                 } else
                                     Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
@@ -168,8 +168,8 @@ public class MyAccount extends Fragment {
                     .placeholder(R.drawable.in_love)
                     .into(profile_image);
         name.setText(user.getName() + ", " + user.getAge());
-        workIndustry.setText(user.getWorkIndustry());
-        university.setText(user.getUniversity());
+        workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
+        university.setText(user.getMemberWork().get(0).getUniversityName());
     }
 
     private class LoadFeatureSlider extends AsyncTask<Void,Void,Void>{

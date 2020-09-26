@@ -48,7 +48,6 @@ import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
-import com.neosao.truedates.model.SettingsModel;
 import com.neosao.truedates.model.UserModel;
 
 import org.json.JSONException;
@@ -71,7 +70,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     LocalPref localPref;
     RangeBar ageRangebar, distanceRangebar;
     TextView distanceText, ageText;
-    SettingsModel userSettings;
     SwitchCompat instaSwitch;
 
     @Override
@@ -92,11 +90,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         localPref = new LocalPref(getBaseContext());
         user = localPref.getUser();
-        userSettings = localPref.getUserSettings();
-        if (null == userSettings) {
-            userSettings = new SettingsModel("5", "20", "30", "0", "");
-            localPref.saveUserSettings(userSettings);
-        }
+
+        if(null == user.getMembersettings().get(0).getMaxAgeFilter())
+            user.getMembersettings().get(0).setMaxAgeFilter("30");
+
+        if(null == user.getMembersettings().get(0).getMinAgeFilter())
+            user.getMembersettings().get(0).setMinAgeFilter("18");
+
+        if(null == user.getMembersettings().get(0).getMaxDistance())
+            user.getMembersettings().get(0).setMaxDistance("5");
 
         locationCard = findViewById(R.id.locationCard);
         location = findViewById(R.id.location);
@@ -118,8 +120,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     showInstaPopup();
                 else
                 {
-                    userSettings.setIsInstagramActive("0");
-                    userSettings.setInstagramLink("");
+                    user.getMembersettings().get(0).setIsInstagramActive("0");
+                    user.getMembersettings().get(0).setInstagramLink("");
                     new UpdateInstagram().execute();
                 }
             }
@@ -130,7 +132,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 distanceText.setText(rightPinValue + " Km");
-                userSettings.setMaxDistance(rightPinValue);
+                user.getMembersettings().get(0).setMaxDistance(rightPinValue);
             }
 
             @Override
@@ -148,8 +150,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 ageText.setText(leftPinValue + " - " + rightPinValue);
-                userSettings.setMinAgeFilter(leftPinValue);
-                userSettings.setMaxAgeFilter(rightPinValue);
+                user.getMembersettings().get(0).setMinAgeFilter(leftPinValue);
+                user.getMembersettings().get(0).setMaxAgeFilter(rightPinValue);
             }
 
             @Override
@@ -212,7 +214,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 showMe.setText(adapter.getItem(i));
-                user.setShowMe(adapter.getItem(i));
+                user.getMembersettings().get(0).setShowMe(adapter.getItem(i));
                 alertDialog.dismiss();
                 new UpdateShowMe().execute();
             }
@@ -232,7 +234,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dialogBuilder.setCustomTitle(titleView);
 
         final EditText input = new EditText(Settings.this);
-        input.setText(userSettings.getInstagramLink());
+        input.setText(user.getMembersettings().get(0).getInstagramLink());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -247,8 +249,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Toast.makeText(getBaseContext(),"Enter instagram profile link", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                userSettings.setIsInstagramActive("1");
-                userSettings.setInstagramLink(input.getText().toString());
+                user.getMembersettings().get(0).setIsInstagramActive("1");
+                user.getMembersettings().get(0).setInstagramLink(input.getText().toString());
                 new UpdateInstagram().execute();
             }
         });
@@ -284,12 +286,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         Geocoder geocoder = new Geocoder(Settings.this, Locale.getDefault());
                         if (loc != null) {
                             try {
-                                user.setLatitude(String.valueOf(loc.getLatitude()));
-                                user.setLongitude(String.valueOf(loc.getLongitude()));
+                                user.getMembersettings().get(0).setLatitude(String.valueOf(loc.getLatitude()));
+                                user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                                 Address address = addresses.get(0);
-                                user.setCurrentLocation(address.getLocality());
-                                user.setCurrentCountry(address.getCountryName());
+                                user.getMembersettings().get(0).setCurrentLocation(address.getLocality() + ", " + address.getCountryName());
                                 location.setText(address.getLocality() + ", " + address.getCountryName());
 
                                 new UpdateLocation().execute();
@@ -314,10 +315,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        location.setText(user.getCurrentLocation() + ", " + user.getCurrentCountry());
-        ageRangebar.setRangePinsByValue(Float.parseFloat(userSettings.getMinAgeFilter()), Float.parseFloat(userSettings.getMaxAgeFilter()));
-        distanceRangebar.setSeekPinByValue(Float.parseFloat(userSettings.getMaxDistance()));
-        showMe.setText(user.getShowMe());
+        location.setText(user.getMembersettings().get(0).getCurrentLocation());
+        ageRangebar.setRangePinsByValue(Float.parseFloat(user.getMembersettings().get(0).getMinAgeFilter()), Float.parseFloat(user.getMembersettings().get(0).getMaxAgeFilter()));
+        distanceRangebar.setSeekPinByValue(Float.parseFloat(user.getMembersettings().get(0).getMaxDistance()));
+        showMe.setText(user.getMembersettings().get(0).getShowMe());
     }
 
     private class UpdateLocation extends AsyncTask<Void, Void, Void> {
@@ -353,9 +354,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Map<String, String> params = new HashMap<String, String>();
 
                     params.put("userId", user.getUserId());
-                    params.put("longitude", user.getLongitude());
-                    params.put("latitude", user.getLatitude());
-                    params.put("currentLocation", user.getCurrentLocation() + ", " + user.getCurrentCountry());
+                    params.put("longitude", user.getMembersettings().get(0).getLongitude());
+                    params.put("latitude", user.getMembersettings().get(0).getLatitude());
+                    params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;
@@ -386,7 +387,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                             try {
                                 JSONObject object = new JSONObject(response);
                                 Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
-                                localPref.saveUserSettings(userSettings);
+                                localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -409,7 +410,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Map<String, String> params = new HashMap<String, String>();
 
                     params.put("userId", user.getUserId());
-                    params.put("maxDistance", userSettings.getMaxDistance());
+                    params.put("maxDistance", user.getMembersettings().get(0).getMaxDistance());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;
@@ -440,7 +441,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                             try {
                                 JSONObject object = new JSONObject(response);
                                 Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
-                                localPref.saveUserSettings(userSettings);
+                                localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -463,8 +464,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Map<String, String> params = new HashMap<String, String>();
 
                     params.put("userId", user.getUserId());
-                    params.put("minAgeFilter", userSettings.getMinAgeFilter());
-                    params.put("maxAgeFilter", userSettings.getMaxAgeFilter());
+                    params.put("minAgeFilter", user.getMembersettings().get(0).getMinAgeFilter());
+                    params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;
@@ -518,7 +519,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Map<String, String> params = new HashMap<String, String>();
 
                     params.put("userId", user.getUserId());
-                    params.put("showMe", user.getShowMe());
+                    params.put("showMe", user.getMembersettings().get(0).getShowMe());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;
@@ -549,7 +550,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                             try {
                                 JSONObject object = new JSONObject(response);
                                 Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
-                                localPref.saveUserSettings(userSettings);
+                                localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -572,8 +573,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Map<String, String> params = new HashMap<String, String>();
 
                     params.put("userId", user.getUserId());
-                    params.put("isInstagramActive", userSettings.getIsInstagramActive());
-                    params.put("instagramLink", userSettings.getInstagramLink());
+                    params.put("isInstagramActive", user.getMembersettings().get(0).getIsInstagramActive());
+                    params.put("instagramLink", user.getMembersettings().get(0).getInstagramLink());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;

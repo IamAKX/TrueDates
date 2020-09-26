@@ -1,14 +1,8 @@
 package com.neosao.truedates.screens;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,13 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -307,12 +305,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         Geocoder geocoder = new Geocoder(EditProfile.this, Locale.getDefault());
                         if (loc != null) {
                             try {
-                                user.setLatitude(String.valueOf(loc.getLatitude()));
-                                user.setLongitude(String.valueOf(loc.getLongitude()));
+                                user.getMembersettings().get(0).setLatitude(String.valueOf(loc.getLatitude()));
+                                user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                                 Address address = addresses.get(0);
-                                user.setCurrentLocation(address.getLocality());
-                                user.setCurrentCountry(address.getCountryName());
+                                user.getMembersettings().get(0).setCurrentLocation(address.getLocality()+", "+address.getCountryName());
                                 location.setText(address.getLocality() + ", " + address.getCountryName());
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -337,15 +334,15 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         super.onResume();
         name.setText(user.getName());
         email.setText(user.getEmail());
-        about.setText(user.getAboutMe());
+        about.setText(user.getAbout());
         gender.setText(user.getGender());
         dob.setText(user.getBirthDate());
-        location.setText(user.getCurrentLocation()+", "+user.getCurrentCountry());
-        university.setText(user.getUniversity());
-        fieldOfStudy.setText(user.getFieldOfStudy());
-        qualification.setText(user.getQualification());
-        workIndustry.setText(user.getWorkIndustry());
-        experience.setText(user.getExperience());
+        location.setText(user.getMembersettings().get(0).getCurrentLocation());
+        university.setText(user.getMemberWork().get(0).getUniversityName());
+        fieldOfStudy.setText(user.getMemberWork().get(0).getFieldName());
+        qualification.setText(user.getMemberWork().get(0).getHighestQualification());
+        workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
+        experience.setText(user.getMemberWork().get(0).getExperienceYears());
         motherTongue.setText(user.getMotherTounge());
         zodiac.setText(user.getZodiacSign());
         height.setText(user.getHeight());
@@ -353,16 +350,17 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         maritalStatus.setText(user.getMaritalStatus());
         caste.setText(user.getCaste());
         religion.setText(user.getReligion());
-        showMe.setText(user.getShowMe());
+        showMe.setText(user.getMembersettings().get(0).getShowMe());
         drinks.setText(user.getDrink());
         smoke.setText(user.getSmoke());
         diet.setText(user.getDiet());
         pets.setText(user.getPets());
-        interests.setText(user.getIntrests());
+        interests.setText(user.getMemberInterests().get(0).getInterestName());
         haveKids.setText(user.getHaveKids());
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());
         bodyType.setText(user.getBodyType());
+
     }
 
     private class SaveProfile extends AsyncTask<Void,Void,Void> {
@@ -372,14 +370,15 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             super.onPreExecute();
             user.setName(name.getText().toString());
             user.setEmail(email.getText().toString());
-            user.setAboutMe(about.getText().toString());
+            user.setAbout(about.getText().toString());
             user.setGender(gender.getText().toString());
             user.setBirthDate(dob.getText().toString());
-            user.setUniversity(university.getText().toString());
-            user.setFieldOfStudy(fieldOfStudy.getText().toString());
-            user.setQualification(qualification.getText().toString());
-            user.setWorkIndustry(workIndustry.getText().toString());
-            user.setExperience(experience.getText().toString());
+            user.getMembersettings().get(0).setCurrentLocation(location.getText().toString());
+            user.getMemberWork().get(0).setUniversityName(university.getText().toString());
+            user.getMemberWork().get(0).setFieldName(fieldOfStudy.getText().toString());
+            user.getMemberWork().get(0).setHighestQualification(qualification.getText().toString());
+            user.getMemberWork().get(0).setIndustryName(workIndustry.getText().toString());
+            user.getMemberWork().get(0).setExperienceYears(experience.getText().toString());
             user.setMotherTounge(motherTongue.getText().toString());
             user.setZodiacSign(zodiac.getText().toString());
             user.setHeight(height.getText().toString());
@@ -387,16 +386,21 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             user.setMaritalStatus(maritalStatus.getText().toString());
             user.setCaste(caste.getText().toString());
             user.setReligion(religion.getText().toString());
-            user.setShowMe(showMe.getText().toString());
+            user.getMembersettings().get(0).setShowMe(showMe.getText().toString());
             user.setDrink(drinks.getText().toString());
-            user.setShowMe(smoke.getText().toString());
+            user.setSmoke(smoke.getText().toString());
             user.setDiet(diet.getText().toString());
             user.setPets(pets.getText().toString());
-            user.setIntrests(interests.getText().toString());
+            user.getMemberInterests().get(0).setInterestName(interests.getText().toString());
             user.setHaveKids(haveKids.getText().toString());
             user.setWantKids(wantKids.getText().toString());
             user.setLookingFor(lookingFor.getText().toString());
             user.setBodyType(bodyType.getText().toString());
+
+            user.getMemberWork().get(0).setFieldStudyCode(new Utils().getFieldStudyCode(user.getMemberWork().get(0).getFieldName()).getCode());
+            user.getMemberWork().get(0).setIndustryCode(new Utils().getWorkIndustryCode(user.getMemberWork().get(0).getIndustryName()).getCode());
+            user.getMemberInterests().get(0).setInterestName(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getCode());
+            user.getMemberInterests().get(0).setMemberInterestValue(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getInterestValue());
 
             dialog = Utils.getProgress(EditProfile.this, "Updating, please wait ...");
             dialog.show();
@@ -440,11 +444,14 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId",user.getUserId());
+                    params.put("registerType", user.getRegisterType());
+                    params.put("firebaseId", user.getFirebaseId());
                     params.put("name", user.getName());
                     params.put("zodiacSign", user.getZodiacSign());
+                    params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());
                     params.put("gender", user.getGender());
                     params.put("birthDate", user.getBirthDate());
-                    params.put("currentLocation", user.getCurrentLocation());
+                    params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
                     params.put("height", user.getHeight());
                     params.put("motherTounge", user.getMotherTounge());
                     params.put("maritalStatus", user.getMaritalStatus());
@@ -452,26 +459,26 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("religion", user.getReligion());
                     params.put("drink", user.getDrink());
                     params.put("smoke", user.getSmoke());
-                    params.put("fieldStudyCode", getFieldStudyCode(user.getFieldOfStudy()));
-                    params.put("highestQualification", user.getQualification());
-                    params.put("industryCode", getWorkIndustryCode(user.getWorkIndustry()));
-                    params.put("experienceYears", user.getExperience());
+                    params.put("fieldStudyCode", user.getMemberWork().get(0).getFieldStudyCode());
+                    params.put("highestQualification", user.getMemberWork().get(0).getHighestQualification());
+                    params.put("industryCode", user.getMemberWork().get(0).getIndustryCode());
+                    params.put("experienceYears", user.getMemberWork().get(0).getExperienceYears());
                     params.put("email", user.getEmail());
-                    params.put("showMe", user.getShowMe());
-                    params.put("longitude", user.getLongitude());
-                    params.put("latitude", user.getLatitude());
+                    params.put("showMe", user.getMembersettings().get(0).getShowMe());
+                    params.put("longitude", user.getMembersettings().get(0).getLongitude());
+                    params.put("latitude", user.getMembersettings().get(0).getLatitude());
                     params.put("bodyType", user.getBodyType());
                     params.put("lookingFor", user.getLookingFor());
-                    params.put("universityName", user.getUniversity());
+                    params.put("universityName", user.getMemberWork().get(0).getUniversityName());
 
-                    params.put("about", user.getAboutMe());
-                    params.put("workIndustry", user.getWorkIndustry());
-                    params.put("relationshipStatus", user.getWorkIndustry());
+                    params.put("about", user.getAbout());
+                    params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
-                    params.put("interests", user.getIntrests());
+                    params.put("interestCode", user.getMemberInterests().get(0).getInterestName());
                     params.put("haveKids", user.getHaveKids());
                     params.put("wantKids", user.getWantKids());
+
 
                     Log.e("check","Reg req body : "+params.toString());
                     return params;
@@ -491,19 +498,5 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             return null;
         }
     }
-    private String getWorkIndustryCode(String workIndustry) {
-        for (WorkIndustry wim : DynamicOptionConstants.WORK_INDUSTRY_ARRAY_LIST) {
-            if (wim.getIndustryName().equalsIgnoreCase(workIndustry))
-                return wim.getCode();
-        }
-        return null;
-    }
 
-    private String getFieldStudyCode(String fieldOfStudy) {
-        for (FieldOfStudy fos : DynamicOptionConstants.FIELD_OF_STUDY_ARRAY_LIST) {
-            if (fos.getFieldName().equalsIgnoreCase(fieldOfStudy))
-                return fos.getCode();
-        }
-        return null;
-    }
 }
