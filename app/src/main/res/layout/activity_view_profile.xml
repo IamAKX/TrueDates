@@ -34,18 +34,20 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
+                    android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="John Doe,"
+                    android:text=""
                     android:textSize="30sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/balsamiq_sans"/>
 
                 <TextView
+                    android:id="@+id/age"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="26"
+                    android:text=""
                     android:textSize="30sp"
                     android:fontFamily="@font/balsamiq_sans"/>
 
@@ -65,10 +67,11 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/work"/>
                 <TextView
+                    android:id="@+id/workIndustry"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Software Engineer at Comviva Technologies"/>
+                    android:text=""/>
 
             </LinearLayout>
 
@@ -87,10 +90,11 @@
                     android:layout_height="16sp"
                     app:srcCompat="@drawable/education"/>
                 <TextView
+                    android:id="@+id/education"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Computer Science and Engineering from West Bengal University of Technology"/>
+                    android:text=""/>
 
             </LinearLayout>
 
@@ -108,10 +112,11 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/person"/>
                 <TextView
+                    android:id="@+id/showMe"
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Man"/>
+                    android:text=""/>
 
             </LinearLayout>
 
@@ -132,7 +137,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="less than a kilometer away"/>
+                    android:text="Less than a kilometer away"/>
 
             </LinearLayout>
 
@@ -146,11 +151,12 @@
                 android:layout_marginRight="10dp"/>
 
             <TextView
+                android:id="@+id/about"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Entrepreneur #Computer Passionate, B Positive in Blood Group and in nature too!! Leo Zodiac. Humanity is only religion."/>
+                android:text=""/>
 
         </LinearLayout>
 

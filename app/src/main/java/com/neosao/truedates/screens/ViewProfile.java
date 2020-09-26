@@ -2,17 +2,21 @@ package com.neosao.truedates.screens;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.neosao.truedates.R;
+import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.model.UserModel;
 
 import jp.shts.android.storiesprogressview.StoriesProgressView;
 
-public class ViewProfile extends AppCompatActivity implements StoriesProgressView.StoriesListener{
+public class ViewProfile extends AppCompatActivity implements StoriesProgressView.StoriesListener {
 
     private static final int PROGRESS_COUNT = 6;
 
@@ -21,6 +25,8 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
     View reverse;
     View skip;
 
+    TextView name, age, workIndustry, education, showMe, about;
+    UserModel userModel;
     private int counter = 0;
     private final int[] resources = new int[]{
             R.drawable.user_man,
@@ -52,7 +58,15 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
     }
 
     private void initializeComponents() {
+        userModel = new LocalPref(getBaseContext()).getUser();
         storiesProgressView = findViewById(R.id.stories);
+        name = findViewById(R.id.name);
+        age = findViewById(R.id.age);
+        workIndustry = findViewById(R.id.workIndustry);
+        education = findViewById(R.id.education);
+        showMe = findViewById(R.id.showMe);
+        about = findViewById(R.id.about);
+
         // bind reverse view
         reverse = findViewById(R.id.reverse);
         // bind skip view
@@ -60,6 +74,19 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
 
         initStory();
 
+        name.setText(userModel.getName()+",");
+        age.setText(userModel.getAge());
+        workIndustry.setText(userModel.getMemberWork().get(0).getIndustryName());
+        education.setText(userModel.getMemberWork().get(0).getUniversityName());
+        showMe.setText(userModel.getMembersettings().get(0).getShowMe());
+        about.setText(userModel.getAbout());
+
+        findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getBaseContext(), EditProfile.class));
+            }
+        });
 
     }
 
