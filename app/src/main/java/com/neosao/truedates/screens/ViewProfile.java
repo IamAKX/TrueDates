@@ -3,22 +3,31 @@ package com.neosao.truedates.screens;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.model.UserModel;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import jp.shts.android.storiesprogressview.StoriesProgressView;
 
 public class ViewProfile extends AppCompatActivity implements StoriesProgressView.StoriesListener {
 
-    private static final int PROGRESS_COUNT = 6;
+    private static int PROGRESS_COUNT = 1;
 
     private StoriesProgressView storiesProgressView;
     private ImageView image;
@@ -28,16 +37,7 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
     TextView name, age, workIndustry, education, showMe, about;
     UserModel userModel;
     private int counter = 0;
-    private final int[] resources = new int[]{
-            R.drawable.user_man,
-            R.drawable.user_woman_1,
-            R.drawable.user_woman_2,
-            R.drawable.user_woman_3,
-            R.drawable.user_woman_4,
-            R.drawable.user_woman_5,
-            R.drawable.user_woman_6,
-            R.drawable.user_woman_7
-    };
+    private String[] resources;
 
     private final long[] durations = new long[]{
             500L, 1000L, 1500L, 4000L, 5000L, 1000,
@@ -52,7 +52,6 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_view_profile);
 
-        counter = resources.length;
 
         initializeComponents();
     }
@@ -67,6 +66,12 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
         showMe = findViewById(R.id.showMe);
         about = findViewById(R.id.about);
 
+
+        resources = new String[userModel.getMemberPhotos().size()];
+        for (int i = 0; i < userModel.getMemberPhotos().size(); i++) {
+            resources[i] = (userModel.getMemberPhotos().get(i).getMemberPhoto());
+        }
+        counter = resources.length;
         // bind reverse view
         reverse = findViewById(R.id.reverse);
         // bind skip view
@@ -74,7 +79,7 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
 
         initStory();
 
-        name.setText(userModel.getName()+",");
+        name.setText(userModel.getName() + ",");
         age.setText(userModel.getAge());
         workIndustry.setText(userModel.getMemberWork().get(0).getIndustryName());
         education.setText(userModel.getMemberWork().get(0).getUniversityName());
@@ -91,6 +96,7 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
     }
 
     private void initStory() {
+        PROGRESS_COUNT = userModel.getMemberPhotos().size();
         storiesProgressView.setStoriesCount(PROGRESS_COUNT);
         storiesProgressView.setStoryDuration(3000L);
         // or
@@ -101,7 +107,10 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
         storiesProgressView.startStories(counter);
 
         image = (ImageView) findViewById(R.id.image);
-        image.setImageResource(resources[counter]);
+        Glide.with(getBaseContext())
+                .load(resources[counter])
+                .into(image);
+
         reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,13 +146,18 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
 
     @Override
     public void onNext() {
-        image.setImageResource(resources[++counter]);
+
+        Glide.with(getBaseContext())
+                .load(resources[++counter])
+                .into(image);
     }
 
     @Override
     public void onPrev() {
         if ((counter - 1) < 0) return;
-        image.setImageResource(resources[--counter]);
+        Glide.with(getBaseContext())
+                .load(resources[--counter])
+                .into(image);
     }
 
     @Override
