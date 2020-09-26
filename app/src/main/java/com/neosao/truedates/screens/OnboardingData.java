@@ -33,6 +33,7 @@ import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FirebaseUserModel;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.FieldOfStudy;
+import com.neosao.truedates.model.options.Interest;
 import com.neosao.truedates.model.options.WorkIndustry;
 import com.neosao.truedates.onboardingfragments.Habits;
 import com.neosao.truedates.onboardingfragments.Intoduction;
@@ -102,7 +103,10 @@ public class OnboardingData extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (viewpager.getCurrentItem() < 4)
+                {
+                    if(validateInputs())
                     viewpager.setCurrentItem(viewpager.getCurrentItem() + 1);
+                }
                 else {
                     if (validateInputs())
                         new RegisterUser().execute();
@@ -356,6 +360,7 @@ public class OnboardingData extends AppCompatActivity {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Log.e("check",response);
                             try {
                                 JSONObject jsonResp = new JSONObject(response);
                                 if (jsonResp.has("status")) {
@@ -400,6 +405,7 @@ public class OnboardingData extends AppCompatActivity {
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -435,11 +441,10 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("universityName", user.getUniversity());
 
                     params.put("about", user.getAboutMe());
-                    params.put("workIndustry", user.getWorkIndustry());
                     params.put("relationshipStatus", user.getWorkIndustry());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
-                    params.put("interests", user.getIntrests());
+                    params.put("interests", getInterestCode(user.getIntrests()));
                     params.put("haveKids", user.getHaveKids());
                     params.put("wantKids", user.getWantKids());
 
@@ -460,6 +465,13 @@ public class OnboardingData extends AppCompatActivity {
             requestQueue.add(jsonObjectRequest);
             return null;
         }
+    }
+
+    private String getInterestCode(String intrests) {
+        for(Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
+            if(i.getInterestName().equalsIgnoreCase(intrests))
+                return i.getCode();
+        return null;
     }
 
     private String getWorkIndustryCode(String workIndustry) {

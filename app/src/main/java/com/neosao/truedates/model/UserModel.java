@@ -46,7 +46,7 @@ public class UserModel {
     private String workIndustry;
     private String experience;
     private String relationshipStatus;
-    private String intrests;
+    private String interests;
 
     public UserModel() {
     }
@@ -94,7 +94,7 @@ public class UserModel {
         this.workIndustry = workIndustry;
         this.experience = experience;
         this.relationshipStatus = relationshipStatus;
-        this.intrests = intrests;
+        this.interests = intrests;
     }
 
     public String getId() {
@@ -434,11 +434,11 @@ public class UserModel {
     }
 
     public String getIntrests() {
-        return intrests;
+        return interests;
     }
 
     public void setIntrests(String intrests) {
-        this.intrests = intrests;
+        this.interests = intrests;
     }
 
     @Override
@@ -486,7 +486,7 @@ public class UserModel {
                 ", workIndustry='" + workIndustry + '\'' +
                 ", experience='" + experience + '\'' +
                 ", relationshipStatus='" + relationshipStatus + '\'' +
-                ", intrests='" + intrests + '\'' +
+                ", interests='" + interests + '\'' +
                 '}';
     }
 }
