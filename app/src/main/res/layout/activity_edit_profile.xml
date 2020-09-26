@@ -40,26 +40,29 @@
                 android:weightSum="3">
 
                 <ImageView
+                    android:id="@+id/profileImage1"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage2"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage3"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -74,26 +77,29 @@
                 android:weightSum="3">
 
                 <ImageView
+                    android:id="@+id/profileImage4"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage5"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage6"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -108,26 +114,29 @@
                 android:weightSum="3">
 
                 <ImageView
+                    android:id="@+id/profileImage7"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage8"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
                 <ImageView
+                    android:id="@+id/profileImage9"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/add_image"/>
+                    android:src="@drawable/dashed_border"/>
 
             </LinearLayout>
 

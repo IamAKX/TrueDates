@@ -20,6 +20,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
         <activity android:name=".screens.UploadProfileImage"></activity>
         <activity android:name=".screens.ViewProfile" />
         <activity android:name=".screens.EditProfile" />

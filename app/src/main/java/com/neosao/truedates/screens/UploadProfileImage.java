@@ -2,10 +2,9 @@ package com.neosao.truedates.screens;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,35 +14,34 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.API;
+import com.neosao.truedates.configs.AndroidMultiPartEntity;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.Utils;
-import com.neosao.truedates.configs.VolleyMultipartRequest;
-import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -56,7 +54,6 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     Image[] selectedImages = new Image[6];
     ImageView tappedImageView;
     Button continueBtn;
-    SweetAlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +75,6 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         for (ImageView iv : imageViews)
             iv.setOnClickListener(this);
 
-        dialog = Utils.getProgress(UploadProfileImage.this, "Uploading image...");
 
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,105 +86,14 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
 
                  if(selectedImageCount<4)
                  {
-                     Toast.makeText(getBaseContext(),"Select atleast 4 images", Toast.LENGTH_LONG).show();
+                     Toast.makeText(getBaseContext(),"Select at least 4 images", Toast.LENGTH_LONG).show();
                      return;
                  }
-                dialog.show();
-                uploadImages(0);
+                startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }
         });
     }
 
-    private void uploadImages(final int index) {
-        if (index > 5) {
-            if (dialog.isShowing())
-                dialog.dismissWithAnimation();
-            startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            return;
-        }
-        if (null != selectedImages[index]) {
-            // upload image
-
-            try {
-                final Image imageToBeUploaded = selectedImages[index];
-                final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageToBeUploaded.getUri());
-
-                Log.e("check", "Uploading : " + imageToBeUploaded.getPath());
-                Log.e("check", "Uploading : " + imageToBeUploaded.getName());
-
-                //our custom volley request
-                VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, API.UPLOAD_IMAGE,
-                        new Response.Listener<NetworkResponse>() {
-                            @Override
-                            public void onResponse(NetworkResponse response) {
-                                try {
-                                    JSONObject obj = new JSONObject(new String(response.data));
-                                    Log.e("check", obj.toString());
-                                    if (obj.has("message"))
-                                        Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                                    List<MemberPhotos> photosArrayList = user.getMemberPhotos();
-                                    if (null == photosArrayList)
-                                        photosArrayList = new ArrayList<>();
-                                    photosArrayList.add(new MemberPhotos(imageToBeUploaded.getName(), imageToBeUploaded.getPath()));
-                                    user.setMemberPhotos(photosArrayList);
-                                    localPref.saveUser(user);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                uploadImages(index + 1);
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                                uploadImages(index + 1);
-                            }
-                        }) {
-
-                    /*
-                     * If you want to add more parameters with the image
-                     * you can do it here
-                     * here we have only one parameter with the image
-                     * which is tags
-                     * */
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("userId", user.getUserId());
-                        return params;
-                    }
-
-                    /*
-                     * Here we are passing image by renaming it with a unique name
-                     * */
-                    @Override
-                    protected Map<String, DataPart> getByteData() {
-                        Map<String, DataPart> params = new HashMap<>();
-                        long imagename = System.currentTimeMillis();
-                        params.put("file", new VolleyMultipartRequest.DataPart(imageToBeUploaded.getName(), getFileDataFromDrawable(bitmap)));
-                        return params;
-                    }
-                };
-
-                //adding the request to volley
-                Volley.newRequestQueue(this).add(volleyMultipartRequest);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else
-            uploadImages(index + 1);
-
-
-    }
-
-    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
 
     @Override
     public void onClick(View view) {
@@ -243,6 +148,10 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                         .load(images.get(0).getPath())
                         .into(tappedImageView);
             }
+            if(null != images.get(0))
+            {
+                new UploadImageTask(images.get(0)).execute();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -266,4 +175,96 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     }
 
 
+    private class UploadImageTask extends AsyncTask<Void,Void,String>{
+
+        Image imageToBeUploaded;
+        SweetAlertDialog dialog;
+        public UploadImageTask(Image imageToBeUploaded) {
+            this.imageToBeUploaded = imageToBeUploaded;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(UploadProfileImage.this, "Uploading image...");
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(API.UPLOAD_IMAGE);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+
+                            }
+                        });
+
+
+                File sourceFile = new File(imageToBeUploaded.getPath());
+
+                // Adding file data to http body
+                entity.addPart("file", new FileBody(sourceFile));
+
+                // Extra parameters if you want to pass to server
+                entity.addPart("userId",
+                        new StringBody(user.getUserId()));
+
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+            finally {
+
+                dialog.dismissWithAnimation();
+
+            }
+            Log.e("check","upload response : "+ responseString);
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String responseString) {
+            super.onPostExecute(responseString);
+            try {
+                JSONObject obj = new JSONObject(responseString);
+                if(null != obj && obj.has("message"))
+                    Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
+
+                if(null != obj && obj.has("status") && !obj.getString("status").equals("200"))
+                {
+                    selectedImages[getIndexOfImageView(tappedImageView)] = null;
+                    Glide.with(getBaseContext())
+                            .load(R.drawable.dashed_border)
+                            .into(tappedImageView);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

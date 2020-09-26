@@ -3,6 +3,7 @@ package com.neosao.truedates.screens;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,10 +19,12 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,26 +38,39 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.API;
+import com.neosao.truedates.configs.AndroidMultiPartEntity;
 import com.neosao.truedates.configs.DynamicOptionConstants;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.UserModel;
-import com.neosao.truedates.model.options.FieldOfStudy;
-import com.neosao.truedates.model.options.WorkIndustry;
+import com.nguyenhoanglam.imagepicker.model.Image;
+import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +88,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     final Calendar calendar = Calendar.getInstance();
     UserModel user;
     LocalPref localPref;
+    ImageView[] profileImageArray;
+    ImageView tappedImageView;
+    ArrayList<Image> images = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +137,17 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         wantKids = findViewById(R.id.wantKids);
         lookingFor = findViewById(R.id.lookingFor);
         bodyType = findViewById(R.id.bodyType);
+        profileImageArray = new ImageView[]{
+                findViewById(R.id.profileImage1),
+                findViewById(R.id.profileImage2),
+                findViewById(R.id.profileImage3),
+                findViewById(R.id.profileImage4),
+                findViewById(R.id.profileImage5),
+                findViewById(R.id.profileImage6),
+                findViewById(R.id.profileImage7),
+                findViewById(R.id.profileImage8),
+                findViewById(R.id.profileImage9)
+        };
 
         gender.setOnClickListener(this);
         dob.setOnClickListener(this);
@@ -143,6 +173,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         wantKids.setOnClickListener(this);
         lookingFor.setOnClickListener(this);
         bodyType.setOnClickListener(this);
+        for (ImageView iv : profileImageArray)
+            iv.setOnClickListener(this);
+
 
         findViewById(R.id.saveBtn).setOnClickListener(this);
     }
@@ -234,6 +267,50 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             case R.id.saveBtn:
                 new SaveProfile().execute();
                 break;
+            case R.id.profileImage1:
+            case R.id.profileImage2:
+            case R.id.profileImage3:
+            case R.id.profileImage4:
+            case R.id.profileImage5:
+            case R.id.profileImage6:
+            case R.id.profileImage7:
+            case R.id.profileImage8:
+            case R.id.profileImage9:
+                tappedImageView = (ImageView) view;
+                new Permissive.Request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                        .whenPermissionsGranted(new PermissionsGrantedListener() {
+                            @Override
+                            public void onPermissionsGranted(String[] permissions) throws SecurityException {
+                                ImagePicker.with(EditProfile.this)
+                                        .setFolderMode(true)
+                                        .setFolderTitle("Album")
+                                        .setDirectoryName("True Dates")
+                                        .setMultipleMode(false)
+                                        .setShowNumberIndicator(true)
+                                        .setMaxSize(1)
+                                        .setBackgroundColor("#ffffff")
+                                        .setStatusBarColor("#E0E0E0")
+                                        .setToolbarColor("#ffffff")
+                                        .setToolbarIconColor("#FF6F8B")
+                                        .setToolbarTextColor("#FF6F8B")
+                                        .setProgressBarColor("#FF6F8B")
+                                        .setIndicatorColor("#FF6F8B")
+                                        .setShowCamera(true)
+                                        .setDoneTitle("Select")
+                                        .setLimitMessage("You can select up to 10 images")
+                                        .setSelectedImages(images)
+                                        .setRequestCode(100)
+                                        .start();
+                            }
+                        })
+                        .whenPermissionsRefused(new PermissionsRefusedListener() {
+                            @Override
+                            public void onPermissionsRefused(String[] permissions) {
+                                Toast.makeText(getBaseContext(), "We need your permission to read the image", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .execute(EditProfile.this);
+                break;
         }
 
     }
@@ -294,6 +371,28 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (ImagePicker.shouldHandleResult(requestCode, resultCode, data, 100)) {
+            images = ImagePicker.getImages(data);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Glide.with(getBaseContext())
+                        .load(images.get(0).getUri())
+                        .into(tappedImageView);
+            } else {
+                Glide.with(getBaseContext())
+                        .load(images.get(0).getPath())
+                        .into(tappedImageView);
+            }
+            if(null != images.get(0))
+            {
+                new UploadImageTask(images.get(0)).execute();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
     private void getAddress() {
         new Permissive.Request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
                 .whenPermissionsGranted(new PermissionsGrantedListener() {
@@ -309,7 +408,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                 user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                                 Address address = addresses.get(0);
-                                user.getMembersettings().get(0).setCurrentLocation(address.getLocality()+", "+address.getCountryName());
+                                user.getMembersettings().get(0).setCurrentLocation(address.getLocality() + ", " + address.getCountryName());
                                 location.setText(address.getLocality() + ", " + address.getCountryName());
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -360,11 +459,18 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());
         bodyType.setText(user.getBodyType());
+        for (int i = 0; i < user.getMemberPhotos().size() && i<9; i++) {
+            if(null != user.getMemberPhotos().get(i) && null != user.getMemberPhotos().get(i).getMemberPhoto())
+            Glide.with(getBaseContext())
+                    .load(user.getMemberPhotos().get(i).getMemberPhoto())
+                    .into(profileImageArray[i]);
+        }
 
     }
 
-    private class SaveProfile extends AsyncTask<Void,Void,Void> {
+    private class SaveProfile extends AsyncTask<Void, Void, Void> {
         SweetAlertDialog dialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -417,8 +523,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                 JSONObject jsonResp = new JSONObject(response);
                                 if (jsonResp.has("message")) {
 
-                                        Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
-                                        localPref.saveUser(user);
+                                    Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
+                                    localPref.saveUser(user);
                                 } else
                                     Toast.makeText(getBaseContext(), "Response is unparsable", Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
@@ -443,7 +549,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userId",user.getUserId());
+                    params.put("userId", user.getUserId());
                     params.put("registerType", user.getRegisterType());
                     params.put("firebaseId", user.getFirebaseId());
                     params.put("name", user.getName());
@@ -480,7 +586,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("wantKids", user.getWantKids());
 
 
-                    Log.e("check","Reg req body : "+params.toString());
+                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };
@@ -496,6 +602,103 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             requestQueue.getCache().clear();
             requestQueue.add(jsonObjectRequest);
             return null;
+        }
+    }
+
+    private class UploadImageTask extends AsyncTask<Void,Void,String>{
+
+        Image imageToBeUploaded;
+        SweetAlertDialog dialog;
+        public UploadImageTask(Image imageToBeUploaded) {
+            this.imageToBeUploaded = imageToBeUploaded;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(EditProfile.this, "Uploading image...");
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(API.UPLOAD_IMAGE);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+
+                            }
+                        });
+
+
+                File sourceFile = new File(imageToBeUploaded.getPath());
+
+                // Adding file data to http body
+                entity.addPart("file", new FileBody(sourceFile));
+
+                // Extra parameters if you want to pass to server
+                entity.addPart("userId",
+                        new StringBody(user.getUserId()));
+
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+            finally {
+                dialog.dismissWithAnimation();
+                try {
+                    JSONObject obj = new JSONObject(responseString);
+                    if(null != obj && obj.has("message"))
+                        Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.e("check","upload response : "+ responseString);
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String responseString) {
+            super.onPostExecute(responseString);
+            try {
+                JSONObject obj = new JSONObject(responseString);
+                if(null != obj && obj.has("message"))
+                    Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
+
+                if(null != obj && obj.has("status") && !obj.getString("status").equals("200"))
+                {
+                    Glide.with(getBaseContext())
+                            .load(R.drawable.dashed_border)
+                            .into(tappedImageView);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

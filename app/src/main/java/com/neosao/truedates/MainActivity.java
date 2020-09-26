@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                             if(null == user)
                                 startActivity(new Intent(getBaseContext(), Login.class));
                             else
-                                if (null==user.getMemberPhotos() || user.getMemberPhotos().size()<1)
+                                if (null==user.getMemberPhotos() || user.getMemberPhotos().size()<4)
                                     startActivity(new Intent(getBaseContext(), UploadProfileImage.class));
                                 else
                                     startActivity(new Intent(getBaseContext(), HomeContainer.class));
