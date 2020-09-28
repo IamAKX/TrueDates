@@ -30,6 +30,7 @@ import com.neosao.truedates.adapters.SliderAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FeatureSliderModel;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.EditProfile;
@@ -109,11 +110,10 @@ public class MyAccount extends Fragment {
                                 if (object.getString("status").equals("200")) {
                                     user = new Gson().fromJson(object.getJSONObject("result").getJSONObject("member").toString(), UserModel.class);
                                     localPref.saveUser(user);
-                                    if (null != user.getMemberPhotos() && user.getMemberPhotos().size() > 0 && null != user.getMemberPhotos().get(0).getMemberPhoto())
-                                        Glide.with(getContext())
-                                                .load(user.getMemberPhotos().get(0).getMemberPhoto())
-                                                .placeholder(R.drawable.in_love)
-                                                .into(profile_image);
+                                    Glide.with(getContext())
+                                            .load(user.getDefaultPhoto())
+                                            .placeholder(R.drawable.in_love)
+                                            .into(profile_image);
                                     name.setText(user.getName() + ", " + user.getAge());
                                     workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
                                     university.setText(user.getMemberWork().get(0).getUniversityName());
@@ -162,9 +162,8 @@ public class MyAccount extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (null != user.getMemberPhotos() && user.getMemberPhotos().size() > 0 && null != user.getMemberPhotos().get(0).getMemberPhoto())
             Glide.with(getContext())
-                    .load(user.getMemberPhotos().get(0).getMemberPhoto())
+                    .load(user.getDefaultPhoto())
                     .placeholder(R.drawable.in_love)
                     .into(profile_image);
         name.setText(user.getName() + ", " + user.getAge());
@@ -172,7 +171,7 @@ public class MyAccount extends Fragment {
         university.setText(user.getMemberWork().get(0).getUniversityName());
     }
 
-    private class LoadFeatureSlider extends AsyncTask<Void,Void,Void>{
+    private class LoadFeatureSlider extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.FEATURE_SLIDER,
@@ -181,15 +180,13 @@ public class MyAccount extends Fragment {
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if(object.getString("status").equals("200"))
-                                {
+                                if (object.getString("status").equals("200")) {
                                     ArrayList<FeatureSliderModel> list = new ArrayList<>();
-                                    if(object.has("result") && object.getJSONObject("result").has("features"))
-                                    {
+                                    if (object.has("result") && object.getJSONObject("result").has("features")) {
                                         JSONArray array = object.getJSONObject("result").getJSONArray("features");
                                         for (int i = 0; i < array.length(); i++) {
                                             JSONObject item = array.getJSONObject(i);
-                                            FeatureSliderModel model = new Gson().fromJson(item.toString(),FeatureSliderModel.class);
+                                            FeatureSliderModel model = new Gson().fromJson(item.toString(), FeatureSliderModel.class);
                                             list.add(model);
                                         }
 
@@ -201,12 +198,10 @@ public class MyAccount extends Fragment {
                                         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
                                         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
                                         sliderView.startAutoCycle();
-                                    }
-                                    else
-                                        Toast.makeText(getContext(),"Unable to load feature slider",Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                    Toast.makeText(getContext(),object.getString("message"),Toast.LENGTH_SHORT).show();
+                                    } else
+                                        Toast.makeText(getContext(), "Unable to load feature slider", Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -228,7 +223,7 @@ public class MyAccount extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
 
-                    Log.e("check","Reg req body : "+params.toString());
+                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };

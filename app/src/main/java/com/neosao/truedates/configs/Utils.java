@@ -8,10 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
 
 import com.neosao.truedates.R;
+import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.options.FieldOfStudy;
 import com.neosao.truedates.model.options.Interest;
 import com.neosao.truedates.model.options.WorkIndustry;
@@ -54,18 +56,17 @@ public class Utils {
         }
     }
 
-    public static SweetAlertDialog getProgress(Context context, String title){
+    public static SweetAlertDialog getProgress(Context context, String title) {
         SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(R.color.themePink);
         pDialog.getProgressHelper().setRimColor(R.color.themePink);
         pDialog.setContentText(title);
         pDialog.setCancelable(false);
-        return  pDialog;
+        return pDialog;
     }
 
-    public static boolean isValid(String email)
-    {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+    public static boolean isValid(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
                 "[a-zA-Z0-9_+&*-]+)*@" +
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
                 "A-Z]{2,7}$";
@@ -77,8 +78,8 @@ public class Utils {
     }
 
     public Interest getInterestCode(String intrests) {
-        for(Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
-            if(i.getInterestName().equalsIgnoreCase(intrests))
+        for (Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
+            if (i.getInterestName().equalsIgnoreCase(intrests))
                 return i;
         return null;
     }
@@ -98,4 +99,39 @@ public class Utils {
         }
         return null;
     }
+
+    public static int getPhotoCount(MemberPhotos[] arr) {
+        int counter = 0;
+        if(null == arr)
+            return counter;
+        for (int i = 0; i < arr.length; i++)
+            if (arr[i] != null)
+                counter++;
+        return counter;
+    }
+
+    public static int getIndexOfImageView(ImageView view) {
+        switch (view.getId()) {
+            case R.id.profileImage1:
+                return 0;
+            case R.id.profileImage2:
+                return 1;
+            case R.id.profileImage3:
+                return 2;
+            case R.id.profileImage4:
+                return 3;
+            case R.id.profileImage5:
+                return 4;
+            case R.id.profileImage6:
+                return 5;
+            case R.id.profileImage7:
+                return 6;
+            case R.id.profileImage8:
+                return 7;
+            case R.id.profileImage9:
+                return 8;
+        }
+        return 0;
+    }
+
 }

@@ -18,11 +18,13 @@ import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.AndroidMultiPartEntity;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
@@ -44,6 +46,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 
 public class UploadProfileImage extends AppCompatActivity implements View.OnClickListener {
 
@@ -79,12 +83,8 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int selectedImageCount = 0;
-                for (Image i : selectedImages)
-                    if (null != i)
-                        selectedImageCount++;
-
-                 if(selectedImageCount<4)
+                UserModel newUser = localPref.getUser();
+                 if(null != newUser && null != newUser.getMemberPhotos() && Utils.getPhotoCount(newUser.getMemberPhotos()) < 4)
                  {
                      Toast.makeText(getBaseContext(),"Select at least 4 images", Toast.LENGTH_LONG).show();
                      return;
@@ -156,23 +156,6 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private int getIndexOfImageView(ImageView view) {
-        switch (view.getId()) {
-            case R.id.profileImage1:
-                return 0;
-            case R.id.profileImage2:
-                return 1;
-            case R.id.profileImage3:
-                return 2;
-            case R.id.profileImage4:
-                return 3;
-            case R.id.profileImage5:
-                return 4;
-            case R.id.profileImage6:
-                return 5;
-        }
-        return 0;
-    }
 
 
     private class UploadImageTask extends AsyncTask<Void,Void,String>{
@@ -256,6 +239,23 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                     Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
 
                 if(null != obj && obj.has("status") && !obj.getString("status").equals("200"))
+                {
+                    selectedImages[getIndexOfImageView(tappedImageView)] = null;
+                    Glide.with(getBaseContext())
+                            .load(R.drawable.dashed_border)
+                            .into(tappedImageView);
+                    if(null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
+                    {
+                        MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("result").toString(), MemberPhotos.class);
+                        if(null == user.getMemberPhotos())
+                            user.setMemberPhotos( new MemberPhotos[9]);
+
+                                user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
+
+                        localPref.saveUser(user);
+                    }
+                }
+                else
                 {
                     selectedImages[getIndexOfImageView(tappedImageView)] = null;
                     Glide.with(getBaseContext())

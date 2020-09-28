@@ -67,9 +67,9 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
         about = findViewById(R.id.about);
 
 
-        resources = new String[userModel.getMemberPhotos().size()];
-        for (int i = 0; i < userModel.getMemberPhotos().size(); i++) {
-            resources[i] = (userModel.getMemberPhotos().get(i).getMemberPhoto());
+        resources = new String[userModel.getMemberPhotos().length];
+        for (int i = 0; i < userModel.getMemberPhotos().length; i++) {
+            resources[i] = (userModel.getMemberPhotos()[i].getMemberPhoto());
         }
         counter = resources.length;
         // bind reverse view
@@ -96,7 +96,7 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
     }
 
     private void initStory() {
-        PROGRESS_COUNT = userModel.getMemberPhotos().size();
+        PROGRESS_COUNT = userModel.getMemberPhotos().length;
         storiesProgressView.setStoriesCount(PROGRESS_COUNT);
         storiesProgressView.setStoryDuration(3000L);
         // or

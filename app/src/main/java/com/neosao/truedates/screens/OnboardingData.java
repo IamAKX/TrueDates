@@ -75,12 +75,12 @@ public class OnboardingData extends AppCompatActivity {
         user = new UserModel();
 
         user.setMemberInterests(new ArrayList<MemberInterests>());
-        user.setMemberPhotos(new ArrayList<MemberPhotos>());
+        user.setMemberPhotos(new MemberPhotos[9]);
         user.setMembersettings(new ArrayList<Membersettings>());
         user.setMemberWork(new ArrayList<MemberWork>());
 
         user.getMemberInterests().add(new MemberInterests());
-        user.getMemberPhotos().add(new MemberPhotos());
+//        user.getMemberPhotos().add(new MemberPhotos());
         user.getMembersettings().add(new Membersettings());
         user.getMemberWork().add(new MemberWork());
 

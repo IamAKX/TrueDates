@@ -31,17 +31,17 @@ public class UserModel {
     private String uniqueId;
     private String about;
     private String relationshipStatus;
-    private List<MemberPhotos> memberPhotos;
+    private MemberPhotos[] memberPhotos;
     private List<Membersettings> membersettings;
     private List<MemberInterests> memberInterests;
     private List<MemberWork> memberWork;
-
+    private String defaultPhoto;
     private String registerType;
 
     public UserModel() {
     }
 
-    public UserModel(String isActive, Object isDelete, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String email, String maritalStatus, String uniqueId, String about, String relationshipStatus, List<MemberPhotos> memberPhotos, List<Membersettings> membersettings, List<MemberInterests> memberInterests, List<MemberWork> memberWork, String registerType) {
+    public UserModel(String isActive, Object isDelete, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String email, String maritalStatus, String uniqueId, String about, String relationshipStatus, MemberPhotos[] memberPhotos, List<Membersettings> membersettings, List<MemberInterests> memberInterests, List<MemberWork> memberWork, String defaultPhoto, String registerType) {
         this.isActive = isActive;
         this.isDelete = isDelete;
         this.code = code;
@@ -74,6 +74,7 @@ public class UserModel {
         this.membersettings = membersettings;
         this.memberInterests = memberInterests;
         this.memberWork = memberWork;
+        this.defaultPhoto = defaultPhoto;
         this.registerType = registerType;
     }
 
@@ -301,11 +302,11 @@ public class UserModel {
         this.relationshipStatus = relationshipStatus;
     }
 
-    public List<MemberPhotos> getMemberPhotos() {
+    public MemberPhotos[] getMemberPhotos() {
         return memberPhotos;
     }
 
-    public void setMemberPhotos(List<MemberPhotos> memberPhotos) {
+    public void setMemberPhotos(MemberPhotos[] memberPhotos) {
         this.memberPhotos = memberPhotos;
     }
 
@@ -331,6 +332,14 @@ public class UserModel {
 
     public void setMemberWork(List<MemberWork> memberWork) {
         this.memberWork = memberWork;
+    }
+
+    public String getDefaultPhoto() {
+        return defaultPhoto;
+    }
+
+    public void setDefaultPhoto(String defaultPhoto) {
+        this.defaultPhoto = defaultPhoto;
     }
 
     public String getRegisterType() {

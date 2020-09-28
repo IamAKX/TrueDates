@@ -42,6 +42,7 @@ import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.AndroidMultiPartEntity;
@@ -50,6 +51,7 @@ import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
@@ -80,6 +82,7 @@ import java.util.Map;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.location.LocationManager.NETWORK_PROVIDER;
+import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 
 public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
@@ -459,10 +462,10 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());
         bodyType.setText(user.getBodyType());
-        for (int i = 0; i < user.getMemberPhotos().size() && i<9; i++) {
-            if(null != user.getMemberPhotos().get(i) && null != user.getMemberPhotos().get(i).getMemberPhoto())
+        for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i<9; i++) {
+            if(null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto())
             Glide.with(getBaseContext())
-                    .load(user.getMemberPhotos().get(i).getMemberPhoto())
+                    .load(user.getMemberPhotos()[i].getMemberPhoto())
                     .into(profileImageArray[i]);
         }
 
@@ -695,6 +698,22 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     Glide.with(getBaseContext())
                             .load(R.drawable.dashed_border)
                             .into(tappedImageView);
+                    if(null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
+                    {
+                        MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("result").toString(), MemberPhotos.class);
+                        if(null == user.getMemberPhotos())
+                            user.setMemberPhotos( new MemberPhotos[9]);
+
+                        user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
+
+                        localPref.saveUser(user);
+                    }
+                    else
+                    {
+                        Glide.with(getBaseContext())
+                                .load(R.drawable.dashed_border)
+                                .into(tappedImageView);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
