@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -20,13 +29,24 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
+import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.FirebaseLoginProvider;
 import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FirebaseUserModel;
+import com.neosao.truedates.model.UserModel;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import in.aabhasjindal.otptextview.OTPListener;
 import in.aabhasjindal.otptextview.OtpTextView;
 
@@ -78,7 +98,8 @@ public class PhoneValidation extends AppCompatActivity {
                             FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.mobile.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null == user.getPhotoUrl() ? "" : user.getPhotoUrl().toString(), user.getUid());
                             Log.e("check", userModel.toString());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
-                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+//                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                            new CheckForNewUser().execute();
 
                         } else {
                             // Sign in failed, display a message and update the UI
@@ -179,5 +200,91 @@ public class PhoneValidation extends AppCompatActivity {
         };
 
         thread.start();
+    }
+
+    private class CheckForNewUser extends AsyncTask<Void, Void, Void> {
+        SweetAlertDialog dialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(PhoneValidation.this, "Please wait...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            dialog.dismissWithAnimation();
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    if (object.has("result") && object.getJSONObject("result").has("member")){
+                                        UserModel userModel = new Gson().fromJson(object.getJSONObject("result").getJSONObject("member").toString(),UserModel.class);
+                                        if(null != userModel)
+                                        {
+                                            new LocalPref(getBaseContext()).saveUser(userModel);
+                                            startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                    }
+
+                                } else {
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            dialog.dismissWithAnimation();
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
+                    Log.e("check", "Req body : " + params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+
+            return null;
+        }
     }
 }

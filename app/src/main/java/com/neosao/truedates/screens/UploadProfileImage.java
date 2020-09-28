@@ -157,6 +157,16 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i<6; i++) {
+            if(null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto())
+                Glide.with(getBaseContext())
+                        .load(user.getMemberPhotos()[i].getMemberPhoto())
+                        .into(imageViews[i]);
+        }
+    }
 
     private class UploadImageTask extends AsyncTask<Void,Void,String>{
 
@@ -199,9 +209,13 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                 // Extra parameters if you want to pass to server
                 entity.addPart("userId",
                         new StringBody(user.getUserId()));
+                entity.addPart("index",
+                        new StringBody(String.valueOf(getIndexOfImageView(tappedImageView))));
 
                 httppost.setEntity(entity);
 
+
+                Log.e("check","User id : "+ user.getUserId());
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity r_entity = response.getEntity();
@@ -233,24 +247,26 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         @Override
         protected void onPostExecute(String responseString) {
             super.onPostExecute(responseString);
+            Log.e("check","1 : "+responseString);
             try {
                 JSONObject obj = new JSONObject(responseString);
                 if(null != obj && obj.has("message"))
                     Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
 
-                if(null != obj && obj.has("status") && !obj.getString("status").equals("200"))
+                if(null != obj && obj.has("status") && obj.getString("status").equals("200"))
                 {
                     selectedImages[getIndexOfImageView(tappedImageView)] = null;
-                    Glide.with(getBaseContext())
-                            .load(R.drawable.dashed_border)
-                            .into(tappedImageView);
-                    if(null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
+                    Log.e("check","status");
+                    if(obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
                     {
-                        MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("result").toString(), MemberPhotos.class);
-                        if(null == user.getMemberPhotos())
+                        MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
+                        if(null == user.getMemberPhotos() || user.getMemberPhotos().length < 9)
                             user.setMemberPhotos( new MemberPhotos[9]);
 
-                                user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
+                        Log.e("check","photo : "+photos.toString());
+
+                        user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
+                        Log.e("check","photo arr length "+Utils.getPhotoCount(user.getMemberPhotos()));
 
                         localPref.saveUser(user);
                     }
@@ -264,6 +280,7 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e("check","err: "+e.getLocalizedMessage());
             }
         }
     }

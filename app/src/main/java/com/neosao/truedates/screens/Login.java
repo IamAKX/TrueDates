@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -17,6 +18,14 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -30,12 +39,24 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
+import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.FirebaseLoginProvider;
 import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FirebaseUserModel;
+import com.neosao.truedates.model.UserModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Login extends AppCompatActivity {
 
@@ -108,9 +129,10 @@ public class Login extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.e("check", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.facebook.name(), true, user.getDisplayName(),user.getEmail(), user.getPhoneNumber(), user.getPhotoUrl().toString(), user.getUid());
+                            FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.facebook.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), user.getPhotoUrl().toString(), user.getUid());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
-                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+//                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                            new CheckForNewUser().execute();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("check", "signInWithCredential:failure", task.getException());
@@ -192,5 +214,91 @@ public class Login extends AppCompatActivity {
         // When the Activity is destroyed, release our MediaPlayer and set it to null.
         mMediaPlayer.release();
         mMediaPlayer = null;
+    }
+
+    private class CheckForNewUser extends AsyncTask<Void, Void, Void> {
+        SweetAlertDialog dialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(Login.this, "Please wait...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            dialog.dismissWithAnimation();
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    if (object.has("result") && object.getJSONObject("result").has("member")){
+                                        UserModel userModel = new Gson().fromJson(object.getJSONObject("result").getJSONObject("member").toString(),UserModel.class);
+                                        if(null != userModel)
+                                        {
+                                            new LocalPref(getBaseContext()).saveUser(userModel);
+                                            startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                    }
+
+                                } else {
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            dialog.dismissWithAnimation();
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
+                    Log.e("check", "Req body : " + params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+
+            return null;
+        }
     }
 }

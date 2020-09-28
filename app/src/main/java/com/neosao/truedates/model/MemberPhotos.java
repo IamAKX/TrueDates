@@ -47,4 +47,14 @@ public class MemberPhotos {
     public void setIsDefault(String isDefault) {
         this.isDefault = isDefault;
     }
+
+    @Override
+    public String toString() {
+        return "MemberPhotos{" +
+                "photoCode='" + photoCode + '\'' +
+                ", memberPhoto='" + memberPhoto + '\'' +
+                ", index='" + index + '\'' +
+                ", isDefault='" + isDefault + '\'' +
+                '}';
+    }
 }
