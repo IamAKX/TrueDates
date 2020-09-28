@@ -44,16 +44,22 @@ import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
 import com.neosao.truedates.R;
+import com.neosao.truedates.adapters.SliderAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.model.FeatureSliderModel;
 import com.neosao.truedates.model.UserModel;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -62,6 +68,7 @@ import java.util.Map;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
+    private SliderView sliderView;
 
     CardView locationCard, showMeCard;
     TextView location, showMe;
@@ -112,6 +119,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         locationCard.setOnClickListener(this);
         showMeCard.setOnClickListener(this);
+        
+        
+        findViewById(R.id.card1).setOnClickListener(this);
+        findViewById(R.id.card2).setOnClickListener(this);
+        findViewById(R.id.card3).setOnClickListener(this);
 
         instaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -181,7 +193,38 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             case R.id.showMeCard:
                 showOptionPopup("Show me", OptionContants.SHOW_ME_OPTIONS);
                 break;
+            case R.id.card1:
+            case R.id.card2:
+            case R.id.card3:
+                showSubscribtionAlertbox();
+                break;
         }
+    }
+
+    private void showSubscribtionAlertbox() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.subs_package, null);
+        dialogBuilder.setView(dialogView);
+
+        ArrayList<FeatureSliderModel> list = new ArrayList<>();
+        list.add(new FeatureSliderModel("1","Sample","http://neosao.com/testing/dating/uploads/features/FET_4.png","Test"));
+        list.add(new FeatureSliderModel("1","Sample","http://neosao.com/testing/dating/uploads/features/FET_4.png","Test"));
+        list.add(new FeatureSliderModel("1","Sample","http://neosao.com/testing/dating/uploads/features/FET_4.png","Test"));
+        list.add(new FeatureSliderModel("1","Sample","http://neosao.com/testing/dating/uploads/features/FET_4.png","Test"));
+
+        sliderView = dialogView.findViewById(R.id.slider_view);
+        final SliderAdapter adapter = new SliderAdapter(getBaseContext(), list);
+
+        sliderView.setSliderAdapter(adapter);
+
+        sliderView.setIndicatorAnimation(IndicatorAnimations.SLIDE); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
+        sliderView.startAutoCycle();
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     private void showOptionPopup(String title, String[] options) {

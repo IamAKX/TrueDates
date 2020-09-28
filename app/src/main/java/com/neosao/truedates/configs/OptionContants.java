@@ -6,7 +6,6 @@ public interface OptionContants {
     public static final String[] EXPERIENCE_OPTIONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"};
     public static final String[] HEIGHT_OPTIONS = {
             "4'8\"",
-            "4'8\"",
             "4'9\"",
             "4'10\"",
             "4'11\"",
