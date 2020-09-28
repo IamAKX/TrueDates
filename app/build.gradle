@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
     implementation group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
     implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.3'
+    implementation "com.github.skydoves:powermenu:2.1.5"
 }
 repositories {
     mavenCentral()

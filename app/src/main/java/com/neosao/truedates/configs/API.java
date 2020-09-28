@@ -19,4 +19,6 @@ public interface API {
     String UPDATE_SHOW_ME = BASE_URL + "updateShowMe";
     String UPDATE_INSTAGRAM = BASE_URL + "updateInstagramSettings";
 
+    String SET_DEFAULT_PHOTO = BASE_URL + "updateDefaultPhoto";
+    String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
 }

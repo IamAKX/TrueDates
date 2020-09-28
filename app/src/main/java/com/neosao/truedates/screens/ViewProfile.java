@@ -69,6 +69,7 @@ public class ViewProfile extends AppCompatActivity implements StoriesProgressVie
 
         resources = new String[userModel.getMemberPhotos().length];
         for (int i = 0; i < userModel.getMemberPhotos().length; i++) {
+            if(null != userModel.getMemberPhotos()[i] && null != userModel.getMemberPhotos()[i].getMemberPhoto())
             resources[i] = (userModel.getMemberPhotos()[i].getMemberPhoto());
         }
         counter = resources.length;

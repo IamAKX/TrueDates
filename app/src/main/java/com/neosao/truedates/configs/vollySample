@@ -1,4 +1,3 @@
-
             StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_USER_PROFILE,
                     new Response.Listener<String>() {
                         @Override

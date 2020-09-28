@@ -162,10 +162,11 @@ public class MyAccount extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-            Glide.with(getContext())
-                    .load(user.getDefaultPhoto())
-                    .placeholder(R.drawable.in_love)
-                    .into(profile_image);
+        user = localPref.getUser();
+        Glide.with(getContext())
+                .load(user.getDefaultPhoto())
+                .placeholder(R.drawable.in_love)
+                .into(profile_image);
         name.setText(user.getName() + ", " + user.getAge());
         workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
         university.setText(user.getMemberWork().get(0).getUniversityName());

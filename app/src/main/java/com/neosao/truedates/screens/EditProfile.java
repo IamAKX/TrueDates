@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +32,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -56,6 +60,10 @@ import com.neosao.truedates.model.UserModel;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.skydoves.powermenu.MenuAnimation;
+import com.skydoves.powermenu.OnMenuItemClickListener;
+import com.skydoves.powermenu.PowerMenu;
+import com.skydoves.powermenu.PowerMenuItem;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -178,6 +186,63 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         bodyType.setOnClickListener(this);
         for (ImageView iv : profileImageArray)
             iv.setOnClickListener(this);
+        for (final ImageView iv : profileImageArray) {
+            final PowerMenu powerMenu = new PowerMenu.Builder(EditProfile.this)
+                    .addItem(new PowerMenuItem("Make default image", false)) // add an item.
+                    .addItem(new PowerMenuItem("Delete", true)) // aad an item list.
+                    .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
+                    .setMenuRadius(10f) // sets the corner radius.
+                    .setMenuShadow(10f) // sets the shadow.
+                    .setTextColor(ContextCompat.getColor(getBaseContext(), R.color.colorAccent))
+                    .setTextGravity(Gravity.CENTER)
+                    .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
+                    .setSelectedTextColor(Color.WHITE)
+                    .setMenuColor(ContextCompat.getColor(getBaseContext(), R.color.white))
+                    .setSelectedMenuColor(ContextCompat.getColor(getBaseContext(), R.color.red))
+                    .setOnMenuItemClickListener(new OnMenuItemClickListener<PowerMenuItem>() {
+                        @Override
+                        public void onItemClick(int position, PowerMenuItem item) {
+                            int index = getIndexOfImageView(iv);
+                            MemberPhotos defImage = user.getMemberPhotos()[index];
+                            switch (position) {
+                                case 0:
+
+                                    if (null != defImage && null != defImage.getMemberPhoto()) {
+
+                                        defImage.setIsDefault("1");
+                                        for (int i = 0; i < 9; i++) {
+
+                                            if (null != user.getMemberPhotos()[i]) {
+                                                // set default=1 in local user
+                                                user.getMemberPhotos()[i].setIsDefault("0");
+                                                // change default imageview backgroud
+                                                profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
+                                            }
+                                        }
+                                        user.getMemberPhotos()[index].setIsDefault("1");
+                                        iv.setBackgroundColor(getResources().getColor(R.color.themePink));
+
+                                        localPref.saveUser(user);
+                                        new SaveDefaulImage(user.getMemberPhotos()[index].getPhotoCode()).execute();
+                                    }
+                                    break;
+                                case 1:
+                                    if(null != defImage && null!=defImage.getPhotoCode())
+                                    new DeleteImage(defImage.getPhotoCode(), iv, index).execute();
+                                    break;
+                            }
+                        }
+                    })
+                    .build();
+
+            iv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    powerMenu.showAsDropDown(view);
+                    return true;
+                }
+            });
+        }
 
 
         findViewById(R.id.saveBtn).setOnClickListener(this);
@@ -387,8 +452,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         .load(images.get(0).getPath())
                         .into(tappedImageView);
             }
-            if(null != images.get(0))
-            {
+            if (null != images.get(0)) {
                 new UploadImageTask(images.get(0)).execute();
             }
         }
@@ -462,11 +526,17 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());
         bodyType.setText(user.getBodyType());
-        for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i<9; i++) {
-            if(null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto())
-            Glide.with(getBaseContext())
-                    .load(user.getMemberPhotos()[i].getMemberPhoto())
-                    .into(profileImageArray[i]);
+        for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i < 9; i++) {
+            if (null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto()) {
+                Glide.with(getBaseContext())
+                        .load(user.getMemberPhotos()[i].getMemberPhoto())
+                        .into(profileImageArray[i]);
+                if (user.getMemberPhotos()[i].getIsDefault().equals("0"))
+                    profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
+                else
+                    profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.themePink));
+            }
+
         }
 
     }
@@ -608,10 +678,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private class UploadImageTask extends AsyncTask<Void,Void,String>{
+    private class UploadImageTask extends AsyncTask<Void, Void, String> {
 
         Image imageToBeUploaded;
         SweetAlertDialog dialog;
+
         public UploadImageTask(Image imageToBeUploaded) {
             this.imageToBeUploaded = imageToBeUploaded;
         }
@@ -671,12 +742,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 responseString = e.toString();
             } catch (IOException e) {
                 responseString = e.toString();
-            }
-            finally {
+            } finally {
                 dialog.dismissWithAnimation();
 
             }
-            Log.e("check","upload response : "+ responseString);
+            Log.e("check", "upload response : " + responseString);
 
             return responseString;
         }
@@ -686,24 +756,18 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             super.onPostExecute(responseString);
             try {
                 JSONObject obj = new JSONObject(responseString);
-                if(null != obj && obj.has("message"))
-                    Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
+                if (null != obj && obj.has("message"))
+                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
 
-                if(null != obj && obj.has("status") && obj.getString("status").equals("200"))
-                {
+                if (null != obj && obj.has("status") && obj.getString("status").equals("200")) {
 
-                    if(null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
-                    {
+                    if (null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto")) {
                         MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
-                        if(null == user.getMemberPhotos() || user.getMemberPhotos().length < 9)
-                            user.setMemberPhotos( new MemberPhotos[9]);
 
                         user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
 
                         localPref.saveUser(user);
-                    }
-                    else
-                    {
+                    } else {
                         Glide.with(getBaseContext())
                                 .load(R.drawable.dashed_border)
                                 .into(tappedImageView);
@@ -715,4 +779,136 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    private class SaveDefaulImage extends AsyncTask<Void,Void,Void>{
+        String photoCode;
+
+        public SaveDefaulImage(String photoCode) {
+            this.photoCode = photoCode;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.SET_DEFAULT_PHOTO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("message") && null != object.getString("message"))
+                                    Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("userId",user.getUserId());
+                    params.put("photoCode",photoCode);
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    private class DeleteImage extends AsyncTask<Void,Void,Void>{
+        String photoCode;
+        ImageView imageView;
+        int index;
+
+        public DeleteImage(String photoCode, ImageView imageView, int index) {
+            this.photoCode = photoCode;
+            this.imageView = imageView;
+            this.index = index;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.DELETE_PHOTO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("message") && null != object.getString("message"))
+                                    Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                imageView.setBackgroundColor(getResources().getColor(R.color.white));
+                                Glide.with(getBaseContext())
+                                        .load(R.drawable.dashed_border)
+                                        .into(imageView);
+                                user.getMemberPhotos()[index] = null;
+                                localPref.saveUser(user);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("userId",user.getUserId());
+                    params.put("photoCode",photoCode);
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
 }
