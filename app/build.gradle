@@ -23,6 +23,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -62,6 +66,7 @@ dependencies {
     implementation group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
     implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.3'
     implementation "com.github.skydoves:powermenu:2.1.5"
+    implementation 'com.github.yalantis:ucrop:2.2.6'
 }
 repositories {
     mavenCentral()

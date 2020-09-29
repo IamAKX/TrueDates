@@ -2,6 +2,7 @@ package com.neosao.truedates.screens;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
@@ -28,6 +30,8 @@ import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -55,7 +59,6 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     UserModel user;
     LocalPref localPref;
     ArrayList<Image> images = new ArrayList<>();
-    Image[] selectedImages = new Image[6];
     ImageView tappedImageView;
     Button continueBtn;
 
@@ -84,14 +87,21 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(View view) {
                 UserModel newUser = localPref.getUser();
-                 if(null != newUser && null != newUser.getMemberPhotos() && Utils.getPhotoCount(newUser.getMemberPhotos()) < 4)
-                 {
-                     Toast.makeText(getBaseContext(),"Select at least 4 images", Toast.LENGTH_LONG).show();
-                     return;
-                 }
+                if (null != newUser && null != newUser.getMemberPhotos() && Utils.getPhotoCount(newUser.getMemberPhotos()) < 4) {
+                    Toast.makeText(getBaseContext(), "Select at least 4 images", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }
         });
+
+        if (null != user && null != user.getMemberPhotos())
+            for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i < 6; i++) {
+                if (null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto())
+                    Glide.with(getBaseContext())
+                            .load(user.getMemberPhotos()[i].getMemberPhoto())
+                            .into(imageViews[i]);
+            }
     }
 
 
@@ -138,41 +148,56 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (ImagePicker.shouldHandleResult(requestCode, resultCode, data, 100)) {
             images = ImagePicker.getImages(data);
-            selectedImages[getIndexOfImageView(tappedImageView)] = images.get(0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Glide.with(getBaseContext())
-                        .load(images.get(0).getUri())
-                        .into(tappedImageView);
-            } else {
-                Glide.with(getBaseContext())
-                        .load(images.get(0).getPath())
-                        .into(tappedImageView);
-            }
-            if(null != images.get(0))
+            UCrop.of(images.get(0).getUri(), Uri.fromFile(new File(getCacheDir(), String.valueOf("TrueDates_edited_" + System.currentTimeMillis() + ".png"))))
+                    .withOptions(getCropOption())
+                    .start(UploadProfileImage.this);
+
+        }
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            Log.e("check", resultUri.getPath());
+            Glide.with(getBaseContext())
+                    .load(resultUri.getPath())
+                    .into(tappedImageView);
+
+            if(null != resultUri)
             {
-                new UploadImageTask(images.get(0)).execute();
+                File imageToBeUploaded = new File(resultUri.getPath());
+                if(null != imageToBeUploaded)
+                    new UploadImageTask(imageToBeUploaded).execute();
             }
+
+
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+            Log.e("check", cropError.getLocalizedMessage());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private UCrop.Options getCropOption() {
+        UCrop.Options options = new UCrop.Options();
+        options.setHideBottomControls(false);
+        options.setFreeStyleCropEnabled(true);
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        for (int i = 0; i < Utils.getPhotoCount(user.getMemberPhotos()) && i<6; i++) {
-            if(null != user.getMemberPhotos()[i] && null != user.getMemberPhotos()[i].getMemberPhoto())
-                Glide.with(getBaseContext())
-                        .load(user.getMemberPhotos()[i].getMemberPhoto())
-                        .into(imageViews[i]);
-        }
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.white));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.grey));
+        options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.themePink));
+        options.setRootViewBackgroundColor(ContextCompat.getColor(this, R.color.white));
+        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.themePink));
+        return options;
     }
 
-    private class UploadImageTask extends AsyncTask<Void,Void,String>{
 
-        Image imageToBeUploaded;
+
+
+    private class UploadImageTask extends AsyncTask<Void, Void, String> {
+
+        File imageToBeUploaded;
         SweetAlertDialog dialog;
-        public UploadImageTask(Image imageToBeUploaded) {
+
+        public UploadImageTask(File imageToBeUploaded) {
             this.imageToBeUploaded = imageToBeUploaded;
         }
 
@@ -201,10 +226,9 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                         });
 
 
-                File sourceFile = new File(imageToBeUploaded.getPath());
 
                 // Adding file data to http body
-                entity.addPart("file", new FileBody(sourceFile));
+                entity.addPart("file", new FileBody(imageToBeUploaded));
 
                 // Extra parameters if you want to pass to server
                 entity.addPart("userId",
@@ -215,7 +239,7 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                 httppost.setEntity(entity);
 
 
-                Log.e("check","User id : "+ user.getUserId());
+                Log.e("check", "User id : " + user.getUserId());
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity r_entity = response.getEntity();
@@ -233,13 +257,12 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
                 responseString = e.toString();
             } catch (IOException e) {
                 responseString = e.toString();
-            }
-            finally {
+            } finally {
 
                 dialog.dismissWithAnimation();
 
             }
-            Log.e("check","upload response : "+ responseString);
+            Log.e("check", "upload response : " + responseString);
 
             return responseString;
         }
@@ -247,40 +270,34 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         @Override
         protected void onPostExecute(String responseString) {
             super.onPostExecute(responseString);
-            Log.e("check","1 : "+responseString);
+            Log.e("check", "1 : " + responseString);
             try {
                 JSONObject obj = new JSONObject(responseString);
-                if(null != obj && obj.has("message"))
-                    Toast.makeText(getBaseContext(),obj.getString("message"),Toast.LENGTH_LONG).show();
+                if (null != obj && obj.has("message"))
+                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
 
-                if(null != obj && obj.has("status") && obj.getString("status").equals("200"))
-                {
-                    selectedImages[getIndexOfImageView(tappedImageView)] = null;
-                    Log.e("check","status");
-                    if(obj.has("result") && obj.getJSONObject("result").has("memberPhoto"))
-                    {
+                if (null != obj && obj.has("status") && obj.getString("status").equals("200")) {
+                    Log.e("check", "status");
+                    if (obj.has("result") && obj.getJSONObject("result").has("memberPhoto")) {
                         MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
-                        if(null == user.getMemberPhotos() || user.getMemberPhotos().length < 9)
-                            user.setMemberPhotos( new MemberPhotos[9]);
+                        if (null == user.getMemberPhotos() || user.getMemberPhotos().length < 9)
+                            user.setMemberPhotos(new MemberPhotos[9]);
 
-                        Log.e("check","photo : "+photos.toString());
+                        Log.e("check", "photo : " + photos.toString());
 
                         user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
-                        Log.e("check","photo arr length "+Utils.getPhotoCount(user.getMemberPhotos()));
+                        Log.e("check", "photo arr length " + Utils.getPhotoCount(user.getMemberPhotos()));
 
                         localPref.saveUser(user);
                     }
-                }
-                else
-                {
-                    selectedImages[getIndexOfImageView(tappedImageView)] = null;
+                } else {
                     Glide.with(getBaseContext())
                             .load(R.drawable.dashed_border)
                             .into(tappedImageView);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e("check","err: "+e.getLocalizedMessage());
+                Log.e("check", "err: " + e.getLocalizedMessage());
             }
         }
     }

@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,8 @@ import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -443,22 +446,46 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (ImagePicker.shouldHandleResult(requestCode, resultCode, data, 100)) {
             images = ImagePicker.getImages(data);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Glide.with(getBaseContext())
-                        .load(images.get(0).getUri())
-                        .into(tappedImageView);
-            } else {
-                Glide.with(getBaseContext())
-                        .load(images.get(0).getPath())
-                        .into(tappedImageView);
+            UCrop.of(images.get(0).getUri(), Uri.fromFile(new File(getCacheDir(), String.valueOf("TrueDates_edited_" + System.currentTimeMillis() + ".png"))))
+                    .withOptions(getCropOption())
+                    .start(EditProfile.this);
+        }
+
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            Log.e("check", resultUri.getPath());
+            Glide.with(getBaseContext())
+                    .load(resultUri.getPath())
+                    .into(tappedImageView);
+
+            if(null != resultUri)
+            {
+                File imageToBeUploaded = new File(resultUri.getPath());
+                if(null != imageToBeUploaded)
+                    new UploadImageTask(imageToBeUploaded).execute();
             }
-            if (null != images.get(0)) {
-                new UploadImageTask(images.get(0)).execute();
-            }
+
+
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+            Log.e("check", cropError.getLocalizedMessage());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private UCrop.Options getCropOption() {
+        UCrop.Options options = new UCrop.Options();
+        options.setHideBottomControls(false);
+        options.setFreeStyleCropEnabled(true);
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
+
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.white));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.grey));
+        options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.themePink));
+        options.setRootViewBackgroundColor(ContextCompat.getColor(this, R.color.white));
+        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.themePink));
+        return options;
+    }
 
     private void getAddress() {
         new Permissive.Request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -680,10 +707,10 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
     private class UploadImageTask extends AsyncTask<Void, Void, String> {
 
-        Image imageToBeUploaded;
+        File imageToBeUploaded;
         SweetAlertDialog dialog;
 
-        public UploadImageTask(Image imageToBeUploaded) {
+        public UploadImageTask(File imageToBeUploaded) {
             this.imageToBeUploaded = imageToBeUploaded;
         }
 
@@ -712,10 +739,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         });
 
 
-                File sourceFile = new File(imageToBeUploaded.getPath());
 
                 // Adding file data to http body
-                entity.addPart("file", new FileBody(sourceFile));
+                entity.addPart("file", new FileBody(imageToBeUploaded));
 
                 // Extra parameters if you want to pass to server
                 entity.addPart("userId",
