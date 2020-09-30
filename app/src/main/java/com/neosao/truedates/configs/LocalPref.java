@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.neosao.truedates.model.FirebaseUserModel;
 import com.neosao.truedates.model.UserModel;
@@ -17,6 +18,14 @@ public class LocalPref {
     public LocalPref(Context context) {
         this.context = context;
         preferences = context.getSharedPreferences("Local_Preference", Activity.MODE_PRIVATE);
+    }
+
+
+    public boolean logOutUser()
+    {
+        FirebaseAuth.getInstance().signOut();
+        editor.clear();
+        return editor.commit();
     }
 
     public boolean saveFirebaseUser(FirebaseUserModel user)

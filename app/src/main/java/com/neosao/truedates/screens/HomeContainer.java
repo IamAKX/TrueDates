@@ -39,6 +39,7 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
 
     private Context mContext;
     private ViewPager viewPager;
+    public static ViewPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
         fragList.add(new MyAccount());
         fragList.add(new DateBrowser());
         fragList.add(new Messaging());
-        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(fragList, getSupportFragmentManager());
+        pagerAdapter = new ViewPagerAdapter(fragList, getSupportFragmentManager());
         viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(3);
@@ -62,6 +63,8 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
         bnv.setSelectedItemId(R.id.fire);
         new LoadDynamicOptionLists().doInBackground();
     }
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -121,4 +124,6 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
             return null;
         }
     }
+
+
 }

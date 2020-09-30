@@ -14,12 +14,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -56,8 +60,10 @@ import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.MemberInterests;
 import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
+import com.neosao.truedates.model.options.Interest;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -84,6 +90,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -205,7 +212,13 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     .setOnMenuItemClickListener(new OnMenuItemClickListener<PowerMenuItem>() {
                         @Override
                         public void onItemClick(int position, PowerMenuItem item) {
+
                             int index = getIndexOfImageView(iv);
+                            if(index > Utils.getPhotoCount(user.getMemberPhotos()))
+                            {
+                                Toast.makeText(getBaseContext(),"Image not available", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             MemberPhotos defImage = user.getMemberPhotos()[index];
                             switch (position) {
                                 case 0:
@@ -213,7 +226,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                     if (null != defImage && null != defImage.getMemberPhoto()) {
 
                                         defImage.setIsDefault("1");
-                                        for (int i = 0; i < 9; i++) {
+                                        for (int i = 0; i < 9 && i < Utils.getPhotoCount(user.getMemberPhotos()); i++) {
 
                                             if (null != user.getMemberPhotos()[i]) {
                                                 // set default=1 in local user
@@ -227,6 +240,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                                         localPref.saveUser(user);
                                         new SaveDefaulImage(user.getMemberPhotos()[index].getPhotoCode()).execute();
+
                                     }
                                     break;
                                 case 1:
@@ -249,6 +263,27 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
 
         findViewById(R.id.saveBtn).setOnClickListener(this);
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
     @Override
@@ -321,7 +356,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 showOptionPopup("Pets", (EditText) view, OptionContants.PET_OPTIONS);
                 break;
             case R.id.interests:
-                showOptionPopup("Interests", (EditText) view, DynamicOptionConstants.INTEREST_OPTION);
+                showInterestOptionPopup("Interests", (EditText) view, DynamicOptionConstants.INTEREST_OPTION);
                 break;
             case R.id.haveKids:
                 showOptionPopup("Have Kids", (EditText) view, OptionContants.HAVE_KIDS_OPTIONS);
@@ -395,8 +430,36 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         ImageButton clear_text = titleView.findViewById(R.id.clear_text);
         View dialogView = inflater.inflate(R.layout.listview_option, null);
         ListView listView = dialogView.findViewById(R.id.select_dialog_listview);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, options);
+
+        BaseAdapter adapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return options.length;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return options[i];
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
+                TextView textView = row.findViewById( android.R.id.text1);
+                textView.setText(String.valueOf(getItem(i)));
+                if(!editText.getText().toString().isEmpty() && editText.getText().toString().equals(getItem(i)))
+                {
+                    textView.setTextColor(getBaseContext().getResources().getColor(R.color.themePink));
+                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
+                }
+                return row;
+            }
+        };
         listView.setAdapter(adapter);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(EditProfile.this);
@@ -415,7 +478,91 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                editText.setText(adapter.getItem(i));
+                editText.setText(String.valueOf(adapter.getItem(i)));
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
+
+
+    private void showInterestOptionPopup(String title, final EditText editText, String[] options) {
+        LayoutInflater inflater = getLayoutInflater();
+
+        View titleView =  inflater.inflate(R.layout.alertdialogbox_title, null);
+        TextView titleTextView = titleView.findViewById(R.id.title);
+        titleTextView.setText(title);
+        ImageButton clear_text = titleView.findViewById(R.id.clear_text);
+        View dialogView = inflater.inflate(R.layout.listview_option, null);
+        ListView listView = dialogView.findViewById(R.id.select_dialog_listview);
+        BaseAdapter adapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return options.length;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return options[i];
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
+                TextView textView = row.findViewById( android.R.id.text1);
+                textView.setText(String.valueOf(getItem(i)));
+
+                ArrayList<String> interestArrayList;
+                if(editText.getText().toString().isEmpty())
+                    interestArrayList = new ArrayList<>();
+                else
+                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
+
+
+                if(interestArrayList.contains(getItem(i)))
+                {
+                    textView.setTextColor(getBaseContext().getResources().getColor(R.color.themePink));
+                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
+                }
+                return row;
+            }
+        };
+        listView.setAdapter(adapter);
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(EditProfile.this);
+        dialogBuilder.setCustomTitle(titleView);
+        dialogBuilder.setView(dialogView);
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setCancelable(false);
+
+        clear_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editText.setText("");
+                alertDialog.dismiss();
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ArrayList<String> interestArrayList;
+                if(editText.getText().toString().isEmpty())
+                    interestArrayList = new ArrayList<>();
+                else
+                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
+
+                if(interestArrayList.contains(String.valueOf(adapter.getItem(i))))
+                    interestArrayList.remove(String.valueOf(adapter.getItem(i)));
+                else
+                    interestArrayList.add(String.valueOf(adapter.getItem(i)));
+
+                editText.setText(TextUtils.join(",",interestArrayList));
                 alertDialog.dismiss();
             }
         });
@@ -440,6 +587,12 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             dob.setText(format.format(personBirthDate.getTime()));
             user.setAge(String.valueOf(diff));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        HomeContainer.pagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -605,8 +758,32 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
             user.getMemberWork().get(0).setFieldStudyCode(new Utils().getFieldStudyCode(user.getMemberWork().get(0).getFieldName()).getCode());
             user.getMemberWork().get(0).setIndustryCode(new Utils().getWorkIndustryCode(user.getMemberWork().get(0).getIndustryName()).getCode());
-            user.getMemberInterests().get(0).setInterestName(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getCode());
-            user.getMemberInterests().get(0).setMemberInterestValue(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getInterestValue());
+
+            ArrayList<String> interestArrayList;
+            if(interests.getText().toString().isEmpty())
+                interestArrayList = new ArrayList<>();
+            else
+                interestArrayList = new ArrayList<>(Arrays.asList(interests.getText().toString().split(",")));
+
+            user.setMemberInterests(new ArrayList<MemberInterests>());
+            for(String item : interestArrayList)
+            {
+                Interest interest = new Utils().getInterestCode(item);
+                if(null != interest)
+                {
+                    MemberInterests memberInterests = new MemberInterests();
+                    memberInterests.setInterestCode(interest.getCode());
+                    memberInterests.setInterestName(interest.getInterestName());
+
+                    memberInterests.setMemberInterestValue(interest.getInterestValue());
+
+                    user.getMemberInterests().add(memberInterests);
+
+                }
+            }
+
+//            user.getMemberInterests().get(0).setInterestName(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getCode());
+//            user.getMemberInterests().get(0).setMemberInterestValue(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getInterestValue());
 
             dialog = Utils.getProgress(EditProfile.this, "Updating, please wait ...");
             dialog.show();
@@ -654,7 +831,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("firebaseId", user.getFirebaseId());
                     params.put("name", user.getName());
                     params.put("zodiacSign", user.getZodiacSign());
-                    params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());
                     params.put("gender", user.getGender());
                     params.put("birthDate", user.getBirthDate());
                     params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
@@ -681,7 +857,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
-                    params.put("interestCode", user.getMemberInterests().get(0).getInterestName());
+                    params.put("interestCode", Utils.getInterestCodeList(user));
                     params.put("haveKids", user.getHaveKids());
                     params.put("wantKids", user.getWantKids());
 

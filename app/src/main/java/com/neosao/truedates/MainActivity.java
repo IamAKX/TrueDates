@@ -21,6 +21,7 @@ import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.HomeContainer;
 import com.neosao.truedates.screens.Login;
 import com.neosao.truedates.screens.OnboardingData;
+import com.neosao.truedates.screens.Otp;
 import com.neosao.truedates.screens.Settings;
 import com.neosao.truedates.screens.UploadProfileImage;
 
@@ -40,34 +41,33 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Utils.setStatusBarGradiant(this);
-        startActivity(new Intent(getBaseContext(), UploadProfileImage.class));
 ////        printHashKey(getBaseContext());
-//        final LocalPref localPref = new LocalPref(getBaseContext());
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                SystemClock.sleep(1500);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(localPref.getLoginStatus())
-//                        {
-//                            UserModel user = localPref.getUser();
-//                            if(null == user)
-//                                startActivity(new Intent(getBaseContext(), Login.class));
-//                            else
-//                                if (null==user.getMemberPhotos() || Utils.getPhotoCount(user.getMemberPhotos()) <4)
-//                                    startActivity(new Intent(getBaseContext(), UploadProfileImage.class));
-//                                else
-//                                    startActivity(new Intent(getBaseContext(), HomeContainer.class));
-//                        }
-//                        else
-//                            startActivity(new Intent(getBaseContext(), Login.class));
-//                        finish();
-//                    }
-//                });
-//            }
-//        }).start();
+        final LocalPref localPref = new LocalPref(getBaseContext());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(1500);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(localPref.getLoginStatus())
+                        {
+                            UserModel user = localPref.getUser();
+                            if(null == user)
+                                startActivity(new Intent(getBaseContext(), Login.class));
+                            else
+                                if (null==user.getMemberPhotos() || Utils.getPhotoCount(user.getMemberPhotos()) <4)
+                                    startActivity(new Intent(getBaseContext(), UploadProfileImage.class));
+                                else
+                                    startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                        }
+                        else
+                            startActivity(new Intent(getBaseContext(), Login.class));
+                        finish();
+                    }
+                });
+            }
+        }).start();
 
     }
 

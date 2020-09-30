@@ -163,6 +163,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="20dp"
                 android:elevation="4dp"
+                android:visibility="gone"
                 app:shape_roundRect_bottomLeftRadius="10dp"
                 app:shape_roundRect_bottomRightRadius="10dp"
                 app:shape_roundRect_topLeftRadius="10dp"
@@ -184,6 +185,7 @@
 <!--            Basic info-->
 
             <TextView
+                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Full Name"

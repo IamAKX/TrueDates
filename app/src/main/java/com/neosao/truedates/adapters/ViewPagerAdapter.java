@@ -1,5 +1,6 @@
 package com.neosao.truedates.adapters;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -27,6 +28,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         }
 
         return new Fragment();
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
     }
 
     @Override

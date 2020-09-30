@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -119,7 +120,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         locationCard.setOnClickListener(this);
         showMeCard.setOnClickListener(this);
-        
+        findViewById(R.id.logoutBtn).setOnClickListener(this);
         
         findViewById(R.id.card1).setOnClickListener(this);
         findViewById(R.id.card2).setOnClickListener(this);
@@ -192,6 +193,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.showMeCard:
                 showOptionPopup("Show me", OptionContants.SHOW_ME_OPTIONS);
+                break;
+            case R.id.logoutBtn:
+                localPref.logOutUser();
+                Toast.makeText(getBaseContext(), "You have been logged out", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 break;
             case R.id.card1:
             case R.id.card2:

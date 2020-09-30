@@ -79,7 +79,7 @@ public class OnboardingData extends AppCompatActivity {
         user.setMembersettings(new ArrayList<Membersettings>());
         user.setMemberWork(new ArrayList<MemberWork>());
 
-        user.getMemberInterests().add(new MemberInterests());
+//        user.getMemberInterests().add(new MemberInterests());
 //        user.getMemberPhotos().add(new MemberPhotos());
         user.getMembersettings().add(new Membersettings());
         user.getMemberWork().add(new MemberWork());
@@ -222,6 +222,12 @@ public class OnboardingData extends AppCompatActivity {
             Personal.height.setError("Enter height");
             return false;
         }
+        if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
+            viewpager.setCurrentItem(2);
+            Personal.relationshipStatus.setError("Enter marital status");
+            return false;
+        }
+
         if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
             viewpager.setCurrentItem(2);
             Personal.relationshipStatus.setError("Enter relationship status");
@@ -268,7 +274,7 @@ public class OnboardingData extends AppCompatActivity {
             return false;
         }
 
-        if (null == user.getMemberInterests().get(0).getInterestName() || user.getMemberInterests().get(0).getInterestName().isEmpty()) {
+        if (null == user.getMemberInterests() || user.getMemberInterests().isEmpty()) {
             viewpager.setCurrentItem(3);
             Habits.interests.setError("Enter interests");
             return false;
@@ -454,7 +460,7 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
-                    params.put("interestCode", user.getMemberInterests().get(0).getInterestName());
+                    params.put("interestCode", Utils.getInterestCodeList(user));
                     params.put("haveKids", user.getHaveKids());
                     params.put("wantKids", user.getWantKids());
 

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -13,7 +14,9 @@ import android.widget.ImageView;
 import androidx.annotation.RequiresApi;
 
 import com.neosao.truedates.R;
+import com.neosao.truedates.model.MemberInterests;
 import com.neosao.truedates.model.MemberPhotos;
+import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.FieldOfStudy;
 import com.neosao.truedates.model.options.Interest;
 import com.neosao.truedates.model.options.WorkIndustry;
@@ -21,6 +24,7 @@ import com.neosao.truedates.model.options.WorkIndustry;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -102,7 +106,7 @@ public class Utils {
 
     public static int getPhotoCount(MemberPhotos[] arr) {
         int counter = 0;
-        if(null == arr)
+        if (null == arr)
             return counter;
         for (int i = 0; i < arr.length; i++)
             if (arr[i] != null)
@@ -132,6 +136,17 @@ public class Utils {
                 return 8;
         }
         return 0;
+    }
+
+    public static String getInterestCodeList(UserModel userModel) {
+        String id = "";
+        ArrayList<String> idList = new ArrayList<>();
+        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+            return id;
+        for(MemberInterests interest : userModel.getMemberInterests())
+            idList.add(interest.getInterestCode());
+        id = TextUtils.join(",",idList);
+        return id;
     }
 
 }

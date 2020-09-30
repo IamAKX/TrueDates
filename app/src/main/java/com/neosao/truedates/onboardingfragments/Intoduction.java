@@ -3,6 +3,7 @@ package com.neosao.truedates.onboardingfragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -247,8 +249,36 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         ImageButton clear_text = titleView.findViewById(R.id.clear_text);
         View dialogView = inflater.inflate(R.layout.listview_option, null);
         ListView listView = dialogView.findViewById(R.id.select_dialog_listview);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, options);
+
+        BaseAdapter adapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return options.length;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return options[i];
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
+                TextView textView = row.findViewById( android.R.id.text1);
+                textView.setText(String.valueOf(getItem(i)));
+                if(!editText.getText().toString().isEmpty() && editText.getText().toString().equals(getItem(i)))
+                {
+                    textView.setTextColor(getContext().getResources().getColor(R.color.themePink));
+                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
+                }
+                return row;
+            }
+        };
         listView.setAdapter(adapter);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
@@ -267,7 +297,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                editText.setText(adapter.getItem(i));
+                editText.setText(String.valueOf(adapter.getItem(i)));
                 alertDialog.dismiss();
             }
         });
