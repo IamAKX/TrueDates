@@ -36,6 +36,8 @@ import static java.util.Calendar.YEAR;
 
 public class Utils {
 
+    public static String CURRENCY_SYMBOL = "\u20B9 ";
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void setStatusBarGradiant(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -80,6 +82,7 @@ public class Utils {
             return false;
         return pat.matcher(email).matches();
     }
+
 
     public Interest getInterestCode(String intrests) {
         for (Interest i : DynamicOptionConstants.INTEREST_ARRAY_LIST)
@@ -145,6 +148,17 @@ public class Utils {
             return id;
         for(MemberInterests interest : userModel.getMemberInterests())
             idList.add(interest.getInterestCode());
+        id = TextUtils.join(",",idList);
+        return id;
+    }
+
+    public static String getInterestName(UserModel userModel) {
+        String id = "";
+        ArrayList<String> idList = new ArrayList<>();
+        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+            return id;
+        for(MemberInterests interest : userModel.getMemberInterests())
+            idList.add(interest.getInterestName());
         id = TextUtils.join(",",idList);
         return id;
     }

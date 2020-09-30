@@ -701,7 +701,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         smoke.setText(user.getSmoke());
         diet.setText(user.getDiet());
         pets.setText(user.getPets());
-        interests.setText(user.getMemberInterests().get(0).getInterestName());
+        interests.setText(Utils.getInterestName(user));
         haveKids.setText(user.getHaveKids());
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());

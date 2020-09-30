@@ -7,8 +7,9 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="300dp">
 
         <TextView
             android:id="@+id/title"
@@ -22,6 +23,7 @@
             android:textStyle="bold"/>
 
         <com.smarteist.autoimageslider.SliderView
+            android:layout_below="@+id/title"
             android:id="@+id/slider_view"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
@@ -51,20 +53,17 @@
         android:layout_height="200dp">
 
         <LinearLayout
+            android:id="@+id/priceDataLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="3"
             android:orientation="horizontal">
-
-            <include layout="@layout/subs_package_item"/>
-            <include layout="@layout/subs_package_item"/>
-            <include layout="@layout/subs_package_item"/>
         </LinearLayout>
 
     </RelativeLayout>
 
     <com.github.florent37.shapeofview.shapes.RoundRectView
-
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"

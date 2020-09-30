@@ -18,6 +18,9 @@ public interface API {
     String UPDATE_MAX_DISTANCE = BASE_URL + "updateMaxDistance";
     String UPDATE_SHOW_ME = BASE_URL + "updateShowMe";
     String UPDATE_INSTAGRAM = BASE_URL + "updateInstagramSettings";
+    String UPDATE_PHONE_NUMBER = BASE_URL + "updateMyContactNumber";
+    String GET_SUBSCRIBTION_PACKAGES = BASE_URL + "getSubscriptionPackages";
+
 
     String SET_DEFAULT_PHOTO = BASE_URL + "updateDefaultPhoto";
     String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
