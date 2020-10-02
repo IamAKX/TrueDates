@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/fire"
-        android:icon="@drawable/fire"
+        android:icon="@drawable/small"
         android:title="Matches" />
 
     <item

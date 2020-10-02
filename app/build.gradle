@@ -67,6 +67,7 @@ dependencies {
     implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.3'
     implementation "com.github.skydoves:powermenu:2.1.5"
     implementation 'com.github.yalantis:ucrop:2.2.6'
+    implementation 'com.github.mabbas007:TagsEditText:1.0.5'
 }
 repositories {
     mavenCentral()

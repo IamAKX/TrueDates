@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:TagsEditText="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingTop="30dp"
     android:paddingLeft="20dp"
@@ -92,18 +93,22 @@
                 app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <mabbas007.tagsedittext.TagsEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Interests"
                 android:focusable="false"
                 android:id="@+id/interests"
+
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                app:met_baseColor="@color/colorAccent"
-                app:met_underlineColor="@color/hintColor"
-                app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="@color/gradientEnd"
-                app:met_floatingLabel="highlight" />
+                TagsEditText:allowSpaceInTag="true"
+                TagsEditText:tagsCloseImageRight="@drawable/tag_close"
+                TagsEditText:tagsBackground="@drawable/interest_chip_background"
+                TagsEditText:tagsTextColor="@color/white"
+                TagsEditText:tagsTextSize="@dimen/defaultTagsTextSize"
+                TagsEditText:tagsCloseImagePadding="@dimen/defaultTagsCloseImagePadding"
+               />
 
         </LinearLayout>
 

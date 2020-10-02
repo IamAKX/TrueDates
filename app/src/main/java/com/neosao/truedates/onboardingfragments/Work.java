@@ -237,7 +237,6 @@ public class Work extends Fragment implements View.OnClickListener {
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText.setText("");
                 alertDialog.dismiss();
             }
         });

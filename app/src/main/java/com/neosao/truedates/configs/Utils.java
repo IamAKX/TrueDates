@@ -163,4 +163,14 @@ public class Utils {
         return id;
     }
 
+    public static String[] getInterestNameArray(UserModel userModel) {
+        ArrayList<String> idList = new ArrayList<>();
+        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+            return new String[0];
+        for(MemberInterests interest : userModel.getMemberInterests())
+            idList.add(interest.getInterestName());
+
+        return idList.toArray(new String[0]);
+    }
+
 }

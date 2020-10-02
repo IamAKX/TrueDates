@@ -224,7 +224,7 @@ public class OnboardingData extends AppCompatActivity {
         }
         if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
             viewpager.setCurrentItem(2);
-            Personal.relationshipStatus.setError("Enter marital status");
+            Personal.maritalStatus.setError("Enter marital status");
             return false;
         }
 

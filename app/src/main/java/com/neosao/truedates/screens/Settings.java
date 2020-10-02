@@ -306,7 +306,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showMe.setText("");
                 alertDialog.dismiss();
             }
         });
@@ -359,7 +358,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showMe.setText("");
                 instaSwitch.setChecked(false);
                 alertDialog.dismiss();
             }

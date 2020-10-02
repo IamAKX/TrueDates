@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:TagsEditText="http://schemas.android.com/apk/res-auto"
     android:background="@color/defaultBackgroundColor"
     android:fitsSystemWindows="true"
     tools:context=".screens.EditProfile">
@@ -47,7 +48,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -58,7 +59,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -68,7 +69,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -88,7 +89,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -99,7 +100,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -109,7 +110,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -131,7 +132,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -142,7 +143,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:padding="2dp"
@@ -152,7 +153,7 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -635,17 +636,26 @@
                 android:textSize="16sp"
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
-            <EditText
-                android:id="@+id/interests"
-                android:layout_marginBottom="15dp"
+
+            <mabbas007.tagsedittext.TagsEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:hint="Interests"
                 android:focusable="false"
-                android:hint="Your Interests"
-                android:padding="10dp"/>
+                android:id="@+id/interests"
+                android:padding="10dp"
+                android:background="@color/white"
+                android:layout_marginBottom="15dp"
+                TagsEditText:allowSpaceInTag="true"
+                TagsEditText:tagsCloseImageRight="@drawable/tag_close"
+                TagsEditText:tagsBackground="@drawable/interest_chip_background"
+                TagsEditText:tagsTextColor="@color/white"
+                TagsEditText:tagsTextSize="@dimen/defaultTagsTextSize"
+                TagsEditText:tagsCloseImagePadding="@dimen/defaultTagsCloseImagePadding"
+                />
 
-<!--            Other details-->
+
+            <!--            Other details-->
 
             <TextView
                 android:layout_width="wrap_content"

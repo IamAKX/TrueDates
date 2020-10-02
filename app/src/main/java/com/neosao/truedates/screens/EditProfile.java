@@ -3,6 +3,7 @@ package com.neosao.truedates.screens;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -98,6 +99,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import mabbas007.tagsedittext.TagsEditText;
 
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
@@ -105,7 +107,8 @@ import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     Toolbar toolbar;
-    EditText name, email, about, gender, dob, location, university, fieldOfStudy, qualification, workIndustry, experience, motherTongue, zodiac, height, relationshipStatus, maritalStatus, caste, religion, showMe, drinks, smoke, diet, pets, interests, haveKids, wantKids, lookingFor, bodyType;
+    EditText name, email, about, gender, dob, location, university, fieldOfStudy, qualification, workIndustry, experience, motherTongue, zodiac, height, relationshipStatus, maritalStatus, caste, religion, showMe, drinks, smoke, diet, pets, haveKids, wantKids, lookingFor, bodyType;
+    TagsEditText interests;
     final Calendar calendar = Calendar.getInstance();
     UserModel user;
     LocalPref localPref;
@@ -356,7 +359,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 showOptionPopup("Pets", (EditText) view, OptionContants.PET_OPTIONS);
                 break;
             case R.id.interests:
-                showInterestOptionPopup("Interests", (EditText) view, DynamicOptionConstants.INTEREST_OPTION);
+                showInterestOptionPopup("Interests", (TagsEditText) view, DynamicOptionConstants.INTEREST_OPTION);
                 break;
             case R.id.haveKids:
                 showOptionPopup("Have Kids", (EditText) view, OptionContants.HAVE_KIDS_OPTIONS);
@@ -471,7 +474,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText.setText("");
                 alertDialog.dismiss();
             }
         });
@@ -487,7 +489,14 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    private void showInterestOptionPopup(String title, final EditText editText, String[] options) {
+    private void showInterestOptionPopup(String title, final TagsEditText editText, String[] options) {
+        ArrayList<String> interestArrayList;
+        if(editText.getText().toString().isEmpty())
+            interestArrayList = new ArrayList<>();
+        else
+            interestArrayList = (ArrayList<String>) editText.getTags();
+
+
         LayoutInflater inflater = getLayoutInflater();
 
         View titleView =  inflater.inflate(R.layout.alertdialogbox_title, null);
@@ -518,12 +527,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 TextView textView = row.findViewById( android.R.id.text1);
                 textView.setText(String.valueOf(getItem(i)));
 
-                ArrayList<String> interestArrayList;
-                if(editText.getText().toString().isEmpty())
-                    interestArrayList = new ArrayList<>();
-                else
-                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
-
 
                 if(interestArrayList.contains(getItem(i)))
                 {
@@ -538,35 +541,45 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(EditProfile.this);
         dialogBuilder.setCustomTitle(titleView);
         dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                editText.setTags(interestArrayList.toArray(new String[0]));
+
+                dialogInterface.dismiss();
+            }
+        });
+
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.setCancelable(false);
 
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText.setText("");
                 alertDialog.dismiss();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ArrayList<String> interestArrayList;
-                if(editText.getText().toString().isEmpty())
-                    interestArrayList = new ArrayList<>();
-                else
-                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
 
                 if(interestArrayList.contains(String.valueOf(adapter.getItem(i))))
                     interestArrayList.remove(String.valueOf(adapter.getItem(i)));
                 else
                     interestArrayList.add(String.valueOf(adapter.getItem(i)));
 
-                editText.setText(TextUtils.join(",",interestArrayList));
-                alertDialog.dismiss();
+                adapter.notifyDataSetChanged();
             }
         });
 
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.themePink));
+            }
+        });
         alertDialog.show();
     }
 
@@ -701,7 +714,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         smoke.setText(user.getSmoke());
         diet.setText(user.getDiet());
         pets.setText(user.getPets());
-        interests.setText(Utils.getInterestName(user));
+        interests.setTags(Utils.getInterestNameArray(user));
         haveKids.setText(user.getHaveKids());
         wantKids.setText(user.getWantKids());
         lookingFor.setText(user.getLookingFor());
@@ -763,7 +776,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             if(interests.getText().toString().isEmpty())
                 interestArrayList = new ArrayList<>();
             else
-                interestArrayList = new ArrayList<>(Arrays.asList(interests.getText().toString().split(",")));
+                interestArrayList = new ArrayList<>(Arrays.asList(interests.getText().toString().split(" ")));
 
             user.setMemberInterests(new ArrayList<MemberInterests>());
             for(String item : interestArrayList)

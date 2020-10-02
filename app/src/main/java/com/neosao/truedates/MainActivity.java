@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Utils.setStatusBarGradiant(this);
+
 ////        printHashKey(getBaseContext());
         final LocalPref localPref = new LocalPref(getBaseContext());
+//        localPref.logOutUser();
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -1,5 +1,6 @@
 package com.neosao.truedates.onboardingfragments;
 
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -32,10 +33,13 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import mabbas007.tagsedittext.TagsEditText;
+
 public class Habits extends Fragment implements View.OnClickListener {
 
     View rootView;
-    public static MaterialEditText drinks, smoke, diet, pets, interests;
+    public static MaterialEditText drinks, smoke, diet, pets;
+    public static TagsEditText interests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,11 +138,14 @@ public class Habits extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                Log.e("check",charSequence.toString());
+
                 ArrayList<String> interestArrayList;
                 if(charSequence.toString().isEmpty())
                     interestArrayList = new ArrayList<>();
                 else
-                    interestArrayList = new ArrayList<>(Arrays.asList(charSequence.toString().split(",")));
+                    interestArrayList = new ArrayList<>(Arrays.asList(charSequence.toString().split(" ")));
 
                 OnboardingData.user.setMemberInterests(new ArrayList<MemberInterests>());
                 for(String item : interestArrayList)
@@ -185,7 +192,7 @@ public class Habits extends Fragment implements View.OnClickListener {
                 showOptionPopup("Pets", (MaterialEditText) view, OptionContants.PET_OPTIONS);
                 break;
             case R.id.interests:
-                showInterestOptionPopup("Interests", (MaterialEditText) view, DynamicOptionConstants.INTEREST_OPTION);
+                showInterestOptionPopup("Interests", (TagsEditText) view, DynamicOptionConstants.INTEREST_OPTION);
                 break;
         }
     }
@@ -239,7 +246,6 @@ public class Habits extends Fragment implements View.OnClickListener {
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText.setText("");
                 alertDialog.dismiss();
             }
         });
@@ -254,7 +260,14 @@ public class Habits extends Fragment implements View.OnClickListener {
         alertDialog.show();
     }
 
-    private void showInterestOptionPopup(String title, final MaterialEditText editText, String[] options) {
+    private void showInterestOptionPopup(String title, final TagsEditText editText, String[] options) {
+        ArrayList<String> interestArrayList;
+        if(editText.getText().toString().isEmpty())
+            interestArrayList = new ArrayList<>();
+        else
+            interestArrayList = (ArrayList<String>) editText.getTags();
+
+
         LayoutInflater inflater = getLayoutInflater();
 
         View titleView =  inflater.inflate(R.layout.alertdialogbox_title, null);
@@ -285,12 +298,6 @@ public class Habits extends Fragment implements View.OnClickListener {
                 TextView textView = row.findViewById( android.R.id.text1);
                 textView.setText(String.valueOf(getItem(i)));
 
-                ArrayList<String> interestArrayList;
-                if(editText.getText().toString().isEmpty())
-                    interestArrayList = new ArrayList<>();
-                else
-                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
-
 
                 if(interestArrayList.contains(getItem(i)))
                 {
@@ -305,35 +312,45 @@ public class Habits extends Fragment implements View.OnClickListener {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setCustomTitle(titleView);
         dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                editText.setTags(interestArrayList.toArray(new String[0]));
+
+                dialogInterface.dismiss();
+            }
+        });
+
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.setCancelable(false);
 
         clear_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText.setText("");
                 alertDialog.dismiss();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ArrayList<String> interestArrayList;
-                if(editText.getText().toString().isEmpty())
-                    interestArrayList = new ArrayList<>();
-                else
-                    interestArrayList = new ArrayList<>(Arrays.asList(editText.getText().toString().split(",")));
 
                 if(interestArrayList.contains(String.valueOf(adapter.getItem(i))))
                     interestArrayList.remove(String.valueOf(adapter.getItem(i)));
                 else
                     interestArrayList.add(String.valueOf(adapter.getItem(i)));
 
-                editText.setText(TextUtils.join(",",interestArrayList));
-                alertDialog.dismiss();
+               adapter.notifyDataSetChanged();
             }
         });
 
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.themePink));
+            }
+        });
         alertDialog.show();
     }
 }

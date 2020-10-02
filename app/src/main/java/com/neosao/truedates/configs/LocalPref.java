@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.neosao.truedates.model.FirebaseUserModel;
@@ -24,7 +25,9 @@ public class LocalPref {
     public boolean logOutUser()
     {
         FirebaseAuth.getInstance().signOut();
+        editor = preferences.edit();
         editor.clear();
+        LoginManager.getInstance().logOut();
         return editor.commit();
     }
 
