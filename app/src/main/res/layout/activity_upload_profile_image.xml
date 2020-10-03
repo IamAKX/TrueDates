@@ -61,7 +61,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:id="@+id/profileImage2"
@@ -69,8 +69,8 @@
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -88,7 +88,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:id="@+id/profileImage4"
@@ -97,7 +97,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 
@@ -115,7 +115,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
                 <ImageView
                     android:id="@+id/profileImage6"
@@ -124,7 +124,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:src="@drawable/dashed_border"/>
+                    app:srcCompat="@drawable/dashed_border"/>
 
             </LinearLayout>
 

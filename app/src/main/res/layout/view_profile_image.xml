@@ -31,12 +31,23 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <jp.shts.android.storiesprogressview.StoriesProgressView
-        android:id="@+id/stories"
+<!--    <jp.shts.android.storiesprogressview.StoriesProgressView-->
+<!--        android:id="@+id/stories"-->
+<!--        android:paddingLeft="8dp"-->
+<!--        android:paddingRight="8dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="3dp"-->
+<!--        android:layout_gravity="top"-->
+<!--        android:layout_marginTop="8dp" />-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/storyProgressContainer"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_gravity="top"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"/>
+
 </merge>

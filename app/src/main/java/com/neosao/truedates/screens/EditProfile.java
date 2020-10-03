@@ -65,6 +65,11 @@ import com.neosao.truedates.model.MemberInterests;
 import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.Interest;
+import com.neosao.truedates.onboardingfragments.Habits;
+import com.neosao.truedates.onboardingfragments.Intoduction;
+import com.neosao.truedates.onboardingfragments.Others;
+import com.neosao.truedates.onboardingfragments.Personal;
+import com.neosao.truedates.onboardingfragments.Work;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -104,7 +109,7 @@ import mabbas007.tagsedittext.TagsEditText;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 
-public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, OnMenuItemClickListener<PowerMenuItem> {
 
     Toolbar toolbar;
     EditText name, email, about, gender, dob, location, university, fieldOfStudy, qualification, workIndustry, experience, motherTongue, zodiac, height, relationshipStatus, maritalStatus, caste, religion, showMe, drinks, smoke, diet, pets, haveKids, wantKids, lookingFor, bodyType;
@@ -113,8 +118,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     UserModel user;
     LocalPref localPref;
     ImageView[] profileImageArray;
-    ImageView tappedImageView;
+    ImageView tappedImageView, longTappedImageView;
     ArrayList<Image> images = new ArrayList<>();
+    PowerMenu powerMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +206,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         for (ImageView iv : profileImageArray)
             iv.setOnClickListener(this);
         for (final ImageView iv : profileImageArray) {
-            final PowerMenu powerMenu = new PowerMenu.Builder(EditProfile.this)
+
+            powerMenu = new PowerMenu.Builder(EditProfile.this)
                     .addItem(new PowerMenuItem("Make default image", false)) // add an item.
                     .addItem(new PowerMenuItem("Delete", true)) // aad an item list.
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
@@ -212,52 +219,13 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     .setSelectedTextColor(Color.WHITE)
                     .setMenuColor(ContextCompat.getColor(getBaseContext(), R.color.white))
                     .setSelectedMenuColor(ContextCompat.getColor(getBaseContext(), R.color.red))
-                    .setOnMenuItemClickListener(new OnMenuItemClickListener<PowerMenuItem>() {
-                        @Override
-                        public void onItemClick(int position, PowerMenuItem item) {
-
-                            int index = getIndexOfImageView(iv);
-                            if(index > Utils.getPhotoCount(user.getMemberPhotos()))
-                            {
-                                Toast.makeText(getBaseContext(),"Image not available", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            MemberPhotos defImage = user.getMemberPhotos()[index];
-                            switch (position) {
-                                case 0:
-
-                                    if (null != defImage && null != defImage.getMemberPhoto()) {
-
-                                        defImage.setIsDefault("1");
-                                        for (int i = 0; i < 9 && i < Utils.getPhotoCount(user.getMemberPhotos()); i++) {
-
-                                            if (null != user.getMemberPhotos()[i]) {
-                                                // set default=1 in local user
-                                                user.getMemberPhotos()[i].setIsDefault("0");
-                                                // change default imageview backgroud
-                                                profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
-                                            }
-                                        }
-                                        user.getMemberPhotos()[index].setIsDefault("1");
-                                        iv.setBackgroundColor(getResources().getColor(R.color.themePink));
-
-                                        localPref.saveUser(user);
-                                        new SaveDefaulImage(user.getMemberPhotos()[index].getPhotoCode()).execute();
-
-                                    }
-                                    break;
-                                case 1:
-                                    if(null != defImage && null!=defImage.getPhotoCode())
-                                    new DeleteImage(defImage.getPhotoCode(), iv, index).execute();
-                                    break;
-                            }
-                        }
-                    })
+                    .setOnMenuItemClickListener(this)
                     .build();
 
             iv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    longTappedImageView = iv;
                     powerMenu.showAsDropDown(view);
                     return true;
                 }
@@ -284,7 +252,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
@@ -374,7 +342,10 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 showOptionPopup("Body Type", (EditText) view, OptionContants.BODY_TYPE_OPTIONS);
                 break;
             case R.id.saveBtn:
-                new SaveProfile().execute();
+                updateUserObject();
+                if (validateInputs()) {
+                    new SaveProfile().execute();
+                }
                 break;
             case R.id.profileImage1:
             case R.id.profileImage2:
@@ -453,10 +424,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
-                TextView textView = row.findViewById( android.R.id.text1);
+                TextView textView = row.findViewById(android.R.id.text1);
                 textView.setText(String.valueOf(getItem(i)));
-                if(!editText.getText().toString().isEmpty() && editText.getText().toString().equals(getItem(i)))
-                {
+                if (!editText.getText().toString().isEmpty() && editText.getText().toString().equals(getItem(i))) {
                     textView.setTextColor(getBaseContext().getResources().getColor(R.color.themePink));
                     textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
                 }
@@ -491,7 +461,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
     private void showInterestOptionPopup(String title, final TagsEditText editText, String[] options) {
         ArrayList<String> interestArrayList;
-        if(editText.getText().toString().isEmpty())
+        if (editText.getText().toString().isEmpty())
             interestArrayList = new ArrayList<>();
         else
             interestArrayList = (ArrayList<String>) editText.getTags();
@@ -499,7 +469,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         LayoutInflater inflater = getLayoutInflater();
 
-        View titleView =  inflater.inflate(R.layout.alertdialogbox_title, null);
+        View titleView = inflater.inflate(R.layout.alertdialogbox_title, null);
         TextView titleTextView = titleView.findViewById(R.id.title);
         titleTextView.setText(title);
         ImageButton clear_text = titleView.findViewById(R.id.clear_text);
@@ -524,12 +494,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
-                TextView textView = row.findViewById( android.R.id.text1);
+                TextView textView = row.findViewById(android.R.id.text1);
                 textView.setText(String.valueOf(getItem(i)));
 
 
-                if(interestArrayList.contains(getItem(i)))
-                {
+                if (interestArrayList.contains(getItem(i))) {
                     textView.setTextColor(getBaseContext().getResources().getColor(R.color.themePink));
                     textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
                 }
@@ -564,7 +533,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if(interestArrayList.contains(String.valueOf(adapter.getItem(i))))
+                if (interestArrayList.contains(String.valueOf(adapter.getItem(i))))
                     interestArrayList.remove(String.valueOf(adapter.getItem(i)));
                 else
                     interestArrayList.add(String.valueOf(adapter.getItem(i)));
@@ -624,10 +593,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     .load(resultUri.getPath())
                     .into(tappedImageView);
 
-            if(null != resultUri)
-            {
+            if (null != resultUri) {
                 File imageToBeUploaded = new File(resultUri.getPath());
-                if(null != imageToBeUploaded)
+                if (null != imageToBeUploaded)
                     new UploadImageTask(imageToBeUploaded).execute();
             }
 
@@ -734,70 +702,117 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
     }
 
+    private void updateUserObject() {
+
+        user.setName(name.getText().toString());
+        user.setEmail(email.getText().toString());
+        user.setAbout(about.getText().toString());
+        user.setGender(gender.getText().toString());
+        user.setBirthDate(dob.getText().toString());
+        user.getMembersettings().get(0).setCurrentLocation(location.getText().toString());
+        user.getMemberWork().get(0).setUniversityName(university.getText().toString());
+        user.getMemberWork().get(0).setFieldName(fieldOfStudy.getText().toString());
+        user.getMemberWork().get(0).setHighestQualification(qualification.getText().toString());
+        user.getMemberWork().get(0).setIndustryName(workIndustry.getText().toString());
+        user.getMemberWork().get(0).setExperienceYears(experience.getText().toString());
+        user.setMotherTounge(motherTongue.getText().toString());
+        user.setZodiacSign(zodiac.getText().toString());
+        user.setHeight(height.getText().toString());
+        user.setRelationshipStatus(relationshipStatus.getText().toString());
+        user.setMaritalStatus(maritalStatus.getText().toString());
+        user.setCaste(caste.getText().toString());
+        user.setReligion(religion.getText().toString());
+        user.getMembersettings().get(0).setShowMe(showMe.getText().toString());
+        user.setDrink(drinks.getText().toString());
+        user.setSmoke(smoke.getText().toString());
+        user.setDiet(diet.getText().toString());
+        user.setPets(pets.getText().toString());
+        user.getMemberInterests().get(0).setInterestName(interests.getText().toString());
+        user.setHaveKids(haveKids.getText().toString());
+        user.setWantKids(wantKids.getText().toString());
+        user.setLookingFor(lookingFor.getText().toString());
+        user.setBodyType(bodyType.getText().toString());
+
+        user.getMemberWork().get(0).setFieldStudyCode(new Utils().getFieldStudyCode(user.getMemberWork().get(0).getFieldName()).getCode());
+        user.getMemberWork().get(0).setIndustryCode(new Utils().getWorkIndustryCode(user.getMemberWork().get(0).getIndustryName()).getCode());
+
+        ArrayList<String> interestArrayList;
+        if (interests.getText().toString().isEmpty())
+            interestArrayList = new ArrayList<>();
+        else
+            interestArrayList = new ArrayList<>(Arrays.asList(interests.getText().toString().split(" ")));
+
+        user.setMemberInterests(new ArrayList<MemberInterests>());
+        for (String item : interestArrayList) {
+            Interest interest = new Utils().getInterestCode(item);
+            if (null != interest) {
+                MemberInterests memberInterests = new MemberInterests();
+                memberInterests.setInterestCode(interest.getCode());
+                memberInterests.setInterestName(interest.getInterestName());
+
+                memberInterests.setMemberInterestValue(interest.getInterestValue());
+
+                user.getMemberInterests().add(memberInterests);
+
+            }
+        }
+    }
+
+    @Override
+    public void onItemClick(int position, PowerMenuItem item) {
+
+
+        int index = getIndexOfImageView(longTappedImageView);
+        if (index > Utils.getPhotoCount(user.getMemberPhotos())) {
+            Toast.makeText(getBaseContext(), "Image not available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        MemberPhotos defImage = user.getMemberPhotos()[index];
+        switch (position) {
+            case 0:
+
+                if (null != defImage && null != defImage.getMemberPhoto()) {
+
+                    defImage.setIsDefault("1");
+                    for (int i = 0; i < 9 && i < Utils.getPhotoCount(user.getMemberPhotos()); i++) {
+
+                        if (null != user.getMemberPhotos()[i]) {
+                            // set default=1 in local user
+                            user.getMemberPhotos()[i].setIsDefault("0");
+                            // change default imageview backgroud
+                            profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
+                        }
+                    }
+                    user.getMemberPhotos()[index].setIsDefault("1");
+                    longTappedImageView.setBackgroundColor(getResources().getColor(R.color.themePink));
+
+                    localPref.saveUser(user);
+                    new SaveDefaulImage(user.getMemberPhotos()[index].getPhotoCode()).execute();
+
+                }
+                powerMenu.dismiss();
+                break;
+            case 1:
+                powerMenu.dismiss();
+                if (user.getDefaultPhoto().equals(defImage.getMemberPhoto())) {
+                    Toast.makeText(getBaseContext(), "You cannot delete default image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (null != defImage && null != defImage.getPhotoCode())
+                    new DeleteImage(defImage.getPhotoCode(), longTappedImageView, index).execute();
+                break;
+        }
+
+        if(null != powerMenu && powerMenu.isShowing())
+            powerMenu.dismiss();
+    }
+
     private class SaveProfile extends AsyncTask<Void, Void, Void> {
         SweetAlertDialog dialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            user.setName(name.getText().toString());
-            user.setEmail(email.getText().toString());
-            user.setAbout(about.getText().toString());
-            user.setGender(gender.getText().toString());
-            user.setBirthDate(dob.getText().toString());
-            user.getMembersettings().get(0).setCurrentLocation(location.getText().toString());
-            user.getMemberWork().get(0).setUniversityName(university.getText().toString());
-            user.getMemberWork().get(0).setFieldName(fieldOfStudy.getText().toString());
-            user.getMemberWork().get(0).setHighestQualification(qualification.getText().toString());
-            user.getMemberWork().get(0).setIndustryName(workIndustry.getText().toString());
-            user.getMemberWork().get(0).setExperienceYears(experience.getText().toString());
-            user.setMotherTounge(motherTongue.getText().toString());
-            user.setZodiacSign(zodiac.getText().toString());
-            user.setHeight(height.getText().toString());
-            user.setRelationshipStatus(relationshipStatus.getText().toString());
-            user.setMaritalStatus(maritalStatus.getText().toString());
-            user.setCaste(caste.getText().toString());
-            user.setReligion(religion.getText().toString());
-            user.getMembersettings().get(0).setShowMe(showMe.getText().toString());
-            user.setDrink(drinks.getText().toString());
-            user.setSmoke(smoke.getText().toString());
-            user.setDiet(diet.getText().toString());
-            user.setPets(pets.getText().toString());
-            user.getMemberInterests().get(0).setInterestName(interests.getText().toString());
-            user.setHaveKids(haveKids.getText().toString());
-            user.setWantKids(wantKids.getText().toString());
-            user.setLookingFor(lookingFor.getText().toString());
-            user.setBodyType(bodyType.getText().toString());
-
-            user.getMemberWork().get(0).setFieldStudyCode(new Utils().getFieldStudyCode(user.getMemberWork().get(0).getFieldName()).getCode());
-            user.getMemberWork().get(0).setIndustryCode(new Utils().getWorkIndustryCode(user.getMemberWork().get(0).getIndustryName()).getCode());
-
-            ArrayList<String> interestArrayList;
-            if(interests.getText().toString().isEmpty())
-                interestArrayList = new ArrayList<>();
-            else
-                interestArrayList = new ArrayList<>(Arrays.asList(interests.getText().toString().split(" ")));
-
-            user.setMemberInterests(new ArrayList<MemberInterests>());
-            for(String item : interestArrayList)
-            {
-                Interest interest = new Utils().getInterestCode(item);
-                if(null != interest)
-                {
-                    MemberInterests memberInterests = new MemberInterests();
-                    memberInterests.setInterestCode(interest.getCode());
-                    memberInterests.setInterestName(interest.getInterestName());
-
-                    memberInterests.setMemberInterestValue(interest.getInterestValue());
-
-                    user.getMemberInterests().add(memberInterests);
-
-                }
-            }
-
-//            user.getMemberInterests().get(0).setInterestName(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getCode());
-//            user.getMemberInterests().get(0).setMemberInterestValue(new Utils().getInterestCode(user.getMemberInterests().get(0).getInterestName()).getInterestValue());
-
             dialog = Utils.getProgress(EditProfile.this, "Updating, please wait ...");
             dialog.show();
         }
@@ -894,6 +909,170 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    private boolean validateInputs() {
+        // Page 0 validation
+        if (null == user.getName() || user.getName().isEmpty()) {
+
+            name.setError("Enter name");
+            return false;
+        }
+        if (null == user.getEmail() || user.getEmail().isEmpty()) {
+
+            email.setError("Enter email");
+            return false;
+        }
+        if (!Utils.isValid(user.getEmail())) {
+
+            email.setError("Invalid email");
+            return false;
+        }
+        if (null == user.getAbout() || user.getAbout().isEmpty()) {
+
+            about.setError("Write about yourself");
+            return false;
+        }
+        if (null == user.getGender() || user.getGender().isEmpty()) {
+
+            gender.setError("Enter gender");
+            return false;
+        }
+        if (null == user.getBirthDate() || user.getBirthDate().isEmpty()) {
+
+            dob.setError("Enter date of birth");
+            return false;
+        }
+        if (null == user.getMembersettings().get(0).getCurrentLocation() || user.getMembersettings().get(0).getCurrentLocation().isEmpty()) {
+
+            location.setError("Enter location");
+            return false;
+        }
+
+        // Page 1 validation
+        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
+
+            university.setError("Enter university");
+            return false;
+        }
+        if (null == user.getMemberWork().get(0).getFieldName() || user.getMemberWork().get(0).getFieldName().isEmpty()) {
+
+            fieldOfStudy.setError("Enter field of study");
+            return false;
+        }
+        if (null == user.getMemberWork().get(0).getHighestQualification() || user.getMemberWork().get(0).getHighestQualification().isEmpty()) {
+
+            qualification.setError("Enter qualification");
+            return false;
+        }
+        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
+
+            workIndustry.setError("Enter work industry");
+            return false;
+        }
+        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
+
+            experience.setError("Enter experience");
+            return false;
+        }
+        if (null == user.getMotherTounge() || user.getMotherTounge().isEmpty()) {
+
+            motherTongue.setError("Enter mother tongue");
+            return false;
+        }
+
+        // Page 2 validation
+        if (null == user.getZodiacSign() || user.getZodiacSign().isEmpty()) {
+
+            zodiac.setError("Enter zodiac sign");
+            return false;
+        }
+        if (null == user.getHeight() || user.getHeight().isEmpty()) {
+
+            height.setError("Enter height");
+            return false;
+        }
+        if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
+
+            maritalStatus.setError("Enter marital status");
+            return false;
+        }
+
+        if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
+
+            relationshipStatus.setError("Enter relationship status");
+            return false;
+        }
+        if (null == user.getCaste() || user.getCaste().isEmpty()) {
+
+            caste.setError("Enter caste");
+            return false;
+        }
+        if (null == user.getReligion() || user.getReligion().isEmpty()) {
+
+            religion.setError("Enter religion");
+            return false;
+        }
+        if (null == user.getMembersettings().get(0).getShowMe() || user.getMembersettings().get(0).getShowMe().isEmpty()) {
+
+            showMe.setError("Enter show me");
+            return false;
+        }
+
+        // Page 3 validation
+        if (null == user.getDrink() || user.getDrink().isEmpty()) {
+
+            drinks.setError("Enter drink");
+            return false;
+        }
+
+        if (null == user.getSmoke() || user.getSmoke().isEmpty()) {
+
+            smoke.setError("Enter smoke");
+            return false;
+        }
+
+        if (null == user.getDiet() || user.getDiet().isEmpty()) {
+
+            diet.setError("Enter deit");
+            return false;
+        }
+
+        if (null == user.getPets() || user.getPets().isEmpty()) {
+
+            pets.setError("Enter pets");
+            return false;
+        }
+
+        if (null == user.getMemberInterests() || user.getMemberInterests().isEmpty()) {
+
+            interests.setError("Enter interests");
+            return false;
+        }
+
+        // Page 4 validation
+        if (null == user.getHaveKids() || user.getHaveKids().isEmpty()) {
+
+            haveKids.setError("Enter have kids");
+            return false;
+        }
+        if (null == user.getWantKids() || user.getWantKids().isEmpty()) {
+
+            wantKids.setError("Enter want kids");
+            return false;
+        }
+        if (null == user.getLookingFor() || user.getLookingFor().isEmpty()) {
+
+            lookingFor.setError("Enter looking for");
+            return false;
+        }
+        if (null == user.getBodyType() || user.getBodyType().isEmpty()) {
+
+            bodyType.setError("Enter body type");
+            return false;
+        }
+
+        return true;
+    }
+
     private class UploadImageTask extends AsyncTask<Void, Void, String> {
 
         File imageToBeUploaded;
@@ -926,7 +1105,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                             }
                         });
-
 
 
                 // Adding file data to http body
@@ -994,7 +1172,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private class SaveDefaulImage extends AsyncTask<Void,Void,Void>{
+    private class SaveDefaulImage extends AsyncTask<Void, Void, Void> {
         String photoCode;
 
         public SaveDefaulImage(String photoCode) {
@@ -1010,11 +1188,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1026,7 +1204,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Log.e("check", new String(networkResponse.data));
-                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -1034,9 +1212,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userId",user.getUserId());
-                    params.put("photoCode",photoCode);
-                    Log.e("check","Req body : "+params.toString());
+                    params.put("userId", user.getUserId());
+                    params.put("photoCode", photoCode);
+                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -1055,7 +1233,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private class DeleteImage extends AsyncTask<Void,Void,Void>{
+    private class DeleteImage extends AsyncTask<Void, Void, Void> {
+
         String photoCode;
         ImageView imageView;
         int index;
@@ -1072,10 +1251,15 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Log.e("check", response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+                                if (object.has("status") && !object.getString("status").equals("200")) {
+                                    return;
+                                }
+
                                 imageView.setBackgroundColor(getResources().getColor(R.color.white));
                                 Glide.with(getBaseContext())
                                         .load(R.drawable.dashed_border)
@@ -1085,8 +1269,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1098,7 +1282,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Log.e("check", new String(networkResponse.data));
-                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -1106,9 +1290,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userId",user.getUserId());
-                    params.put("photoCode",photoCode);
-                    Log.e("check","Req body : "+params.toString());
+                    params.put("userId", user.getUserId());
+                    params.put("photoCode", photoCode);
+                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };

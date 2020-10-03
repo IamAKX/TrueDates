@@ -479,7 +479,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -589,7 +589,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -644,7 +644,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -698,7 +698,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -753,7 +753,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                                 phoneNumber.setText(user.getMembersettings().get(0).getContactNumber());
                             } catch (JSONException e) {
