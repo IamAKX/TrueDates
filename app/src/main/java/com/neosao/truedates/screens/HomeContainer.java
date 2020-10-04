@@ -23,6 +23,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.ViewPagerAdapter;
 import com.neosao.truedates.configs.API;
+import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.ResponseParser;
 import com.neosao.truedates.configs.Utils;
@@ -62,6 +63,8 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
 
         bnv.setSelectedItemId(R.id.fire);
         new LoadDynamicOptionLists().doInBackground();
+        new LocalPref(getBaseContext()).setLoginStatus(true);
+
     }
 
 
