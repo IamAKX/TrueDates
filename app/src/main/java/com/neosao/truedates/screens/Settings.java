@@ -436,6 +436,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                                 user.getMembersettings().get(0).setLatitude(String.valueOf(loc.getLatitude()));
                                 user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                                if(null == addresses || addresses.isEmpty())
+                                    return;
                                 Address address = addresses.get(0);
                                 user.getMembersettings().get(0).setCurrentLocation(address.getLocality() + ", " + address.getCountryName());
                                 location.setText(address.getLocality() + ", " + address.getCountryName());

@@ -211,6 +211,8 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                                 OnboardingData.user.getMembersettings().get(0).setLatitude(String.valueOf(loc.getLatitude()));
                                 OnboardingData.user.getMembersettings().get(0).setLongitude(String.valueOf(loc.getLongitude()));
                                 List<Address> addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                                if(null == addresses || addresses.isEmpty())
+                                    return;
                                 Address address = addresses.get(0);
 //                            Log.e("check",address.getAddressLine(0)); //271/1, Gangapuri, Block B and C, New Tollygunge, Aurobindo Park, South Kolkata, West Bengal 700093, India
 //                            Log.e("check",address.getAdminArea()); // West Bengal
