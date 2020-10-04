@@ -48,8 +48,8 @@ public interface OptionContants {
     };
 
     public static final String[] SHOW_ME_OPTIONS = {
-            "Male",
-            "Female"
+            "Men",
+            "Women"
     };
     public static final String[] DRINKS_OPTIONS = {
             "Occasionally",

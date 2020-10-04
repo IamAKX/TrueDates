@@ -180,11 +180,11 @@ public class OnboardingData extends AppCompatActivity {
         }
 
         // Page 1 validation
-        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
-            viewpager.setCurrentItem(1);
-            Work.university.setError("Enter university");
-            return false;
-        }
+//        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
+//            viewpager.setCurrentItem(1);
+//            Work.university.setError("Enter university");
+//            return false;
+//        }
         if (null == user.getMemberWork().get(0).getFieldName() || user.getMemberWork().get(0).getFieldName().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.fieldOfStudy.setError("Enter field of study");
@@ -195,16 +195,16 @@ public class OnboardingData extends AppCompatActivity {
             Work.qualification.setError("Enter qualification");
             return false;
         }
-        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
-            viewpager.setCurrentItem(1);
-            Work.workIndustry.setError("Enter work industry");
-            return false;
-        }
-        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
-            viewpager.setCurrentItem(1);
-            Work.experience.setError("Enter experience");
-            return false;
-        }
+//        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
+//            viewpager.setCurrentItem(1);
+//            Work.workIndustry.setError("Enter work industry");
+//            return false;
+//        }
+//        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
+//            viewpager.setCurrentItem(1);
+//            Work.experience.setError("Enter experience");
+//            return false;
+//        }
         if (null == user.getMotherTounge() || user.getMotherTounge().isEmpty()) {
             viewpager.setCurrentItem(1);
             Work.motherTongue.setError("Enter mother tongue");
@@ -217,11 +217,11 @@ public class OnboardingData extends AppCompatActivity {
             Personal.zodiac.setError("Enter zodiac sign");
             return false;
         }
-        if (null == user.getHeight() || user.getHeight().isEmpty()) {
-            viewpager.setCurrentItem(2);
-            Personal.height.setError("Enter height");
-            return false;
-        }
+//        if (null == user.getHeight() || user.getHeight().isEmpty()) {
+//            viewpager.setCurrentItem(2);
+//            Personal.height.setError("Enter height");
+//            return false;
+//        }
         if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
             viewpager.setCurrentItem(2);
             Personal.maritalStatus.setError("Enter marital status");
@@ -396,7 +396,7 @@ public class OnboardingData extends AppCompatActivity {
                                             new LocalPref(getBaseContext()).saveUser(user);
                                             new LocalPref(getBaseContext()).setLoginStatus(true);
                                             startActivity(new Intent(getBaseContext(), UploadProfileImage.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                                            Toast.makeText(getBaseContext(), successMessage, Toast.LENGTH_LONG).show();
+//                                            Toast.makeText(getBaseContext(), successMessage, Toast.LENGTH_LONG).show();
 
                                         } else
                                             Toast.makeText(getBaseContext(), "Response is unparsable", Toast.LENGTH_LONG).show();

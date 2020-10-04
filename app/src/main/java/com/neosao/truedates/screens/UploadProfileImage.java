@@ -151,6 +151,7 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
             images = ImagePicker.getImages(data);
             UCrop.of(images.get(0).getUri(), Uri.fromFile(new File(getCacheDir(), String.valueOf("TrueDates_edited_" + System.currentTimeMillis() + ".png"))))
                     .withOptions(getCropOption())
+                    .withAspectRatio(4, 3)
                     .start(UploadProfileImage.this);
 
         }
@@ -179,7 +180,7 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
     private UCrop.Options getCropOption() {
         UCrop.Options options = new UCrop.Options();
         options.setHideBottomControls(false);
-        options.setFreeStyleCropEnabled(true);
+        options.setFreeStyleCropEnabled(false);
         options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
 
         options.setToolbarColor(ContextCompat.getColor(this, R.color.white));

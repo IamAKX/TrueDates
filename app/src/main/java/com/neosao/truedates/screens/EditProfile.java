@@ -361,6 +361,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         .whenPermissionsGranted(new PermissionsGrantedListener() {
                             @Override
                             public void onPermissionsGranted(String[] permissions) throws SecurityException {
+                                if(null == tappedImageView)
+                                {
+                                    Log.e("check","Tapped image in null");
+                                    return;
+                                }
                                 ImagePicker.with(EditProfile.this)
                                         .setFolderMode(true)
                                         .setFolderTitle("Album")
@@ -583,6 +588,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             images = ImagePicker.getImages(data);
             UCrop.of(images.get(0).getUri(), Uri.fromFile(new File(getCacheDir(), String.valueOf("TrueDates_edited_" + System.currentTimeMillis() + ".png"))))
                     .withOptions(getCropOption())
+                    .withAspectRatio(4, 3)
                     .start(EditProfile.this);
         }
 
@@ -610,7 +616,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     private UCrop.Options getCropOption() {
         UCrop.Options options = new UCrop.Options();
         options.setHideBottomControls(false);
-        options.setFreeStyleCropEnabled(true);
+        options.setFreeStyleCropEnabled(false);
         options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
 
         options.setToolbarColor(ContextCompat.getColor(this, R.color.white));
@@ -950,11 +956,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
 
         // Page 1 validation
-        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
-
-            university.setError("Enter university");
-            return false;
-        }
+//        if (null == user.getMemberWork().get(0).getUniversityName() || user.getMemberWork().get(0).getUniversityName().isEmpty()) {
+//
+//            university.setError("Enter university");
+//            return false;
+//        }
         if (null == user.getMemberWork().get(0).getFieldName() || user.getMemberWork().get(0).getFieldName().isEmpty()) {
 
             fieldOfStudy.setError("Enter field of study");
@@ -965,16 +971,16 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             qualification.setError("Enter qualification");
             return false;
         }
-        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
-
-            workIndustry.setError("Enter work industry");
-            return false;
-        }
-        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
-
-            experience.setError("Enter experience");
-            return false;
-        }
+//        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
+//
+//            workIndustry.setError("Enter work industry");
+//            return false;
+//        }
+//        if (null == user.getMemberWork().get(0).getExperienceYears() || user.getMemberWork().get(0).getExperienceYears().isEmpty()) {
+//
+//            experience.setError("Enter experience");
+//            return false;
+//        }
         if (null == user.getMotherTounge() || user.getMotherTounge().isEmpty()) {
 
             motherTongue.setError("Enter mother tongue");
@@ -987,11 +993,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             zodiac.setError("Enter zodiac sign");
             return false;
         }
-        if (null == user.getHeight() || user.getHeight().isEmpty()) {
-
-            height.setError("Enter height");
-            return false;
-        }
+//        if (null == user.getHeight() || user.getHeight().isEmpty()) {
+//
+//            height.setError("Enter height");
+//            return false;
+//        }
         if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
 
             maritalStatus.setError("Enter marital status");
@@ -1117,7 +1123,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         new StringBody(user.getUserId()));
                 entity.addPart("index",
                         new StringBody(String.valueOf(getIndexOfImageView(tappedImageView))));
-
+                Log.e("check","Index : "+String.valueOf(getIndexOfImageView(tappedImageView)));
                 httppost.setEntity(entity);
 
                 // Making server call
@@ -1158,9 +1164,12 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                     if (null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto")) {
                         MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
-
+                        Log.e("check","MemberPhotos : "+photos.toString());
+                        photos.setIndex(String.valueOf(getIndexOfImageView(tappedImageView)));
                         user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
-
+                        Glide.with(getBaseContext())
+                                .load(photos.getMemberPhoto())
+                                .into(tappedImageView);
                         localPref.saveUser(user);
                     } else {
                         Glide.with(getBaseContext())
