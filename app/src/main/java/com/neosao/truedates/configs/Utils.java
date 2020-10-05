@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -164,11 +165,16 @@ public class Utils {
     }
 
     public static String[] getInterestNameArray(UserModel userModel) {
+
         ArrayList<String> idList = new ArrayList<>();
         if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
-            return new String[0];
+            return new String[]{" "};
         for(MemberInterests interest : userModel.getMemberInterests())
+        {
+            Log.e("check",interest.toString());
+            if(null!= interest.getInterestName())
             idList.add(interest.getInterestName());
+        }
 
         return idList.toArray(new String[0]);
     }

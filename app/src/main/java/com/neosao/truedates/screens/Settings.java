@@ -212,6 +212,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 localPref.logOutUser();
                 Toast.makeText(getBaseContext(), "You have been logged out", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                finish();
                 break;
 
         }
