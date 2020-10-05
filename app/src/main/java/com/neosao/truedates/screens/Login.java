@@ -241,7 +241,7 @@ public class Login extends AppCompatActivity {
                                         if(null != userModel)
                                         {
                                             new LocalPref(getBaseContext()).saveUser(userModel);
-                                            startActivity(new Intent(getBaseContext(), HomeContainer.class));
+                                            startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                                             finish();
                                         }
                                         else

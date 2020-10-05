@@ -127,7 +127,7 @@ public class OnboardingData extends AppCompatActivity {
                 else {
                     if (validateInputs())
                         new RegisterUser().execute();
-//                    startActivity(new Intent(getBaseContext(), HomeContainer.class));
+//                    startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 }
             }
         });

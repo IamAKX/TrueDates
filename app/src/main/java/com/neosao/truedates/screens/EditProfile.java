@@ -138,6 +138,12 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         localPref = new LocalPref(getBaseContext());
         user = localPref.getUser();
+        MemberPhotos[] tempMemberPhotoArray = new MemberPhotos[9];
+        for (int i = 0; i < user.getMemberPhotos().length; i++) {
+            tempMemberPhotoArray[i] = user.getMemberPhotos()[i];
+        }
+        user.setMemberPhotos(tempMemberPhotoArray);
+        localPref.saveUser(user);
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
@@ -776,6 +782,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             return;
         }
         MemberPhotos defImage = user.getMemberPhotos()[index];
+        if(null == defImage)
+        {
+            Toast.makeText(getBaseContext(), "Image not available", Toast.LENGTH_SHORT).show();
+            return;
+        }
         switch (position) {
             case 0:
 
@@ -1178,6 +1189,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             } catch (JSONException e) {
+                Log.e("check", "upload response : " + responseString);
+                Toast.makeText(getBaseContext(),"Upload response : " + responseString,Toast.LENGTH_LONG).show();
+                Glide.with(getBaseContext())
+                        .load(R.drawable.dashed_border)
+                        .into(tappedImageView);
                 e.printStackTrace();
             }
         }

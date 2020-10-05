@@ -45,6 +45,16 @@
             app:sliderScrollTimeInSec="2"
             app:sliderStartAutoCycle="true" />
 
+        <ImageButton
+            android:id="@+id/clear_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/clear"
+            android:tint="@color/colorAccent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:backgroundTint="@color/transparent"/>
+
     </RelativeLayout>
 
 

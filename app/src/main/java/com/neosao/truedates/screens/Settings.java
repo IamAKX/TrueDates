@@ -229,6 +229,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
 
         TextView title = dialogView.findViewById(R.id.title);
+        ImageButton close = dialogView.findViewById(R.id.clear_text);
         sliderView = dialogView.findViewById(R.id.slider_view);
         final SliderAdapterPackage adapter = new SliderAdapterPackage(getBaseContext(), list);
 
@@ -239,6 +240,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
         sliderView.startAutoCycle();
         title.setText(subscription.getPackageName());
+
+
 
         // Set price config
         LinearLayout priceDataLinearLayout = dialogView.findViewById(R.id.priceDataLinearLayout);
@@ -281,6 +284,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
 
         AlertDialog alertDialog = dialogBuilder.create();
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
         alertDialog.show();
     }
 
