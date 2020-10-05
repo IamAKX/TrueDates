@@ -700,7 +700,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 Glide.with(getBaseContext())
                         .load(user.getMemberPhotos()[i].getMemberPhoto())
                         .into(profileImageArray[i]);
-                if (user.getMemberPhotos()[i].getIsDefault().equals("0"))
+                if (user.getMemberPhotos()[i].getIsDefault()==0)
                     profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
                 else
                     profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.themePink));
@@ -781,17 +781,17 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                 if (null != defImage && null != defImage.getMemberPhoto()) {
 
-                    defImage.setIsDefault("1");
+                    defImage.setIsDefault(1);
                     for (int i = 0; i < 9 && i < Utils.getPhotoCount(user.getMemberPhotos()); i++) {
 
                         if (null != user.getMemberPhotos()[i]) {
                             // set default=1 in local user
-                            user.getMemberPhotos()[i].setIsDefault("0");
+                            user.getMemberPhotos()[i].setIsDefault(0);
                             // change default imageview backgroud
                             profileImageArray[i].setBackgroundColor(getResources().getColor(R.color.white));
                         }
                     }
-                    user.getMemberPhotos()[index].setIsDefault("1");
+                    user.getMemberPhotos()[index].setIsDefault(1);
                     longTappedImageView.setBackgroundColor(getResources().getColor(R.color.themePink));
 
                     localPref.saveUser(user);

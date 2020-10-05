@@ -4,16 +4,16 @@ public class MemberPhotos {
     private String photoCode;
     private String memberPhoto;
     private String index;
-    private String isDefault;
+    private int isDefault;
 
-    public MemberPhotos(String photoCode, String memberPhoto, String index, String isDefault) {
+    public MemberPhotos() {
+    }
+
+    public MemberPhotos(String photoCode, String memberPhoto, String index, int isDefault) {
         this.photoCode = photoCode;
         this.memberPhoto = memberPhoto;
         this.index = index;
         this.isDefault = isDefault;
-    }
-
-    public MemberPhotos() {
     }
 
     public String getPhotoCode() {
@@ -40,21 +40,11 @@ public class MemberPhotos {
         this.index = index;
     }
 
-    public String getIsDefault() {
+    public int getIsDefault() {
         return isDefault;
     }
 
-    public void setIsDefault(String isDefault) {
+    public void setIsDefault(int isDefault) {
         this.isDefault = isDefault;
-    }
-
-    @Override
-    public String toString() {
-        return "MemberPhotos{" +
-                "photoCode='" + photoCode + '\'' +
-                ", memberPhoto='" + memberPhoto + '\'' +
-                ", index='" + index + '\'' +
-                ", isDefault='" + isDefault + '\'' +
-                '}';
     }
 }
