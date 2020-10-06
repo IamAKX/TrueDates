@@ -68,7 +68,7 @@ public class ViewProfile extends AppCompatActivity {
         age.setText(userModel.getAge());
         workIndustry.setText(userModel.getMemberWork().get(0).getIndustryName());
         education.setText(userModel.getMemberWork().get(0).getUniversityName());
-        showMe.setText(userModel.getMembersettings().get(0).getShowMe());
+        showMe.setText(userModel.getGender());
         about.setText(userModel.getAbout());
 
         findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {

@@ -144,7 +144,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
         user.setMemberPhotos(tempMemberPhotoArray);
         localPref.saveUser(user);
-
+        if(null != user.getHeight() && !user.getHeight().isEmpty())
+            user.setHeight(user.getHeight().replace("&quot;","\""));
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         about = findViewById(R.id.about);
