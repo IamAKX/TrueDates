@@ -56,6 +56,8 @@ import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.FeatureModel;
+import com.neosao.truedates.model.FeaturePriceModel;
 import com.neosao.truedates.model.FeatureSliderModel;
 import com.neosao.truedates.model.SubscribtionFeatureDataModel;
 import com.neosao.truedates.model.SubscribtionPackageModel;
@@ -77,6 +79,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
@@ -90,7 +94,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     RangeBar ageRangebar, distanceRangebar;
     TextView distanceText, ageText;
     SwitchCompat instaSwitch;
-    LinearLayout linearLayout;
+    LinearLayout subscriptionLinearLayout;
+    LinearLayout featureLinearLayout;
+    SubscribtionPriceDataModel selectedSubscribtion = null;
+    FeaturePriceModel selectedFeaturePriceModel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +136,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         showMeCard = findViewById(R.id.showMeCard);
         showMe = findViewById(R.id.showMe);
         instaSwitch = findViewById(R.id.instaSwitch);
-        linearLayout = findViewById(R.id.subsPackage);
+        subscriptionLinearLayout = findViewById(R.id.subsPackage);
+        featureLinearLayout = findViewById(R.id.featureLayout);
         phoneNumber = findViewById(R.id.phoneNumber);
 
         locationCard.setOnClickListener(this);
@@ -138,6 +146,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         findViewById(R.id.logoutBtn).setOnClickListener(this);
 
         new LoadSubscribtion().execute();
+        new LoadFeature().execute();
         instaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -218,12 +227,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+
+
     private void showSubscribtionAlertbox(SubscribtionPackageModel subscription) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.subs_package, null);
         dialogBuilder.setView(dialogView);
-
+        selectedSubscribtion = null;
         ArrayList<FeatureSliderModel> list = new ArrayList<>();
         for (SubscribtionFeatureDataModel featureDataModel : subscription.getFeatureData()) {
             list.add(new FeatureSliderModel(featureDataModel.getFeatureCode(), featureDataModel.getFeatureName(), featureDataModel.getFeatureLogo(), featureDataModel.getFeatureName()));
@@ -250,7 +261,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         for (SubscribtionPriceDataModel priceDataModel : subscription.getPriceData()) {
 
-            View priceItemView = LayoutInflater.from(this).inflate(R.layout.subs_package_item, linearLayout, false);
+            View priceItemView = LayoutInflater.from(this).inflate(R.layout.subs_package_item, subscriptionLinearLayout, false);
 
             TextView quantity = priceItemView.findViewById(R.id.quantity);
             TextView unit = priceItemView.findViewById(R.id.unit);
@@ -269,7 +280,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             priceItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getBaseContext(), priceDataModel.getPackagePriceCode(), Toast.LENGTH_SHORT).show();
+
                     for (int i = 0; i < priceDataLinearLayout.getChildCount(); i++) {
                         View child = priceDataLinearLayout.getChildAt(i);
                         CardView cv = child.findViewById(R.id.card);
@@ -278,11 +289,27 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
                     CardView cvv = view.findViewById(R.id.card);
                     cvv.setCardBackgroundColor(getResources().getColor(R.color.themePink));
+                    selectedSubscribtion = priceDataModel;
                 }
             });
+
             priceDataLinearLayout.addView(priceItemView);
         }
 
+        dialogView.findViewById(R.id.continueBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(selectedSubscribtion == null)
+                {
+                    Toast.makeText(getBaseContext(), "Please select any package", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    new BuySubscription(subscription.getPackageCode()).execute();
+
+                }
+            }
+        });
 
         AlertDialog alertDialog = dialogBuilder.create();
         close.setOnClickListener(new View.OnClickListener() {
@@ -875,9 +902,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+
     private void addPackageLayout(SubscribtionPackageModel subscription) {
         Log.e("check", subscription.toString());
-        View view = LayoutInflater.from(this).inflate(R.layout.subscribtion_layout, linearLayout, false);
+        View view = LayoutInflater.from(this).inflate(R.layout.subscribtion_layout, subscriptionLinearLayout, false);
         TextView name = view.findViewById(R.id.name);
         TextView desc = view.findViewById(R.id.desc);
         ImageView logo = view.findViewById(R.id.logo);
@@ -893,7 +921,387 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 showSubscribtionAlertbox(subscription);
             }
         });
-        linearLayout.addView(view);
+        subscriptionLinearLayout.addView(view);
 
+    }
+
+
+    private class LoadFeature extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_FEATURE_PACKAGES,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.e("check", "Response " + response);
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("result")) {
+                                    JSONArray array = object.getJSONArray("result");
+                                    for (int i = 0; i < array.length(); i++) {
+                                        FeatureModel featureModel = new Gson().fromJson(array.getJSONObject(i).toString(), FeatureModel.class);
+                                        addFeatureLayout(featureModel);
+                                    }
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("packageLevel", "0");
+                    params.put("userId", user.getUserId());
+
+                    Log.e("check", "Req body : " + params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+
+            return null;
+        }
+    }
+
+    private void addFeatureLayout(FeatureModel featureModel) {
+        Log.e("check", featureModel.toString());
+        View view = LayoutInflater.from(this).inflate(R.layout.feature_card, subscriptionLinearLayout, false);
+        TextView name = view.findViewById(R.id.name);
+        ImageView logo = view.findViewById(R.id.logo);
+
+        name.setText(featureModel.getFeatureTitle());
+        Glide.with(getBaseContext())
+                .load(featureModel.getFeatureIcon())
+                .into(logo);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFeatureModelPopup(featureModel);
+            }
+        });
+        featureLinearLayout.addView(view);
+    }
+
+    private void showFeatureModelPopup(FeatureModel featureModel) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.feature_package, null);
+        dialogBuilder.setView(dialogView);
+        selectedFeaturePriceModel = null;
+
+        TextView title = dialogView.findViewById(R.id.title);
+        ImageButton close = dialogView.findViewById(R.id.clear_text);
+        ImageView logo = dialogView.findViewById(R.id.logo);
+
+        title.setText(featureModel.getFeatureTitle());
+        Glide.with(getBaseContext())
+                .load(featureModel.getFeatureIcon())
+                .into(logo);
+
+
+        // Set price config
+        LinearLayout priceDataLinearLayout = dialogView.findViewById(R.id.priceDataLinearLayout);
+        priceDataLinearLayout.setWeightSum(featureModel.getPriceData().size());
+
+        for (FeaturePriceModel priceDataModel : featureModel.getPriceData()) {
+
+            View priceItemView = LayoutInflater.from(this).inflate(R.layout.subs_package_item, featureLinearLayout, false);
+
+            TextView quantity = priceItemView.findViewById(R.id.quantity);
+            TextView amountPerUnit = priceItemView.findViewById(R.id.amountPerUnit);
+            TextView amount = priceItemView.findViewById(R.id.amount);
+            CardView cardView = priceItemView.findViewById(R.id.card);
+
+            quantity.setText(priceDataModel.getQuantity());
+            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
+            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
+            DecimalFormat df2 = new DecimalFormat("#.##");
+            amountPerUnit.setText(Utils.CURRENCY_SYMBOL + df2.format(amtPerUnit) + " " + priceDataModel.getUnit());
+            cardView.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
+
+            priceItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    for (int i = 0; i < priceDataLinearLayout.getChildCount(); i++) {
+                        View child = priceDataLinearLayout.getChildAt(i);
+                        CardView cv = child.findViewById(R.id.card);
+                        cv.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
+                    }
+
+                    CardView cvv = view.findViewById(R.id.card);
+                    cvv.setCardBackgroundColor(getResources().getColor(R.color.themePink));
+                    selectedFeaturePriceModel = priceDataModel;
+                }
+            });
+
+            priceDataLinearLayout.addView(priceItemView);
+        }
+
+        dialogView.findViewById(R.id.continueBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(selectedFeaturePriceModel == null)
+                {
+                    Toast.makeText(getBaseContext(), "Please select any package", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    new BuyPackage(featureModel.getPackageCode()).execute();
+
+                }
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private class BuySubscription extends AsyncTask<Void,Void,Void>{
+        SweetAlertDialog dialog;
+        String packageCode;
+
+        public BuySubscription(String packageCode) {
+            this.packageCode = packageCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(Settings.this, "Loading, please wait ...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.BUY_SUBSCRIBTION_PACKAGES,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    dialog.setContentText(object.getString("message"))
+                                            .setConfirmText("OK")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismissWithAnimation();
+                                                }
+                                            })
+                                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                } else {
+                                    if (object.has("message") && null != object.getString("message"))
+                                    dialog.setContentText(object.getString("message"))
+                                            .setConfirmText("OK")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismissWithAnimation();
+                                                }
+                                            })
+                                            .changeAlertType(SweetAlertDialog.WARNING_TYPE);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+
+                                dialog.setContentText(e.getLocalizedMessage())
+                                        .setConfirmText("OK")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                sweetAlertDialog.dismissWithAnimation();
+                                            }
+                                        })
+                                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    double amtPerUnit = Double.parseDouble(selectedSubscribtion.getAmount()) / Double.parseDouble(selectedSubscribtion.getQuantity());
+
+                    params.put("userId",user.getUserId());
+                    params.put("paymentStatus","success");
+                    params.put("packageCode",packageCode);
+                    params.put("numberOfMonths",selectedSubscribtion.getQuantity());
+                    params.put("perMonthAmount", String.valueOf(amtPerUnit));
+                    params.put("totalAmount",selectedSubscribtion.getAmount());
+
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    private class BuyPackage extends AsyncTask<Void,Void,Void>{
+        SweetAlertDialog dialog;
+        String packageCode;
+
+        public BuyPackage(String packageCode) {
+            this.packageCode = packageCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(Settings.this, "Loading, please wait ...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.BUY_FEATURE_PACKAGES,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    dialog.setContentText(object.getString("message"))
+                                            .setConfirmText("OK")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismissWithAnimation();
+                                                }
+                                            })
+                                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                } else {
+                                    if (object.has("message") && null != object.getString("message"))
+                                        dialog.setContentText(object.getString("message"))
+                                                .setConfirmText("OK")
+                                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                    @Override
+                                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                        sweetAlertDialog.dismissWithAnimation();
+                                                    }
+                                                })
+                                                .changeAlertType(SweetAlertDialog.WARNING_TYPE);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+
+                                dialog.setContentText(e.getLocalizedMessage())
+                                        .setConfirmText("OK")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                sweetAlertDialog.dismissWithAnimation();
+                                            }
+                                        })
+                                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    double totalAmt = Double.parseDouble(selectedFeaturePriceModel.getAmount()) * Double.parseDouble(selectedFeaturePriceModel.getQuantity());
+
+                    params.put("userId",user.getUserId());
+                    params.put("paymentStatus","success");
+                    params.put("featureCode",selectedFeaturePriceModel.getPackagePriceCode());
+                    params.put("quantity", selectedFeaturePriceModel.getQuantity());
+                    params.put("amount",selectedFeaturePriceModel.getAmount());
+                    params.put("packageCode", packageCode);
+                    params.put("totalAmount", String.valueOf(totalAmt));
+
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
     }
 }

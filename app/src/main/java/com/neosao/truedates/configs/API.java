@@ -20,8 +20,12 @@ public interface API {
     String UPDATE_INSTAGRAM = BASE_URL + "updateInstagramSettings";
     String UPDATE_PHONE_NUMBER = BASE_URL + "updateMyContactNumber";
     String GET_SUBSCRIBTION_PACKAGES = BASE_URL + "getSubscriptionPackages";
-
+    String GET_FEATURE_PACKAGES = BASE_URL + "getFeaturePackageList";
+    String BUY_SUBSCRIBTION_PACKAGES = BASE_URL + "purchaseSubscriptionPackage";
+    String BUY_FEATURE_PACKAGES = BASE_URL + "purchaseFeaturePackage";
 
     String SET_DEFAULT_PHOTO = BASE_URL + "updateDefaultPhoto";
     String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
+
+
 }
