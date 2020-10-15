@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.CardStackAdapter;
 import com.neosao.truedates.configs.API;
@@ -33,6 +35,7 @@ import com.neosao.truedates.configs.DummyProfile;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.ProfileDiffCallback;
 import com.neosao.truedates.configs.RequestQueueSingleton;
+import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.Profile;
 import com.neosao.truedates.model.UserModel;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
@@ -45,6 +48,7 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,6 +57,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.neosao.truedates.configs.Constants.FEATURE_BOOST;
 import static com.neosao.truedates.configs.Constants.FEATURE_DIAMOND;
@@ -65,8 +71,11 @@ public class DateBrowser extends Fragment implements CardStackListener {
     CardStackLayoutManager manager;
     CardStackAdapter adapter;
     View rootView;
-    FloatingActionButton fabBack, fabDislike,fabLike,fabSuperLike,fabBoost;
+    LinearLayout progressView;
+    FloatingActionButton fabBack, fabDislike, fabLike, fabSuperLike, fabBoost;
     UserModel user;
+    ArrayList<UserModel> memberProfileList = new ArrayList<>();
+    int profileOffset = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,16 +85,20 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
         cardStackView = rootView.findViewById(R.id.card_stack_view);
         manager = new CardStackLayoutManager(getContext(), this);
-        adapter = new CardStackAdapter(getContext(), new DummyProfile().getAllProfileList());
         fabBack = rootView.findViewById(R.id.fabBack);
         fabDislike = rootView.findViewById(R.id.fabSkip);
         fabLike = rootView.findViewById(R.id.fabLike);
         fabSuperLike = rootView.findViewById(R.id.fabSuperLike);
         fabBoost = rootView.findViewById(R.id.fabBoost);
+        progressView = rootView.findViewById(R.id.progressView);
         user = new LocalPref(getContext()).getUser();
 
         setupNavigation();
-        setupCardStackView();
+//        setupCardStackView();
+        cardStackView.setVisibility(View.GONE);
+        progressView.setVisibility(View.GONE);
+        new LoadAllMemberProfile().execute();
+
 
         return rootView;
     }
@@ -93,6 +106,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
     private void setupCardStackView() {
         List<Direction> swipeDirection = Arrays.asList(Direction.Left, Direction.Right, Direction.Top);
+        adapter = new CardStackAdapter(getContext(), memberProfileList);
 
         manager.setStackFrom(StackFrom.Top);
         manager.setVisibleCount(4);
@@ -115,7 +129,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
             @Override
             public void onClick(View view) {
 
-                new FeatureDeductionOnSwipe(FEATURE_REWIND,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_REWIND).execute();
             }
         });
 
@@ -129,7 +143,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         .build();
                 manager.setSwipeAnimationSetting(setting);
                 cardStackView.swipe();
-                new FeatureDeductionOnSwipe(FEATURE_LIKE,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_LIKE).execute();
             }
         });
 
@@ -143,7 +157,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         .build();
                 manager.setSwipeAnimationSetting(setting);
                 cardStackView.swipe();
-                new FeatureDeductionOnSwipe(FEATURE_DISLIKE,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_DISLIKE).execute();
             }
         });
 
@@ -157,14 +171,14 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         .build();
                 manager.setSwipeAnimationSetting(setting);
                 cardStackView.swipe();
-                new FeatureDeduction(FEATURE_DIAMOND,"DT203KO9FIYV1").execute();
+                new FeatureDeduction(FEATURE_DIAMOND).execute();
             }
         });
 
         fabBoost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new FeatureDeduction(FEATURE_BOOST,"DT203KO9FIYV1").execute();
+                new FeatureDeduction(FEATURE_BOOST).execute();
             }
         });
 
@@ -172,26 +186,25 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
-        Log.d("CardStackView", "onCardDragging: d = " + direction.name() + ", r = " + ratio);
+//        Log.d("CardStackView", "onCardDragging: d = " + direction.name() + ", r = " + ratio);
     }
 
     @Override
     public void onCardSwiped(Direction direction) {
-        Log.d("CardStackView", "onCardSwiped: p = ${manager.topPosition}, d = $direction");
+//        Log.d("CardStackView", "onCardSwiped: p = ${manager.topPosition}, d = $direction");
         // Refill the stack
 //        if (manager.getTopPosition() == adapter.getItemCount() - 2) {
 //            paginate();
 //        }
-        switch (direction)
-        {
+        switch (direction) {
             case Top:
-                new FeatureDeductionOnSwipe(FEATURE_DIAMOND,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_DIAMOND).execute();
                 break;
             case Left:
-                new FeatureDeductionOnSwipe(FEATURE_LIKE,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_LIKE).execute();
                 break;
             case Right:
-                new FeatureDeductionOnSwipe(FEATURE_DISLIKE,"DT203KO9FIYV1").execute();
+                new FeatureDeductionOnSwipe(FEATURE_DISLIKE).execute();
                 break;
             case Bottom:
 
@@ -200,9 +213,9 @@ public class DateBrowser extends Fragment implements CardStackListener {
     }
 
     private void paginate() {
-        ArrayList<Profile> oldProfile = adapter.getList();
-        ArrayList<Profile> newProfile = new ArrayList<>();
-        newProfile.addAll(new DummyProfile().getAllProfileList());
+        ArrayList<UserModel> oldProfile = adapter.getList();
+        ArrayList<UserModel> newProfile = new ArrayList<>();
+        newProfile.addAll(memberProfileList);
         ProfileDiffCallback callback = new ProfileDiffCallback(oldProfile, newProfile);
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
         adapter.setList(newProfile);
@@ -211,34 +224,39 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
     @Override
     public void onCardRewound() {
-        Log.d("CardStackView", "onCardRewound: " + manager.getTopPosition());
+        Log.e("CardStackView", "onCardRewound: " + manager.getTopPosition());
     }
 
     @Override
     public void onCardCanceled() {
-        Log.d("CardStackView", "onCardCanceled: " + manager.getTopPosition());
+        Log.e("CardStackView", "onCardCanceled: " + manager.getTopPosition());
     }
 
     @Override
     public void onCardAppeared(View view, int position) {
         TextView textView = view.findViewById(R.id.item_name);
-        Log.d("CardStackView", "onCardAppeared: " + position + " " + textView.getText().toString() + "");
+        Log.e("CardStackView", "onCardAppeared: " + position + " " + textView.getText().toString() + "");
     }
 
     @Override
     public void onCardDisappeared(View view, int position) {
         TextView textView = view.findViewById(R.id.item_name);
-        Log.d("CardStackView", "onCardDisappeared: " + position + " " + textView.getText().toString() + "");
+        Log.e("CardStackView", "onCardDisappeared: " + position + " " + textView.getText().toString() + "");
+        if (position == memberProfileList.size() - 1) {
+            profileOffset = 0;
+            new LoadAllMemberProfile().execute();
+        }
     }
 
-    class FeatureDeduction extends AsyncTask<Void,Void,Void>{
+    class FeatureDeduction extends AsyncTask<Void, Void, Void> {
 
         String featureType;
         String toUserId;
 
-        public FeatureDeduction(String featureType, String toUserId) {
+        public FeatureDeduction(String featureType) {
             this.featureType = featureType;
-            this.toUserId = toUserId;
+            if (manager.getTopPosition() > 0)
+                this.toUserId = memberProfileList.get(manager.getTopPosition() - 1).getUserId();
         }
 
         @Override
@@ -247,12 +265,12 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check","Response : "+response);
+                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     SwipeAnimationSetting setting;
-                                    switch (featureType){
+                                    switch (featureType) {
                                         case FEATURE_LIKE:
                                             setting = new SwipeAnimationSetting.Builder()
                                                     .setDirection(Direction.Left)
@@ -294,12 +312,12 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                     }
                                 } else {
                                     if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                                Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -311,7 +329,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Log.e("check", new String(networkResponse.data));
-                                    Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -319,11 +337,11 @@ public class DateBrowser extends Fragment implements CardStackListener {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userId",user.getUserId());
-                    params.put("toUserId",toUserId);
-                    params.put("featureType",featureType);
+                    params.put("userId", user.getUserId());
+                    params.put("toUserId", toUserId);
+                    params.put("featureType", featureType);
 
-                    Log.e("check","Req body : "+params.toString());
+                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -342,14 +360,15 @@ public class DateBrowser extends Fragment implements CardStackListener {
         }
     }
 
-    class FeatureDeductionOnSwipe extends AsyncTask<Void,Void,Void>{
+    class FeatureDeductionOnSwipe extends AsyncTask<Void, Void, Void> {
 
         String featureType;
         String toUserId;
 
-        public FeatureDeductionOnSwipe(String featureType, String toUserId) {
+        public FeatureDeductionOnSwipe(String featureType) {
             this.featureType = featureType;
-            this.toUserId = toUserId;
+            if (manager.getTopPosition() > 0)
+                this.toUserId = memberProfileList.get(manager.getTopPosition() - 1).getUserId();
         }
 
         @Override
@@ -358,25 +377,28 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check","Response : "+response);
+                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
+                                    if (featureType.equals(FEATURE_REWIND)) {
+                                        RewindAnimationSetting rewindSetting = new RewindAnimationSetting.Builder()
+                                                .setDirection(Direction.Bottom)
+                                                .setDuration(Duration.Normal.duration)
+                                                .setInterpolator(new DecelerateInterpolator())
+                                                .build();
+                                        manager.setRewindAnimationSetting(rewindSetting);
+                                        cardStackView.rewind();
+                                    }
                                 } else {
                                     if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
-                                    RewindAnimationSetting rewindSetting = new RewindAnimationSetting.Builder()
-                                            .setDirection(Direction.Bottom)
-                                            .setDuration(Duration.Normal.duration)
-                                            .setInterpolator(new DecelerateInterpolator())
-                                            .build();
-                                    manager.setRewindAnimationSetting(rewindSetting);
-                                    cardStackView.rewind();
+                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                                Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                                 RewindAnimationSetting rewindSetting = new RewindAnimationSetting.Builder()
                                         .setDirection(Direction.Bottom)
                                         .setDuration(Duration.Normal.duration)
@@ -395,7 +417,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Log.e("check", new String(networkResponse.data));
-                                    Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -403,11 +425,110 @@ public class DateBrowser extends Fragment implements CardStackListener {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userId",user.getUserId());
-                    params.put("toUserId",toUserId);
-                    params.put("featureType",featureType);
+                    params.put("userId", user.getUserId());
+                    params.put("toUserId", toUserId);
+                    params.put("featureType", featureType);
 
-                    Log.e("check","Req body : "+params.toString());
+                    Log.e("check", "Req body : " + params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    private class LoadAllMemberProfile extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            cardStackView.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userId", user.getUserId());
+            params.put("latitude", user.getMembersettings().get(0).getLatitude());
+            params.put("longitude", user.getMembersettings().get(0).getLongitude());
+            params.put("showMe", user.getMembersettings().get(0).getShowMe());
+            params.put("maxDistance", user.getMembersettings().get(0).getMaxDistance());
+            params.put("minAgeFilter", user.getMembersettings().get(0).getMinAgeFilter());
+            params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
+            params.put("offset", String.valueOf(profileOffset));
+
+            Log.i("check", "API: " + API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params));
+
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.e("check", "onResponse: " + response);
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+
+                                    if (object.has("result") && object.getJSONObject("result").has("membersData")) {
+                                        JSONArray array = object.getJSONObject("result").getJSONArray("membersData");
+                                        if (null == array || array.length() == 0) {
+                                            new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
+                                                    .setContentText("No dates near your location. Try changing your location or increasing distance range in settings.")
+                                                    .setConfirmText("Okay")
+                                                    .show();
+                                        } else {
+                                            for (int i = 0; i < array.length(); i++) {
+                                                JSONObject memberObject = array.getJSONObject(i);
+                                                memberObject = memberObject.getJSONObject("member");
+                                                UserModel memberModel = new Gson().fromJson(memberObject.toString(), UserModel.class);
+                                                memberProfileList.add(memberModel);
+                                            }
+                                            setupCardStackView();
+                                        }
+                                    }
+
+                                } else {
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
+                            }
+                            cardStackView.setVisibility(View.VISIBLE);
+                            progressView.setVisibility(View.GONE);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            cardStackView.setVisibility(View.VISIBLE);
+                            progressView.setVisibility(View.GONE);
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
                     return params;
                 }
             };

@@ -27,5 +27,5 @@ public interface API {
     String SET_DEFAULT_PHOTO = BASE_URL + "updateDefaultPhoto";
     String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
     String FEATURE_DEDUCTION = BASE_URL + "performFeatureDeduction";
-
+    String GET_PROFILE_LIST = BASE_URL + "getListsProfiles";
 }

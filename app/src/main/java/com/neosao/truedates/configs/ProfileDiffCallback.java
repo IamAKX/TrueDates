@@ -2,15 +2,15 @@ package com.neosao.truedates.configs;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.neosao.truedates.model.Profile;
+import com.neosao.truedates.model.UserModel;
 
 import java.util.ArrayList;
 
 public class ProfileDiffCallback extends DiffUtil.Callback {
-    ArrayList<Profile> oldProfile;
-    ArrayList<Profile> newProfile;
+    ArrayList<UserModel> oldProfile;
+    ArrayList<UserModel> newProfile;
 
-    public ProfileDiffCallback(ArrayList<Profile> oldProfile, ArrayList<Profile> newProfile) {
+    public ProfileDiffCallback(ArrayList<UserModel> oldProfile, ArrayList<UserModel> newProfile) {
         this.oldProfile = oldProfile;
         this.newProfile = newProfile;
     }
@@ -27,7 +27,7 @@ public class ProfileDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldProfile.get(oldItemPosition).getId() == newProfile.get(newItemPosition).getId();
+        return oldProfile.get(oldItemPosition).getUserId() == newProfile.get(newItemPosition).getUserId();
     }
 
     @Override

@@ -138,4 +138,29 @@
         android:clipToPadding="false">
     </com.yuyakaido.android.cardstackview.CardStackView>
 
+    <LinearLayout
+        android:id="@+id/progressView"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/themePink"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:fontFamily="@font/balsamiq_sans"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

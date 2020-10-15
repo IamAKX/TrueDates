@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -145,38 +146,47 @@ public class Utils {
     public static String getInterestCodeList(UserModel userModel) {
         String id = "";
         ArrayList<String> idList = new ArrayList<>();
-        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+        if (null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
             return id;
-        for(MemberInterests interest : userModel.getMemberInterests())
+        for (MemberInterests interest : userModel.getMemberInterests())
             idList.add(interest.getInterestCode());
-        id = TextUtils.join(",",idList);
+        id = TextUtils.join(",", idList);
         return id;
     }
 
     public static String getInterestName(UserModel userModel) {
         String id = "";
         ArrayList<String> idList = new ArrayList<>();
-        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+        if (null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
             return id;
-        for(MemberInterests interest : userModel.getMemberInterests())
+        for (MemberInterests interest : userModel.getMemberInterests())
             idList.add(interest.getInterestName());
-        id = TextUtils.join(",",idList);
+        id = TextUtils.join(",", idList);
         return id;
     }
 
     public static String[] getInterestNameArray(UserModel userModel) {
 
         ArrayList<String> idList = new ArrayList<>();
-        if(null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
+        if (null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
             return new String[]{" "};
-        for(MemberInterests interest : userModel.getMemberInterests())
-        {
-            Log.e("check",interest.toString());
-            if(null!= interest.getInterestName())
-            idList.add(interest.getInterestName());
+        for (MemberInterests interest : userModel.getMemberInterests()) {
+            Log.e("check", interest.toString());
+            if (null != interest.getInterestName())
+                idList.add(interest.getInterestName());
         }
 
         return idList.toArray(new String[0]);
+    }
+
+    public static String buildQueryFromMap(Map<String, String> params) {
+        String query = "";
+        ArrayList<String> list = new ArrayList<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            list.add(entry.getKey()+"="+entry.getValue());
+        }
+        query = "?"+TextUtils.join("&",list);
+        return query;
     }
 
 }

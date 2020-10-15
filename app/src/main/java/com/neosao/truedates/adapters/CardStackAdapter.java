@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
-import com.neosao.truedates.model.Profile;
+import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.ViewProfile;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 
@@ -22,9 +22,9 @@ import java.util.ArrayList;
 public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.MyViewHolder> {
 
     Context context;
-    ArrayList<Profile> list;
+    ArrayList<UserModel> list;
 
-    public CardStackAdapter(Context context, ArrayList<Profile> list) {
+    public CardStackAdapter(Context context, ArrayList<UserModel> list) {
         this.context = context;
         this.list = list;
     }
@@ -40,9 +40,9 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull CardStackAdapter.MyViewHolder holder, int position) {
-        Profile profile = list.get(position);
+        UserModel profile = list.get(position);
         holder.name.setText(profile.getName());
-        holder.city.setText(profile.getLocation());
+        holder.city.setText(profile.getZodiacSign());
 
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,20 +51,21 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.MyVi
             }
         });
         Glide.with(context)
-                .load(profile.getImageUrl())
+                .load(profile.getDefaultPhoto())
                 .into(holder.image);
     }
+
 
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    public ArrayList<Profile> getList() {
+    public ArrayList<UserModel> getList() {
         return list;
     }
 
-    public void setList(ArrayList<Profile> list) {
+    public void setList(ArrayList<UserModel> list) {
         this.list = list;
     }
 
