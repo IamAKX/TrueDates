@@ -1,6 +1,8 @@
 package com.neosao.truedates.model;
 
-public class Membersettings {
+import java.io.Serializable;
+
+public class Membersettings implements Serializable {
     private String id;
     private String code;
     private String memberCode;

@@ -1,6 +1,8 @@
 package com.neosao.truedates.model;
 
-public class MemberWork {
+import java.io.Serializable;
+
+public class MemberWork implements Serializable {
     private String memberWorkCode;
     private String fieldStudyCode;
     private String highestQualification;

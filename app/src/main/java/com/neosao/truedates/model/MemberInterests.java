@@ -1,6 +1,8 @@
 package com.neosao.truedates.model;
 
-public class MemberInterests {
+import java.io.Serializable;
+
+public class MemberInterests implements Serializable {
     private String memberInterestCode;
     private String interestCode;
     private String memberInterestValue;

@@ -1,6 +1,8 @@
 package com.neosao.truedates.model;
 
-public class MemberPhotos {
+import java.io.Serializable;
+
+public class MemberPhotos implements Serializable {
     private String photoCode;
     private String memberPhoto;
     private String index;

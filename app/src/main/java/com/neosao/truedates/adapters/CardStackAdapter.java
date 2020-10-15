@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
 import com.neosao.truedates.model.UserModel;
+import com.neosao.truedates.screens.ViewMemberProfile;
 import com.neosao.truedates.screens.ViewProfile;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 
@@ -47,7 +48,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.MyVi
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context, ViewProfile.class));
+                context.startActivity(new Intent(context, ViewMemberProfile.class).putExtra("member",profile));
             }
         });
         Glide.with(context)
