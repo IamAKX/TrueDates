@@ -1,6 +1,7 @@
 package com.neosao.truedates.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserModel implements Serializable {
@@ -31,6 +32,7 @@ public class UserModel implements Serializable {
     private String maritalStatus;
     private String uniqueId;
     private String about;
+    private String distance;
     private String relationshipStatus;
     private MemberPhotos[] memberPhotos;
     private List<Membersettings> membersettings;
@@ -42,7 +44,7 @@ public class UserModel implements Serializable {
     public UserModel() {
     }
 
-    public UserModel(String isActive, Object isDelete, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String email, String maritalStatus, String uniqueId, String about, String relationshipStatus, MemberPhotos[] memberPhotos, List<Membersettings> membersettings, List<MemberInterests> memberInterests, List<MemberWork> memberWork, String defaultPhoto, String registerType) {
+    public UserModel(String isActive, Object isDelete, String code, String userId, String name, String birthDate, String age, String contactNumber, String zodiacSign, String bodyType, String lookingFor, String height, String motherTounge, String caste, String religion, String diet, String pets, String drink, String smoke, String haveKids, String wantKids, String gender, String firebaseId, String email, String maritalStatus, String uniqueId, String about, String distance, String relationshipStatus, MemberPhotos[] memberPhotos, List<Membersettings> membersettings, List<MemberInterests> memberInterests, List<MemberWork> memberWork, String defaultPhoto, String registerType) {
         this.isActive = isActive;
         this.isDelete = isDelete;
         this.code = code;
@@ -70,6 +72,7 @@ public class UserModel implements Serializable {
         this.maritalStatus = maritalStatus;
         this.uniqueId = uniqueId;
         this.about = about;
+        this.distance = distance;
         this.relationshipStatus = relationshipStatus;
         this.memberPhotos = memberPhotos;
         this.membersettings = membersettings;
@@ -295,6 +298,14 @@ public class UserModel implements Serializable {
         this.about = about;
     }
 
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
     public String getRelationshipStatus() {
         return relationshipStatus;
     }
@@ -349,5 +360,46 @@ public class UserModel implements Serializable {
 
     public void setRegisterType(String registerType) {
         this.registerType = registerType;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "isActive='" + isActive + '\'' +
+                ", isDelete=" + isDelete +
+                ", code='" + code + '\'' +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", age='" + age + '\'' +
+                ", contactNumber='" + contactNumber + '\'' +
+                ", zodiacSign='" + zodiacSign + '\'' +
+                ", bodyType='" + bodyType + '\'' +
+                ", lookingFor='" + lookingFor + '\'' +
+                ", height='" + height + '\'' +
+                ", motherTounge='" + motherTounge + '\'' +
+                ", caste='" + caste + '\'' +
+                ", religion='" + religion + '\'' +
+                ", diet='" + diet + '\'' +
+                ", pets='" + pets + '\'' +
+                ", drink='" + drink + '\'' +
+                ", smoke='" + smoke + '\'' +
+                ", haveKids='" + haveKids + '\'' +
+                ", wantKids='" + wantKids + '\'' +
+                ", gender='" + gender + '\'' +
+                ", firebaseId='" + firebaseId + '\'' +
+                ", email='" + email + '\'' +
+                ", maritalStatus='" + maritalStatus + '\'' +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", about='" + about + '\'' +
+                ", distance='" + distance + '\'' +
+                ", relationshipStatus='" + relationshipStatus + '\'' +
+                ", memberPhotos=" + Arrays.toString(memberPhotos) +
+                ", membersettings=" + membersettings +
+                ", memberInterests=" + memberInterests +
+                ", memberWork=" + memberWork +
+                ", defaultPhoto='" + defaultPhoto + '\'' +
+                ", registerType='" + registerType + '\'' +
+                '}';
     }
 }

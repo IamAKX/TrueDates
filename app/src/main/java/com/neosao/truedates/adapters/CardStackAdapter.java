@@ -43,7 +43,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.MyVi
     public void onBindViewHolder(@NonNull CardStackAdapter.MyViewHolder holder, int position) {
         UserModel profile = list.get(position);
         holder.name.setText(profile.getName());
-        holder.city.setText(profile.getZodiacSign());
+        holder.city.setText(profile.getDistance().substring(0,profile.getDistance().indexOf(".")+3) + " Kms away");
 
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
