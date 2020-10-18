@@ -68,6 +68,7 @@ dependencies {
     implementation "com.github.skydoves:powermenu:2.1.5"
     implementation 'com.github.yalantis:ucrop:2.2.6'
     implementation 'com.github.mabbas007:TagsEditText:1.0.5'
+    implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
 }
 repositories {
     mavenCentral()

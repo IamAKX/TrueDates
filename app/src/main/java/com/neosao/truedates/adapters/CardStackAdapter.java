@@ -15,8 +15,6 @@ import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.ViewMemberProfile;
-import com.neosao.truedates.screens.ViewProfile;
-import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 
 import java.util.ArrayList;
 

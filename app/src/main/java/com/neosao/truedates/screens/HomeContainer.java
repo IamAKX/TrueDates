@@ -62,7 +62,7 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
         bnv.setOnNavigationItemSelectedListener(this);
 
         bnv.setSelectedItemId(R.id.fire);
-        new LoadDynamicOptionLists().doInBackground();
+        new LoadDynamicOptionLists().execute();
         new LocalPref(getBaseContext()).setLoginStatus(true);
 
     }

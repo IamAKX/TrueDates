@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.CardStackAdapter;
+import com.neosao.truedates.adapters.MemberLikedYouAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.DummyProfile;
 import com.neosao.truedates.configs.LocalPref;
@@ -48,6 +51,7 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.ghyeok.stickyswitch.widget.StickySwitch;
 
 import static com.neosao.truedates.configs.Constants.FEATURE_BOOST;
 import static com.neosao.truedates.configs.Constants.FEATURE_DIAMOND;
@@ -71,11 +76,14 @@ public class DateBrowser extends Fragment implements CardStackListener {
     CardStackLayoutManager manager;
     CardStackAdapter adapter;
     View rootView;
-    LinearLayout progressView;
+    LinearLayout progressView,button_container;
     FloatingActionButton fabBack, fabDislike, fabLike, fabSuperLike, fabBoost;
     UserModel user;
     ArrayList<UserModel> memberProfileList = new ArrayList<>();
+    ArrayList<UserModel> memberLikedYouList = new ArrayList<>();
     int profileOffset = 0;
+    StickySwitch feedSwitch;
+    RecyclerView likeRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,6 +99,9 @@ public class DateBrowser extends Fragment implements CardStackListener {
         fabSuperLike = rootView.findViewById(R.id.fabSuperLike);
         fabBoost = rootView.findViewById(R.id.fabBoost);
         progressView = rootView.findViewById(R.id.progressView);
+        feedSwitch = rootView.findViewById(R.id.feedSwitch);
+        button_container = rootView.findViewById(R.id.button_container);
+        likeRecyclerView = rootView.findViewById(R.id.likeRecyclerView);
         user = new LocalPref(getContext()).getUser();
 
         setupNavigation();
@@ -98,8 +109,26 @@ public class DateBrowser extends Fragment implements CardStackListener {
         cardStackView.setVisibility(View.GONE);
         progressView.setVisibility(View.GONE);
         new LoadAllMemberProfile().execute();
+        new LoadWhoLikedMe().execute();
 
+        likeRecyclerView.setVisibility(View.GONE);
 
+        feedSwitch.setOnSelectedChangeListener(new StickySwitch.OnSelectedChangeListener() {
+            @Override
+            public void onSelectedChange(@NotNull StickySwitch.Direction direction, @NotNull String s) {
+                if(direction ==  StickySwitch.Direction.RIGHT)
+                {
+                    cardStackView.setVisibility(View.GONE);
+                    button_container.setVisibility(View.GONE);
+                    likeRecyclerView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    cardStackView.setVisibility(View.VISIBLE);
+                    button_container.setVisibility(View.VISIBLE);
+                    likeRecyclerView.setVisibility(View.GONE);
+                }
+            }
+        });
         return rootView;
     }
 
@@ -469,13 +498,11 @@ public class DateBrowser extends Fragment implements CardStackListener {
             params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
             params.put("offset", String.valueOf(profileOffset));
 
-            Log.i("check", "API: " + API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params));
 
             StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "onResponse: " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -529,6 +556,92 @@ public class DateBrowser extends Fragment implements CardStackListener {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
 
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    private class LoadWhoLikedMe extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            Map<String, String> params = new HashMap<String, String>();
+//            params.put("userId", user.getUserId());
+            params.put("userId", "DT20YKLXARAAC");
+            params.put("offset", String.valueOf(profileOffset));
+
+            Log.i("check", "API: " + API.GET_PROFILE_WHO_LIKED_ME_LIST + Utils.buildQueryFromMap(params));
+
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_WHO_LIKED_ME_LIST + Utils.buildQueryFromMap(params),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    if (object.has("result") && object.getJSONObject("result").has("likesData")) {
+                                        JSONArray array = object.getJSONObject("result").getJSONArray("likesData");
+                                        if (null == array || array.length() == 0) {
+
+                                        } else {
+                                            memberLikedYouList.clear();
+                                            for (int i = 0; i < array.length(); i++) {
+                                                JSONObject memberObject = array.getJSONObject(i);
+                                                memberObject = memberObject.getJSONObject("member");
+                                                UserModel memberModel = new Gson().fromJson(memberObject.toString(), UserModel.class);
+                                                memberLikedYouList.add(memberModel);
+                                            }
+                                            MemberLikedYouAdapter adapter = new MemberLikedYouAdapter(getContext(),memberLikedYouList);
+                                            likeRecyclerView.setHasFixedSize(true);
+                                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
+                                            likeRecyclerView.setLayoutManager(mLayoutManager);
+                                            likeRecyclerView.setAdapter(adapter);
+                                        }
+                                    }
+
+                                } else {
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
+                                    Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
+
+                    Log.e("check","Req body : "+params.toString());
                     return params;
                 }
             };

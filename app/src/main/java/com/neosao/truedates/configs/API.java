@@ -3,6 +3,7 @@ package com.neosao.truedates.configs;
 public interface API {
 
     String BASE_URL = "http://neosao.com/testing/dating/Api/Api/";
+    String TEST_BASE_URL = "http://neosao.com/testing/dating/Api/TestApi/";
 
     String GET_ALL_OPTIONS_LIST = BASE_URL + "getAllOptionsList";
     String REGISTER_USER = BASE_URL + "registration";
@@ -28,4 +29,5 @@ public interface API {
     String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
     String FEATURE_DEDUCTION = BASE_URL + "performFeatureDeduction";
     String GET_PROFILE_LIST = BASE_URL + "getListsProfiles";
+    String GET_PROFILE_WHO_LIKED_ME_LIST = TEST_BASE_URL + "getWhoLikedMeList";
 }

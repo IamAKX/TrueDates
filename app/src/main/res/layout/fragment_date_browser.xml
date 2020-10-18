@@ -128,7 +128,32 @@
 
     </LinearLayout>
 
+
+
+    <io.ghyeok.stickyswitch.widget.StickySwitch
+        android:id="@+id/feedSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        app:ss_animationDuration="600"
+        app:ss_iconPadding="8dp"
+        app:ss_iconSize="20dp"
+        app:ss_leftIcon="@drawable/ic_person_search"
+        app:ss_leftText="Male"
+        app:ss_rightIcon="@drawable/ic_love"
+        app:ss_rightText="Female"
+        app:ss_selectedTextSize="14sp"
+        app:ss_sliderBackgroundColor="@color/md_grey_300"
+        app:ss_switchColor="@color/themePink"
+        app:ss_textColor="@color/white"
+        app:ss_textSize="12sp"
+        app:ss_textVisibility="gone"
+        app:ss_animationType="line"/>
+
     <com.yuyakaido.android.cardstackview.CardStackView
+        android:layout_below="@+id/feedSwitch"
         android:id="@+id/card_stack_view"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
@@ -162,5 +187,11 @@
             android:layout_marginTop="5dp"/>
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/likeRecyclerView"
+        android:layout_below="@+id/feedSwitch"/>
 
 </RelativeLayout>
