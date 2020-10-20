@@ -229,10 +229,10 @@ public class DateBrowser extends Fragment implements CardStackListener {
             case Top:
                 new FeatureDeductionOnSwipe(FEATURE_DIAMOND).execute();
                 break;
-            case Left:
+            case Right:
                 new FeatureDeductionOnSwipe(FEATURE_LIKE).execute();
                 break;
-            case Right:
+            case Left:
                 new FeatureDeductionOnSwipe(FEATURE_DISLIKE).execute();
                 break;
             case Bottom:
@@ -504,7 +504,10 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         @Override
                         public void onResponse(String response) {
                             try {
+
                                 JSONObject object = new JSONObject(response);
+                                Log.e("check", "onResponse: "+object.toString(4));
+
                                 if (object.has("status") && object.getString("status").equals("200")) {
 
                                     if (object.has("result") && object.getJSONObject("result").has("membersData")) {

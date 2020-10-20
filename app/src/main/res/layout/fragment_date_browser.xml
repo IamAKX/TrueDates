@@ -45,7 +45,7 @@
             android:layout_weight="1">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabLike"
+                android:id="@+id/fabSkip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -56,7 +56,7 @@
                 app:fabSize="normal"
                 app:rippleColor="@null"
                 app:borderWidth="0dp"
-                app:srcCompat="@drawable/ic_like_24dp"/>
+                app:srcCompat="@drawable/skip"/>
 
         </RelativeLayout>
 
@@ -87,7 +87,7 @@
             android:layout_weight="1">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabSkip"
+                android:id="@+id/fabLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -98,11 +98,11 @@
                 app:fabSize="normal"
                 app:rippleColor="@null"
                 app:borderWidth="0dp"
-                app:srcCompat="@drawable/skip"/>
-
-
+                app:srcCompat="@drawable/ic_like_24dp"/>
 
         </RelativeLayout>
+
+
 
         <RelativeLayout
             android:layout_width="wrap_content"
