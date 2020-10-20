@@ -53,15 +53,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final Match item = matchList.get(position);
         holder.name.setText(item.getName());
-        holder.date.setText(item.getDate());
-        holder.location.setText(item.getLocation());
+        holder.date.setText(item.getAge()+" years");
+        holder.location.setText(item.getCaste());
 
         Glide.with(context)
-                .load(item.getPicture())
+                .load(item.getDefaultPhoto())
                 .into(holder.imgProfile);
 
         Glide.with(context)
-                .load(item.getPicture())
+                .load(item.getDefaultPhoto())
                 .into(holder.imgContent);
     }
 

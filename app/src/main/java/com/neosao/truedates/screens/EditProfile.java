@@ -878,6 +878,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("registerType", user.getRegisterType());
                     params.put("firebaseId", user.getFirebaseId());
                     params.put("name", user.getName());
+                    params.put("age", user.getAge());
                     params.put("zodiacSign", user.getZodiacSign());
                     params.put("gender", user.getGender());
                     params.put("birthDate", user.getBirthDate());

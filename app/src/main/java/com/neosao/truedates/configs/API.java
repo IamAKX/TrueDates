@@ -29,5 +29,6 @@ public interface API {
     String DELETE_PHOTO = BASE_URL + "deleteMemberPhoto";
     String FEATURE_DEDUCTION = BASE_URL + "performFeatureDeduction";
     String GET_PROFILE_LIST = BASE_URL + "getListsProfiles";
-    String GET_PROFILE_WHO_LIKED_ME_LIST = TEST_BASE_URL + "getWhoLikedMeList";
+    String GET_PROFILE_WHO_LIKED_ME_LIST = BASE_URL + "getWhoLikedMeList";
+    String GET_MATCHED_PROFILE = BASE_URL + "getMatchingProfiles";
 }
