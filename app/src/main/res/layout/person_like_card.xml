@@ -42,6 +42,31 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+
+               <ImageView
+                   android:id="@+id/dislike"
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:src="@drawable/skip"
+                   android:layout_weight="1"
+                   />
+
+                <ImageView
+                    android:id="@+id/like"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:srcCompat="@drawable/ic_like_24dp"
+                    android:layout_weight="1"
+                   />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </RelativeLayout>

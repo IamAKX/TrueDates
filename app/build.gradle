@@ -7,7 +7,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.neosao.truedates"
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -38,6 +38,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation files('libs/httpmime-4.1.1.jar')
+    implementation 'com.google.android.gms:play-services-ads:19.5.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -69,6 +70,7 @@ dependencies {
     implementation 'com.github.yalantis:ucrop:2.2.6'
     implementation 'com.github.mabbas007:TagsEditText:1.0.5'
     implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
+    implementation 'com.chootdev:blurimg:1.0.1'
 }
 repositories {
     mavenCentral()

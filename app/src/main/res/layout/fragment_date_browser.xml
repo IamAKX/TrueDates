@@ -188,10 +188,17 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <RelativeLayout
+        android:id="@+id/likedView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/likeRecyclerView"
-        android:layout_below="@+id/feedSwitch"/>
+        android:layout_below="@+id/feedSwitch">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/likeRecyclerView"
+           />
+
+    </RelativeLayout>
 </RelativeLayout>
