@@ -498,6 +498,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
             params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
             params.put("offset", String.valueOf(profileOffset));
 
+            Log.e("check getlist", "doInBackground: "+API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params) );
 
             StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params),
                     new Response.Listener<String>() {
@@ -592,6 +593,8 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+
+                            Log.e("check", "onResponse: "+response );
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {

@@ -92,8 +92,9 @@ public class FeedFragment extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
+                                Log.e("LoadMatchedProfiles", "onResponse: "+response );
+
                                 JSONObject object = new JSONObject(response);
-                                Log.e("check", "onResponse: "+object.toString(4) );
 
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     if (object.has("result") && object.getJSONObject("result").has("matchingProfiles")) {
@@ -149,6 +150,11 @@ public class FeedFragment extends Fragment {
                     params.put("lookingFor",user.getLookingFor());
                     params.put("motherTounge",user.getMotherTounge());
                     params.put("interestCode", Utils.getInterestCodeList(user));
+                    params.put("latitude", user.getMembersettings().get(0).getLatitude());
+                    params.put("longitude", user.getMembersettings().get(0).getLongitude());
+                    params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
+                    params.put("maxDistance", user.getMembersettings().get(0).getMaxDistance());
+
                     params.put("offset","0");
 
                     Log.e("check","Req body : "+params.toString());

@@ -106,6 +106,7 @@ public class MyAccount extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
+
                                 JSONObject object = new JSONObject(response);
                                 if (object.getString("status").equals("200")) {
                                     user = new Gson().fromJson(object.getJSONObject("result").getJSONObject("member").toString(), UserModel.class);
@@ -180,6 +181,7 @@ public class MyAccount extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
+                                Log.e("check", "LoadFeatureSlider: "+response );
                                 JSONObject object = new JSONObject(response);
                                 if (object.getString("status").equals("200")) {
                                     ArrayList<FeatureSliderModel> list = new ArrayList<>();

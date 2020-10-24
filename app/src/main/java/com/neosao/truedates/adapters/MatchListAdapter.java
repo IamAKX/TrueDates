@@ -54,7 +54,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
         final Match item = matchList.get(position);
         holder.name.setText(item.getName());
         holder.date.setText(item.getAge()+" years");
-        holder.location.setText(item.getCaste());
+        holder.location.setText(item.getDistance().substring(0,item.getDistance().indexOf('.'))+" kms");
 
         Glide.with(context)
                 .load(item.getDefaultPhoto())

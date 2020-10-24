@@ -22,6 +22,8 @@ import com.neosao.truedates.model.options.FieldOfStudy;
 import com.neosao.truedates.model.options.Interest;
 import com.neosao.truedates.model.options.WorkIndustry;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -61,6 +63,21 @@ public class Utils {
             return Period.between(birthDate, currentDate).getYears();
         } else {
             return 0;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static String getDiffYears(String dobStr, Calendar today) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar dob = Calendar.getInstance();
+        dob.setTime(format.parse(dobStr));// all done
+
+        LocalDate birthDate = LocalDateTime.ofInstant(dob.toInstant(), dob.getTimeZone().toZoneId()).toLocalDate();
+        LocalDate currentDate = LocalDateTime.ofInstant(today.toInstant(), today.getTimeZone().toZoneId()).toLocalDate();
+        if ((birthDate != null) && (currentDate != null)) {
+            return String.valueOf(Period.between(birthDate, currentDate).getYears());
+        } else {
+            return "0";
         }
     }
 
