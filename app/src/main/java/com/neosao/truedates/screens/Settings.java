@@ -264,7 +264,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             View priceItemView = LayoutInflater.from(this).inflate(R.layout.subs_package_item, subscriptionLinearLayout, false);
 
             TextView quantity = priceItemView.findViewById(R.id.quantity);
-            TextView unit = priceItemView.findViewById(R.id.unit);
+            TextView unit = priceItemView.findViewById(R.id.amountPerUnit);
             TextView amountPerUnit = priceItemView.findViewById(R.id.amountPerUnit);
             TextView amount = priceItemView.findViewById(R.id.amount);
             CardView cardView = priceItemView.findViewById(R.id.card);
@@ -296,6 +296,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             priceDataLinearLayout.addView(priceItemView);
         }
 
+        AlertDialog alertDialog = dialogBuilder.create();
+
         dialogView.findViewById(R.id.continueBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -305,13 +307,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
                 else
                 {
+                    alertDialog.dismiss();
                     new BuySubscription(subscription.getPackageCode()).execute();
 
                 }
             }
         });
 
-        AlertDialog alertDialog = dialogBuilder.create();
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1064,6 +1066,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
             priceDataLinearLayout.addView(priceItemView);
         }
+        AlertDialog alertDialog = dialogBuilder.create();
 
         dialogView.findViewById(R.id.continueBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1074,13 +1077,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
                 else
                 {
+                    alertDialog.dismiss();
                     new BuyPackage(featureModel.getPackageCode()).execute();
 
                 }
             }
         });
 
-        AlertDialog alertDialog = dialogBuilder.create();
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
