@@ -1,9 +1,13 @@
 package com.neosao.truedates.screens;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,10 +15,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.neosao.truedates.R;
+import com.neosao.truedates.adapters.InstagramMediaAdapter;
 import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.model.InstagramMediaModel;
 import com.neosao.truedates.model.UserModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class ViewMemberProfile extends AppCompatActivity {
 
@@ -24,11 +42,12 @@ public class ViewMemberProfile extends AppCompatActivity {
     View reverse;
     View skip;
 
-    TextView name, age, workIndustry, education, showMe, about;
+    TextView name, age, workIndustry, education, showMe, about,instagramImageCount;
     private int counter = 0;
     private String[] resources;
-    LinearLayout storyProgressContainer;
-
+    LinearLayout storyProgressContainer,instagramLayout;
+    RecyclerView instagramRecyclerView;
+    ArrayList<InstagramMediaModel> instagramMediaArrayList = new ArrayList<>();
 
     long pressTime = 0L;
     long limit = 500L;
@@ -51,7 +70,11 @@ public class ViewMemberProfile extends AppCompatActivity {
         showMe = findViewById(R.id.showMe);
         about = findViewById(R.id.about);
         storyProgressContainer = findViewById(R.id.storyProgressContainer);
+        instagramImageCount = findViewById(R.id.instagramImageCount);
+        instagramLayout = findViewById(R.id.instagramLayout);
+        instagramRecyclerView = findViewById(R.id.instagramRecyclerView);
 
+        instagramLayout.setVisibility(View.GONE);
         // bind reverse view
         reverse = findViewById(R.id.reverse);
         // bind skip view
@@ -80,6 +103,23 @@ public class ViewMemberProfile extends AppCompatActivity {
                 skip();
             }
         });
+
+        // Instagram Logic
+        if(null != userModel.getMembersettings().get(0).getIsInstagramActive() && null != userModel.getMembersettings().get(0).getInstagramDetails() && userModel.getMembersettings().get(0).getIsInstagramActive().equals("1"))
+        {
+            instagramMediaArrayList.clear();
+            instagramLayout.setVisibility(View.VISIBLE);
+            try {
+                JSONObject jsonObject = new JSONObject(userModel.getMembersettings().get(0).getInstagramDetails());
+                String user_id = jsonObject.getString("user_id");
+                String longLivedToken = jsonObject.getString("longLivedToken");
+
+                getUserDetails(user_id, longLivedToken);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
@@ -135,5 +175,109 @@ public class ViewMemberProfile extends AppCompatActivity {
             else
                 view.setBackgroundColor(getResources().getColor(R.color.hintColor));
         }
+    }
+
+    private void getUserDetails(String user_id, String access_token) {
+
+        ProgressDialog pd = new ProgressDialog(this);
+        pd.show();
+        String userDataUrl = "https://graph.instagram.com/me/media?fields=id,caption&access_token=" + access_token;
+
+        String userMediaUrl = "graph.facebook.com/" + user_id + "/media";//?access_token=" + access_token;
+
+
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.GET,
+                        userDataUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                JSONObject jsonData = null;
+                                try {
+                                    jsonData = new JSONObject(response);
+
+                                    Log.e("media", jsonData.toString(2));
+                                    JSONArray data = jsonData.getJSONArray("data");
+                                    for (int i = 0; i < data.length(); i++) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                            }
+                                        });
+                                        getInstaImage(data.getJSONObject(i).getString("id"), user_id, access_token);
+                                    }
+                                    pd.dismiss();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                )
+
+        );
+
+    }
+
+    private void getInstaImage(String media_id, String user_id, String access_token) {
+
+        String userMediaUrl = "https://graph.instagram.com/"+media_id+"?fields=id,media_type,media_url,username,timestamp&access_token="+access_token;
+
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.GET,
+                        userMediaUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                JSONObject jsonData = null;
+                                try {
+                                    jsonData = new JSONObject(response);
+                                    Log.e("check","data : "+jsonData.toString(2));
+
+                                    InstagramMediaModel mediaModel = new Gson().fromJson(jsonData.toString(),InstagramMediaModel.class);
+                                    if(mediaModel.getMedia_type().equals("IMAGE") || mediaModel.getMedia_type().equals("CAROUSEL_ALBUM"))
+                                    {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                instagramMediaArrayList.add(mediaModel);
+                                                instagramImageCount.setText(instagramMediaArrayList.size()+" Instagram Images");
+//                                                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getBaseContext());
+//                                                instagramRecyclerView.setLayoutManager(mLayoutManager);
+                                                instagramRecyclerView.setLayoutManager(new GridLayoutManager(getBaseContext(),3));
+                                                InstagramMediaAdapter mediaAdapter = new InstagramMediaAdapter(getBaseContext(),instagramMediaArrayList);
+                                                instagramRecyclerView.setAdapter(mediaAdapter);
+                                            }
+                                        });
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                )
+
+        );
     }
 }
