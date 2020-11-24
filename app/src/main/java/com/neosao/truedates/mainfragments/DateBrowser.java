@@ -621,8 +621,8 @@ public class DateBrowser extends Fragment implements CardStackListener {
         protected Void doInBackground(Void... voids) {
 
             Map<String, String> params = new HashMap<String, String>();
-//            params.put("userId", user.getUserId());
-            params.put("userId", "DT20YKLXARAAC");
+            params.put("userId", user.getUserId());
+//            params.put("userId", "DT20YKLXARAAC");
             params.put("offset", String.valueOf(profileOffset));
 
             Log.i("check", "API: " + API.GET_PROFILE_WHO_LIKED_ME_LIST + Utils.buildQueryFromMap(params));

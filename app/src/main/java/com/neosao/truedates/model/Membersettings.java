@@ -26,9 +26,12 @@ public class Membersettings implements Serializable {
     private String editDate;
     private String deleteDate;
     private String isInstagramActive;
-    private String instagramLink;
+    private String instagramDetails;
 
-    public Membersettings(String id, String code, String memberCode, String currentLocation, String latitude, String longitude, String minAgeFilter, String maxAgeFilter, String maxDistance, String showMe, String contactNumber, String isActive, String isDelete, String addID, String editID, String deleteID, String addIP, String editIP, String deleteIP, String addDate, String editDate, String deleteDate, String isInstagramActive, String instagramLink) {
+    public Membersettings() {
+    }
+
+    public Membersettings(String id, String code, String memberCode, String currentLocation, String latitude, String longitude, String minAgeFilter, String maxAgeFilter, String maxDistance, String showMe, String contactNumber, String isActive, String isDelete, String addID, String editID, String deleteID, String addIP, String editIP, String deleteIP, String addDate, String editDate, String deleteDate, String isInstagramActive, String instagramDetails) {
         this.id = id;
         this.code = code;
         this.memberCode = memberCode;
@@ -52,10 +55,7 @@ public class Membersettings implements Serializable {
         this.editDate = editDate;
         this.deleteDate = deleteDate;
         this.isInstagramActive = isInstagramActive;
-        this.instagramLink = instagramLink;
-    }
-
-    public Membersettings() {
+        this.instagramDetails = instagramDetails;
     }
 
     public String getId() {
@@ -242,11 +242,11 @@ public class Membersettings implements Serializable {
         this.isInstagramActive = isInstagramActive;
     }
 
-    public String getInstagramLink() {
-        return instagramLink;
+    public String getInstagramDetails() {
+        return instagramDetails;
     }
 
-    public void setInstagramLink(String instagramLink) {
-        this.instagramLink = instagramLink;
+    public void setInstagramDetails(String instagramDetails) {
+        this.instagramDetails = instagramDetails;
     }
 }

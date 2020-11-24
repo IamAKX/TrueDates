@@ -1,6 +1,7 @@
 package com.neosao.truedates.screens;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.appyvet.materialrangebar.RangeBar;
 import com.bumptech.glide.Glide;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
@@ -52,6 +54,9 @@ import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.SliderAdapterPackage;
 import com.neosao.truedates.configs.API;
+import com.neosao.truedates.configs.AppPreferences;
+import com.neosao.truedates.configs.AuthenticationDialog;
+import com.neosao.truedates.configs.AuthenticationListener;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.RequestQueueSingleton;
@@ -99,6 +104,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     SubscribtionPriceDataModel selectedSubscribtion = null;
     FeaturePriceModel selectedFeaturePriceModel = null;
 
+    private AuthenticationDialog authenticationDialog;
+    private String token = null;
+    private AppPreferences appPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +123,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        appPreferences = new AppPreferences(getBaseContext());
         localPref = new LocalPref(getBaseContext());
         user = localPref.getUser();
 
@@ -150,11 +159,26 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         instaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
-                    showInstaPopup();
+
+                if(!compoundButton.isPressed()) {
+                    return;
+                }
+
+                if(b)
+                {
+                    authenticationDialog = new AuthenticationDialog(Settings.this, new AuthenticationListener() {
+                        @Override
+                        public void onTokenReceived(String auth_token) {
+                            Log.e("checking", "onTokenReceived: "+auth_token);
+                            getInstagramTemporaryToken(auth_token);
+                        }
+                    });
+                    authenticationDialog.setCancelable(true);
+                    authenticationDialog.show();
+                }
                 else {
                     user.getMembersettings().get(0).setIsInstagramActive("0");
-                    user.getMembersettings().get(0).setInstagramLink("");
+                    user.getMembersettings().get(0).setInstagramDetails("");
                     new UpdateInstagram().execute();
                 }
             }
@@ -362,54 +386,54 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         alertDialog.show();
     }
 
-    private void showInstaPopup() {
-        LayoutInflater inflater = getLayoutInflater();
-        View titleView = inflater.inflate(R.layout.alertdialogbox_title, null);
-        TextView titleTextView = titleView.findViewById(R.id.title);
-        ImageButton clear_text = titleView.findViewById(R.id.clear_text);
-        titleTextView.setText("Enter your Instagram link");
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
-        dialogBuilder.setCustomTitle(titleView);
-
-        final EditText input = new EditText(Settings.this);
-        input.setText(user.getMembersettings().get(0).getInstagramLink());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(20, 10, 20, 0);
-        input.setLayoutParams(lp);
-        dialogBuilder.setView(input);
-        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (input.getText().toString().isEmpty()) {
-                    Toast.makeText(getBaseContext(), "Enter instagram profile link", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                user.getMembersettings().get(0).setIsInstagramActive("1");
-                user.getMembersettings().get(0).setInstagramLink(input.getText().toString());
-                new UpdateInstagram().execute();
-            }
-        });
-
-        final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.setCancelable(false);
-        clear_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                instaSwitch.setChecked(false);
-                alertDialog.dismiss();
-            }
-        });
-
-        Window window = alertDialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-
-        wlp.gravity = Gravity.TOP;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-        alertDialog.show();
-    }
+//    private void showInstaPopup() {
+//        LayoutInflater inflater = getLayoutInflater();
+//        View titleView = inflater.inflate(R.layout.alertdialogbox_title, null);
+//        TextView titleTextView = titleView.findViewById(R.id.title);
+//        ImageButton clear_text = titleView.findViewById(R.id.clear_text);
+//        titleTextView.setText("Enter your Instagram link");
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
+//        dialogBuilder.setCustomTitle(titleView);
+//
+//        final EditText input = new EditText(Settings.this);
+//        input.setText(user.getMembersettings().get(0).getInstagramLink());
+//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT,
+//                LinearLayout.LayoutParams.MATCH_PARENT);
+//        lp.setMargins(20, 10, 20, 0);
+//        input.setLayoutParams(lp);
+//        dialogBuilder.setView(input);
+//        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                if (input.getText().toString().isEmpty()) {
+//                    Toast.makeText(getBaseContext(), "Enter instagram profile link", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                user.getMembersettings().get(0).setIsInstagramActive("1");
+//                user.getMembersettings().get(0).setInstagramLink(input.getText().toString());
+//                new UpdateInstagram().execute();
+//            }
+//        });
+//
+//        final AlertDialog alertDialog = dialogBuilder.create();
+//        alertDialog.setCancelable(false);
+//        clear_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                instaSwitch.setChecked(false);
+//                alertDialog.dismiss();
+//            }
+//        });
+//
+//        Window window = alertDialog.getWindow();
+//        WindowManager.LayoutParams wlp = window.getAttributes();
+//
+//        wlp.gravity = Gravity.TOP;
+//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+//        window.setAttributes(wlp);
+//        alertDialog.show();
+//    }
 
     private void showPhonenNumberPopup() {
         LayoutInflater inflater = getLayoutInflater();
@@ -423,7 +447,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         final EditText input = new EditText(Settings.this);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
         input.setInputType(InputType.TYPE_CLASS_PHONE);
-        input.setText(user.getMembersettings().get(0).getInstagramLink());
+        input.setText(user.getMembersettings().get(0).getContactNumber());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -503,12 +527,219 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
+        if(null != user.getMembersettings().get(0).getIsInstagramActive() && user.getMembersettings().get(0).getIsInstagramActive().equals("1"))
+            instaSwitch.setChecked(true);
+        else
+            instaSwitch.setChecked(false);
         location.setText(user.getMembersettings().get(0).getCurrentLocation());
         ageRangebar.setRangePinsByValue(Float.parseFloat(user.getMembersettings().get(0).getMinAgeFilter()), Float.parseFloat(user.getMembersettings().get(0).getMaxAgeFilter()));
         distanceRangebar.setSeekPinByValue(Float.parseFloat(user.getMembersettings().get(0).getMaxDistance()));
         showMe.setText(user.getMembersettings().get(0).getShowMe());
         if (null != user.getMembersettings().get(0).getContactNumber())
             phoneNumber.setText(user.getMembersettings().get(0).getContactNumber());
+    }
+
+
+    public void getInstagramTemporaryToken(String auth_token) {
+        // Get temporary instagram token
+
+        if (auth_token == null)
+            return;
+        Log.e("checking : token", auth_token);
+        appPreferences.putString(AppPreferences.TOKEN, auth_token);
+        token = auth_token;
+
+        ProgressDialog pd = new ProgressDialog(this);
+        pd.show();
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.POST,
+                        "https://api.instagram.com/oauth/access_token",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+
+                                    Log.e("access_token", jsonObject.toString());
+                                    /*if (jsonData.has("id")) {
+                                        appPreferences.putString(AppPreferences.USER_ID, jsonData.getString("id"));
+                                        appPreferences.putString(AppPreferences.USER_NAME, jsonData.getString("username"));
+                                        appPreferences.putString(AppPreferences.PROFILE_PIC, jsonData.getString("profile_picture"));
+
+                                    }*/
+
+                                    getLongLivedToken(jsonObject.getString("user_id"),jsonObject.getString("access_token"));
+
+//                                    getUserDetails(jsonObject.getString("user_id"), jsonObject.getString("access_token"));
+
+                                    pd.dismiss();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                error.printStackTrace();
+                            }
+                        }
+                ) {
+
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+
+                        HashMap params = new HashMap();
+                        params.put("client_id", "1632170996964024");
+                        params.put("client_secret", "2b76520b4effda708684d3c12d794c67");
+                        params.put("grant_type", "authorization_code" );
+                        params.put("redirect_uri", "https://www.neosao.com/testing/dating/instagram/instaLogin");
+                        params.put("code", token);
+
+                        return params;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+                }
+        );
+    }
+
+    private void getLongLivedToken(String user_id, String access_token) {
+        String longLivedUrlToken = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=2b76520b4effda708684d3c12d794c67&access_token="+access_token;
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.GET,
+                        longLivedUrlToken,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                JSONObject jsonData = null;
+                                try {
+                                    jsonData = new JSONObject(response);
+
+                                    String longLivedToken =  jsonData.getString("access_token");
+                                    Log.e("check","data : "+longLivedUrlToken);
+                                    user.getMembersettings().get(0).setIsInstagramActive("1");
+                                    JSONObject instaDetail = new JSONObject();
+                                    instaDetail.put("user_id",user_id);
+                                    instaDetail.put("longLivedToken",longLivedToken);
+                                    instaDetail.put("access_token",access_token);
+                                    user.getMembersettings().get(0).setInstagramDetails(instaDetail.toString());
+                                    new UpdateInstagram().execute();
+//                                    getUserDetails(user_id, longLivedToken);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                )
+
+        );
+    }
+
+    private void getUserDetails(String user_id, String access_token) {
+
+        ProgressDialog pd = new ProgressDialog(this);
+        pd.show();
+        String userDataUrl = "https://graph.instagram.com/me/media?fields=id,caption&access_token=" + access_token;
+
+        String userMediaUrl = "graph.facebook.com/" + user_id + "/media";//?access_token=" + access_token;
+
+        Log.e("check","data : "+userDataUrl);
+
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.GET,
+                        userDataUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                JSONObject jsonData = null;
+                                try {
+                                    jsonData = new JSONObject(response);
+
+                                    Log.e("media", jsonData.toString(2));
+                                    JSONArray data = jsonData.getJSONArray("data");
+                                    for (int i = 0; i < data.length(); i++) {
+                                        getInstaImage(data.getJSONObject(i).getString("id"), user_id, access_token);
+                                    }
+                                    pd.dismiss();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                )
+
+        );
+
+    }
+
+    private void getInstaImage(String media_id, String user_id, String access_token) {
+
+        String userMediaUrl = "https://graph.instagram.com/"+media_id+"?fields=id,media_type,media_url,username,timestamp&access_token="+access_token;
+
+        Log.e("check","data : "+userMediaUrl);
+
+
+        Volley.newRequestQueue(this).add(
+                new StringRequest(
+                        Request.Method.GET,
+                        userMediaUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                JSONObject jsonData = null;
+                                try {
+                                    jsonData = new JSONObject(response);
+                                    /*appPreferences.putString(AppPreferences.USER_ID, jsonData.getString("id"));
+                                    appPreferences.putString(AppPreferences.USER_NAME, jsonData.getString("username"));
+                                    //appPreferences.putString(AppPreferences.PROFILE_PIC, jsonData.getString("profile_picture"));
+                                    login();*/
+                                    Log.i("media", jsonData.toString(2));
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                )
+
+        );
     }
 
     private class UpdateLocation extends AsyncTask<Void, Void, Void> {
@@ -764,7 +995,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
                     params.put("userId", user.getUserId());
                     params.put("isInstagramActive", user.getMembersettings().get(0).getIsInstagramActive());
-                    params.put("instagramLink", user.getMembersettings().get(0).getInstagramLink());
+                    params.put("instagramDetails", user.getMembersettings().get(0).getInstagramDetails());
 
                     Log.e("check", "Reg req body : " + params.toString());
                     return params;

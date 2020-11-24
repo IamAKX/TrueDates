@@ -20,27 +20,38 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity android:name=".screens.ViewMemberProfile"></activity>
+        <activity android:name=".screens.ViewMemberProfile"
+            android:screenOrientation="portrait"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".screens.UploadProfileImage" />
-        <activity android:name=".screens.ViewProfile" />
-        <activity android:name=".screens.EditProfile" />
-        <activity android:name=".screens.Settings" />
+        <activity android:name=".screens.UploadProfileImage"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.ViewProfile"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.EditProfile"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.Settings"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".screens.HomeContainer"
             android:label="@string/title_activity_home_container"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screens.OnboardingData" />
-        <activity android:name=".screens.PhoneValidation" />
-        <activity android:name=".screens.Otp" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.OnboardingData"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.PhoneValidation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.Otp"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".screens.Login"
-            android:fitsSystemWindows="true" />
-        <activity android:name=".MainActivity">
+            android:fitsSystemWindows="true"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
