@@ -28,7 +28,7 @@
     <string name="facebook_app_id">2850031268561599</string>
     <string name="fb_login_protocol_scheme">fb2850031268561599</string>
 
-<!--    Instagram -->
+    <!--    Instagram -->
     <string name="client_id">1632170996964024</string>
     <string name="callback_url">https://www.neosao.com/testing/dating/instagram/instaLogin</string>
     <string name="base_url">https://api.instagram.com/</string>

@@ -28,7 +28,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -204,6 +206,19 @@ public class Utils {
         }
         query = "?"+TextUtils.join("&",list);
         return query;
+    }
+
+    public String generateChatRoomId(String userId1, String userId2){
+        String chatRoomId = "";
+        ArrayList<Character> charList = new ArrayList<Character>();
+        for(char c : userId1.toCharArray())
+            charList.add(c);
+        for(char c : userId2.toCharArray())
+            charList.add(c);
+        Collections.sort(charList);
+        for(char c : charList)
+            chatRoomId += c;
+        return chatRoomId;
     }
 
 }

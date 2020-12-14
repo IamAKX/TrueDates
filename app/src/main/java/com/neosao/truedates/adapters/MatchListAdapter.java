@@ -1,6 +1,7 @@
 package com.neosao.truedates.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.neosao.truedates.R;
+import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.model.ChatMetadataModel;
 import com.neosao.truedates.model.Match;
+import com.neosao.truedates.model.UserBasicDetails;
+import com.neosao.truedates.model.UserModel;
+import com.neosao.truedates.screens.Chat;
 
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyViewHolder> {
@@ -22,7 +31,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, date, location;
-        ImageView imgProfile, imgContent;
+        ImageView imgProfile, imgContent, img_chat;
 
         MyViewHolder(View view) {
             super(view);
@@ -31,6 +40,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
             location = view.findViewById(R.id.text_location);
             imgProfile = view.findViewById(R.id.img_profile);
             imgContent = view.findViewById(R.id.img_content);
+            img_chat = view.findViewById(R.id.img_chat);
 
         }
     }
@@ -63,6 +73,20 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
         Glide.with(context)
                 .load(item.getDefaultPhoto())
                 .into(holder.imgContent);
+
+        holder.img_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserModel currentUser = new LocalPref(context).getUser();
+                String chatroomId = new Utils().generateChatRoomId(currentUser.getUserId(), item.getUserId());
+                UserBasicDetails user2 = new UserBasicDetails(item.getUserId(),item.getName(),item.getDefaultPhoto(), item.getEmail());
+
+
+                ChatMetadataModel chatMetadataModel = new ChatMetadataModel(chatroomId,new Date(), user2);
+
+                context.startActivity(new Intent(context, Chat.class).putExtra("chatMetadata", chatMetadataModel));
+            }
+        });
     }
 
     @Override

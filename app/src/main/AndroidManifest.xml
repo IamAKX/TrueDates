@@ -20,37 +20,47 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity android:name=".screens.ViewMemberProfile"
-            android:screenOrientation="portrait"></activity>
+        <activity android:name=".screens.Chat"></activity>
+        <activity
+            android:name=".screens.ViewMemberProfile"
+            android:screenOrientation="portrait" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".screens.UploadProfileImage"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.ViewProfile"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.EditProfile"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.Settings"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".screens.UploadProfileImage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.ViewProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.EditProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.Settings"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".screens.HomeContainer"
             android:label="@string/title_activity_home_container"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.OnboardingData"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.PhoneValidation"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.Otp"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.OnboardingData"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.PhoneValidation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.Otp"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".screens.Login"
             android:fitsSystemWindows="true"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -85,8 +95,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7095480517399381~3004032780"/>
-
+            android:value="ca-app-pub-7095480517399381~3004032780" />
     </application>
 
 </manifest>
