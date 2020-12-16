@@ -8,11 +8,13 @@ public class ChatMetadataModel implements Serializable {
     private String chatRoomId;
     private Date lastUpdateTimeStamp;
     UserBasicDetails participants;
+    ArrayList<MessageModel> chats;
 
-    public ChatMetadataModel(String chatRoomId, Date lastUpdateTimeStamp, UserBasicDetails participants) {
+    public ChatMetadataModel(String chatRoomId, Date lastUpdateTimeStamp, UserBasicDetails participants, ArrayList<MessageModel> chats) {
         this.chatRoomId = chatRoomId;
         this.lastUpdateTimeStamp = lastUpdateTimeStamp;
         this.participants = participants;
+        this.chats = chats;
     }
 
     public String getChatRoomId() {
@@ -39,12 +41,11 @@ public class ChatMetadataModel implements Serializable {
         this.participants = participants;
     }
 
-    @Override
-    public String toString() {
-        return "ChatMetadataModel{" +
-                "chatRoomId='" + chatRoomId + '\'' +
-                ", lastUpdateTimeStamp=" + lastUpdateTimeStamp +
-                ", participants=" + participants +
-                '}';
+    public ArrayList<MessageModel> getChats() {
+        return chats;
+    }
+
+    public void setChats(ArrayList<MessageModel> chats) {
+        this.chats = chats;
     }
 }

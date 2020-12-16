@@ -82,7 +82,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.MyVi
                 UserBasicDetails user2 = new UserBasicDetails(item.getUserId(),item.getName(),item.getDefaultPhoto(), item.getEmail());
 
 
-                ChatMetadataModel chatMetadataModel = new ChatMetadataModel(chatroomId,new Date(), user2);
+                ChatMetadataModel chatMetadataModel = new ChatMetadataModel(chatroomId,new Date(), user2, new ArrayList<>());
 
                 context.startActivity(new Intent(context, Chat.class).putExtra("chatMetadata", chatMetadataModel));
             }
