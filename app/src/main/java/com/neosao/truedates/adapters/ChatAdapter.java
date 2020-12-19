@@ -55,7 +55,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .circleCrop()
                     .into(messageHolder.profileImage);
             messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
-
+            if(list.get(position).getMessage().equals("❤")){
+                messageHolder.message.setBackgroundDrawable(null);
+                messageHolder.message.setTextSize(45);
+                messageHolder.message.setPadding(3,3,100,3);
+            }
         }
         else if(holder instanceof FriendMessageHolder){
             FriendMessageHolder messageHolder = (FriendMessageHolder) holder;
@@ -65,6 +69,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .circleCrop()
                     .into(messageHolder.profileImage);
             messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
+            if(list.get(position).getMessage().equals("❤")){
+                messageHolder.message.setBackgroundDrawable(null);
+                messageHolder.message.setTextSize(45);
+                messageHolder.message.setPadding(100,3,3,3);
+            }
         }
     }
 

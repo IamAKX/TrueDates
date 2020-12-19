@@ -153,11 +153,11 @@ public class FeedFragment extends Fragment {
                     params.put("latitude", user.getMembersettings().get(0).getLatitude());
                     params.put("longitude", user.getMembersettings().get(0).getLongitude());
                     params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
-                    params.put("maxDistance", user.getMembersettings().get(0).getMaxDistance());
+                    params.put("maxDistance", (user.getMembersettings().get(0).getMaxDistance() == null )? "100":user.getMembersettings().get(0).getMaxDistance());
 
                     params.put("offset","0");
 
-                    Log.e("check","Req body : "+params.toString());
+                    Log.e("check","Match Req body : "+params.toString());
                     return params;
                 }
             };
