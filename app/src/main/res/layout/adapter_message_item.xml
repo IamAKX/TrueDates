@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="80dp"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/layout_message_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_height="76dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:gravity="center_vertical">
 
 
         <RelativeLayout
@@ -22,45 +21,66 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/thumbnail"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                tools:src="@tools:sample/avatars[9]"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                tools:src="@tools:sample/avatars[9]" />
 
             <RelativeLayout
                 android:id="@+id/layout_dot_indicator"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:padding="2dp"
-                android:background="@drawable/dot_message"
-                android:layout_toEndOf="@id/thumbnail"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="-5dp"/>
+                android:layout_marginStart="-5dp"
+                android:layout_toEndOf="@id/thumbnail"
+                android:background="@drawable/dot_message"
+                android:padding="2dp" />
         </RelativeLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
             android:layout_toEndOf="@id/layout_picture_frame"
-            android:layout_centerInParent="true">
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-medium"
-                android:maxLines="1"
-                android:textColor="@color/darkGray"
-                android:textSize="17sp"
-                android:text="Danielle"/>
+            android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="Danielle"
+                    android:textColor="@color/darkGray"
+                    android:textSize="17sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="Just now"
+                    android:textColor="@color/grey"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_content"
@@ -68,20 +88,20 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_name"
                 android:layout_marginTop="2dp"
-                android:text="Hello! I will like to talk about documents to give registration process"
-                android:textSize="14sp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:text="Hello! I will like to talk about documents to give registration process"
+                android:textSize="14sp" />
         </LinearLayout>
 
 
         <View
             android:layout_width="match_parent"
-            android:background="@color/md_grey_200"
-            android:layout_marginEnd="26dp"
-            android:layout_alignParentBottom="true"
             android:layout_height="0.5dp"
-            android:layout_toEndOf="@id/layout_picture_frame" />
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="26dp"
+            android:layout_toEndOf="@id/layout_picture_frame"
+            android:background="@color/md_grey_200" />
 
     </RelativeLayout>
 

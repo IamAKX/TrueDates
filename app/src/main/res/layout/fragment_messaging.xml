@@ -65,7 +65,7 @@
                 android:id="@+id/text_feed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Feed"
+                android:text="Matches"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/light_gray"

@@ -8,6 +8,9 @@ public class UserBasicDetails implements Serializable {
     private String profileImage;
     private String emailAddress;
 
+    public UserBasicDetails() {
+    }
+
     public UserBasicDetails(String userID, String userName, String profileImage, String emailAddress) {
         this.userID = userID;
         this.userName = userName;

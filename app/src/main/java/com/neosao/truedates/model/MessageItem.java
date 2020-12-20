@@ -1,64 +1,76 @@
 package com.neosao.truedates.model;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 public class MessageItem {
 
-    private int id;
-    private String name;
-    private String content;
-    private int count;
-    private int picture;
-
+    private String chatRoomId;
+    private Date lastUpdateTimeStamp;
+    private String lastMessage;
+    private String lastMessageSentBy;
+    private ArrayList<UserBasicDetails> participants;
 
     public MessageItem() {
     }
 
-    public MessageItem(int id, String name, String content, int count, int picture) {
-        this.id = id;
-        this.name = name;
-        this.content = content;
-        this.count = count;
-        this.picture = picture;
+    public MessageItem(String chatRoomId, Date lastUpdateTimeStamp, String lastMessage, String lastMessageSentBy, ArrayList<UserBasicDetails> participants) {
+        this.chatRoomId = chatRoomId;
+        this.lastUpdateTimeStamp = lastUpdateTimeStamp;
+        this.lastMessage = lastMessage;
+        this.lastMessageSentBy = lastMessageSentBy;
+        this.participants = participants;
     }
 
-    public int getId() {
-        return id;
+    public String getChatRoomId() {
+        return chatRoomId;
     }
 
-    public String getName() {
-        return name;
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
     }
 
-    public String getContent() {
-        return content;
+    public Date getLastUpdateTimeStamp() {
+        return lastUpdateTimeStamp;
     }
 
-    public int getCount() {
-        return count;
+    public void setLastUpdateTimeStamp(Date lastUpdateTimeStamp) {
+        this.lastUpdateTimeStamp = lastUpdateTimeStamp;
     }
 
-    public int getPicture() {
-        return picture;
+    public String getLastMessage() {
+        return lastMessage;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLastMessageSentBy() {
+        return lastMessageSentBy;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setLastMessageSentBy(String lastMessageSentBy) {
+        this.lastMessageSentBy = lastMessageSentBy;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public ArrayList<UserBasicDetails> getParticipants() {
+        return participants;
     }
 
-    public void setPicture(int id) {
-        this.id = id;
+    public void setParticipants(ArrayList<UserBasicDetails> participants) {
+        this.participants = participants;
+    }
+
+    @Override
+    public String toString() {
+        return "MessageItem{" +
+                "chatRoomId='" + chatRoomId + '\'' +
+                ", lastUpdateTimeStamp=" + lastUpdateTimeStamp +
+                ", lastMessage='" + lastMessage + '\'' +
+                ", lastMessageSentBy='" + lastMessageSentBy + '\'' +
+                ", participants=" + participants +
+                '}';
     }
 }
 
-//myImageView.setImageResource(R.drawable.icon);
