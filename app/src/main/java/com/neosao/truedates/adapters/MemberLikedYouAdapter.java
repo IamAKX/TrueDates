@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +70,7 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
     public void onBindViewHolder(@NonNull MemberLikedYouAdapter.LikeViewHolder holder, int position) {
         UserModel userModel = likeList.get(position);
 
-        if (null != holder.item_image) {
+        if (null != userModel.getDefaultPhoto()) {
 //            Glide.with(context)
 //                    .load(userModel.getDefaultPhoto())
 //                    .into(holder.item_image);

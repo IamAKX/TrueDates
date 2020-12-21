@@ -17,6 +17,7 @@ import com.github.marlonlom.utilities.timeago.TimeAgoMessages;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.Utils;
+import com.neosao.truedates.mainfragments.ChatFragment;
 import com.neosao.truedates.model.ChatMetadataModel;
 import com.neosao.truedates.model.MessageItem;
 import com.neosao.truedates.model.UserBasicDetails;
@@ -36,7 +37,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, content, count, text_time;
         ImageView thumbnail;
-        RelativeLayout viewIndicator,layout_message_content;
+        RelativeLayout viewIndicator, layout_message_content;
 
 
         MyViewHolder(View view) {
@@ -68,36 +69,39 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final MessageItem item = messageList.get(position);
         UserBasicDetails friend = null;
-        for(UserBasicDetails u : item.getParticipants())
-        {
-            if(u.getUserID() != new LocalPref(context).getUser().getUserId())
-            {
-                friend = u;
-                break;
+        if (null != item.getParticipants())
+            for (UserBasicDetails u : item.getParticipants()) {
+                if (u.getUserID() != new LocalPref(context).getUser().getUserId()) {
+                    friend = u;
+                    break;
+                }
             }
-        }
-        holder.name.setText(friend.getUserName());
-        holder.content.setText(item.getLastMessage());
+        if(null != item.getLastMessage())
+            holder.content.setText(item.getLastMessage());
 
         holder.viewIndicator.setVisibility(View.INVISIBLE);
 
+        if (null != item.getLastUpdateTimeStamp())
+            holder.text_time.setText(TimeAgo.using(item.getLastUpdateTimeStamp().getTime()));
+        if (null != friend) {
+            holder.name.setText(friend.getUserName());
 
-        holder.text_time.setText(TimeAgo.using(item.getLastUpdateTimeStamp().getTime()));
-        Glide.with(context)
-                .load(friend.getProfileImage())
-                .circleCrop()
-                .into(holder.thumbnail);
+            Glide.with(context)
+                    .load(friend.getProfileImage())
+                    .circleCrop()
+                    .into(holder.thumbnail);
 
-        UserBasicDetails finalFriend = friend;
-        holder.layout_message_content.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String chatroomId = item.getChatRoomId();
-                ChatMetadataModel chatMetadataModel = new ChatMetadataModel(chatroomId,new Date(), finalFriend, new ArrayList<>());
+            UserBasicDetails finalFriend = friend;
+            holder.layout_message_content.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String chatroomId = item.getChatRoomId();
+                    ChatMetadataModel chatMetadataModel = new ChatMetadataModel(chatroomId, new Date(), finalFriend, new ArrayList<>());
+                    context.startActivity(new Intent(context, Chat.class).putExtra("chatMetadata", chatMetadataModel));
 
-                context.startActivity(new Intent(context, Chat.class).putExtra("chatMetadata", chatMetadataModel));
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -105,7 +109,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         return messageList.size();
     }
 
-    public void updateList(List<MessageItem> list){
+    public void updateList(List<MessageItem> list) {
         messageList = list;
         notifyDataSetChanged();
     }

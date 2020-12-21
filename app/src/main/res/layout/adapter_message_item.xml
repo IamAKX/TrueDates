@@ -90,7 +90,7 @@
                 android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Hello! I will like to talk about documents to give registration process"
+                android:text=""
                 android:textSize="14sp" />
         </LinearLayout>
 
