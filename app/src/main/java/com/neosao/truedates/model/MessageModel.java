@@ -10,17 +10,19 @@ public class MessageModel implements Serializable {
     private String senderProfileImage;
     private Date messageTimestamp;
     private String messageID;
+    private String messageType;
 
     public MessageModel() {
     }
 
-    public MessageModel(String message, String senderID, String senderName, String senderProfileImage, Date messageTimestamp, String messageID) {
+    public MessageModel(String message, String senderID, String senderName, String senderProfileImage, Date messageTimestamp, String messageID, String messageType) {
         this.message = message;
         this.senderID = senderID;
         this.senderName = senderName;
         this.senderProfileImage = senderProfileImage;
         this.messageTimestamp = messageTimestamp;
         this.messageID = messageID;
+        this.messageType = messageType;
     }
 
     public String getMessage() {
@@ -71,6 +73,14 @@ public class MessageModel implements Serializable {
         this.messageID = messageID;
     }
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
     @Override
     public String toString() {
         return "MessageModel{" +
@@ -80,6 +90,7 @@ public class MessageModel implements Serializable {
                 ", senderProfileImage='" + senderProfileImage + '\'' +
                 ", messageTimestamp=" + messageTimestamp +
                 ", messageID='" + messageID + '\'' +
+                ", messageType='" + messageType + '\'' +
                 '}';
     }
 }

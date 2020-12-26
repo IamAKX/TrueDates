@@ -2,17 +2,16 @@ package com.neosao.truedates.mainfragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 
 public class FeedFragment extends Fragment {
@@ -92,7 +90,6 @@ public class FeedFragment extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
-                                Log.e("LoadMatchedProfiles", "onResponse: "+response );
 
                                 JSONObject object = new JSONObject(response);
 
@@ -123,19 +120,16 @@ public class FeedFragment extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
                             }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("check", "onErrorResponse: ", error);
 
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -157,7 +151,6 @@ public class FeedFragment extends Fragment {
 
                     params.put("offset","0");
 
-                    Log.e("check","Match Req body : "+params.toString());
                     return params;
                 }
             };

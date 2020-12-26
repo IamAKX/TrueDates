@@ -2,13 +2,6 @@ package com.neosao.truedates.mainfragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -37,13 +35,9 @@ import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.CardStackAdapter;
 import com.neosao.truedates.adapters.MemberLikedYouAdapter;
 import com.neosao.truedates.configs.API;
-import com.neosao.truedates.configs.DummyProfile;
 import com.neosao.truedates.configs.LocalPref;
-import com.neosao.truedates.configs.ProfileDiffCallback;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
-import com.neosao.truedates.model.AdModel;
-import com.neosao.truedates.model.Profile;
 import com.neosao.truedates.model.UserModel;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -322,7 +316,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -374,7 +367,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -385,7 +377,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -398,7 +389,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     params.put("toUserId", toUserId);
                     params.put("featureType", featureType);
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -436,7 +426,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -457,7 +446,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                                 RewindAnimationSetting rewindSetting = new RewindAnimationSetting.Builder()
                                         .setDirection(Direction.Bottom)
                                         .setDuration(Duration.Normal.duration)
@@ -475,7 +463,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -488,7 +475,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     params.put("toUserId", toUserId);
                     params.put("featureType", featureType);
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -528,7 +514,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
             params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
             params.put("offset", String.valueOf(profileOffset));
 
-            Log.e("check getlist", "doInBackground: " + API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params));
 
             StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params),
                     new Response.Listener<String>() {
@@ -537,7 +522,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             try {
 
                                 JSONObject object = new JSONObject(response);
-                                Log.e("check", "onResponse: " + object.toString(4));
 
                                 if (object.has("status") && object.getString("status").equals("200")) {
 
@@ -567,7 +551,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                             cardStackView.setVisibility(View.VISIBLE);
                             progressView.setVisibility(View.GONE);
@@ -581,7 +564,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -632,7 +614,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         @Override
                         public void onResponse(String response) {
 
-                            Log.e("check", "onResponse: " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -663,7 +644,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -674,7 +654,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -685,7 +664,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     Map<String, String> params = new HashMap<String, String>();
 
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };

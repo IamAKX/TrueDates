@@ -16,14 +16,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -65,11 +63,6 @@ import com.neosao.truedates.model.MemberInterests;
 import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.Interest;
-import com.neosao.truedates.onboardingfragments.Habits;
-import com.neosao.truedates.onboardingfragments.Intoduction;
-import com.neosao.truedates.onboardingfragments.Others;
-import com.neosao.truedates.onboardingfragments.Personal;
-import com.neosao.truedates.onboardingfragments.Work;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -371,7 +364,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             public void onPermissionsGranted(String[] permissions) throws SecurityException {
                                 if(null == tappedImageView)
                                 {
-                                    Log.e("check","Tapped image in null");
                                     return;
                                 }
                                 ImagePicker.with(EditProfile.this)
@@ -574,7 +566,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         personBirthDate.set(Calendar.DAY_OF_MONTH, day);
 
         int diff = Utils.getDiffYears(personBirthDate, calendar);
-        Log.e("check", "Age : " + diff);
         if (diff < 18) {
             Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
         } else {
@@ -602,7 +593,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
-            Log.e("check", resultUri.getPath());
             Glide.with(getBaseContext())
                     .load(resultUri.getPath())
                     .into(tappedImageView);
@@ -616,7 +606,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
-            Log.e("check", cropError.getLocalizedMessage());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -873,7 +862,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                 }
                             }
                         }
@@ -918,7 +906,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("wantKids", user.getWantKids());
 
 
-                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };
@@ -1143,7 +1130,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         new StringBody(user.getUserId()));
                 entity.addPart("index",
                         new StringBody(String.valueOf(getIndexOfImageView(tappedImageView))));
-                Log.e("check","Index : "+String.valueOf(getIndexOfImageView(tappedImageView)));
                 httppost.setEntity(entity);
 
                 // Making server call
@@ -1167,7 +1153,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 dialog.dismissWithAnimation();
 
             }
-            Log.e("check", "upload response : " + responseString);
 
             return responseString;
         }
@@ -1184,7 +1169,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                     if (null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto")) {
                         MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
-                        Log.e("check","MemberPhotos : "+photos.toString());
                         photos.setIndex(String.valueOf(getIndexOfImageView(tappedImageView)));
                         user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
                         Glide.with(getBaseContext())
@@ -1198,7 +1182,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             } catch (JSONException e) {
-                Log.e("check", "upload response : " + responseString);
                 Toast.makeText(getBaseContext(),"Upload response : " + responseString,Toast.LENGTH_LONG).show();
                 Glide.with(getBaseContext())
                         .load(R.drawable.dashed_border)
@@ -1228,7 +1211,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1239,7 +1221,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -1250,7 +1231,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId", user.getUserId());
                     params.put("photoCode", photoCode);
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -1287,7 +1267,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("message") && null != object.getString("message"))
@@ -1306,7 +1285,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1317,7 +1295,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }

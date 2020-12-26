@@ -1,16 +1,7 @@
 package com.neosao.truedates.mainfragments;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,6 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -40,7 +38,6 @@ import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
-import com.neosao.truedates.model.Like;
 import com.neosao.truedates.model.Match;
 import com.neosao.truedates.model.MessageItem;
 import com.neosao.truedates.model.UserBasicDetails;
@@ -55,7 +52,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 
 public class ChatFragment extends Fragment {
@@ -150,10 +146,9 @@ public class ChatFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if (null != snapshot) {
                     MessageItem model = snapshot.getValue(MessageItem.class);
-                    Log.e("check", "MessageItem : " + model.toString());
                     messageList.add(model);
                     mAdapter.notifyDataSetChanged();
-                    new LoadMatchedProfiles().execute();
+//                    new LoadMatchedProfiles().execute();
 
                 }
 
@@ -179,7 +174,7 @@ public class ChatFragment extends Fragment {
 
             }
         });
-        new LoadMatchedProfiles().execute();
+//        new LoadMatchedProfiles().execute();
 
     }
 
@@ -200,7 +195,6 @@ public class ChatFragment extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
-                                Log.e("LoadMatchedProfiles", "onResponse: "+response );
 
                                 JSONObject object = new JSONObject(response);
 
@@ -258,7 +252,6 @@ public class ChatFragment extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
                             }
 
                         }
@@ -266,12 +259,10 @@ public class ChatFragment extends Fragment {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("check", "onErrorResponse: ", error);
 
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -293,7 +284,6 @@ public class ChatFragment extends Fragment {
 
                     params.put("offset","0");
 
-                    Log.e("check","Match Req body : "+params.toString());
                     return params;
                 }
             };

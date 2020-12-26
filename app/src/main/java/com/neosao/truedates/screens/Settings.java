@@ -16,6 +16,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -169,7 +170,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     authenticationDialog = new AuthenticationDialog(Settings.this, new AuthenticationListener() {
                         @Override
                         public void onTokenReceived(String auth_token) {
-                            Log.e("checking", "onTokenReceived: "+auth_token);
                             getInstagramTemporaryToken(auth_token);
                         }
                     });
@@ -385,55 +385,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         alertDialog.show();
     }
-
-//    private void showInstaPopup() {
-//        LayoutInflater inflater = getLayoutInflater();
-//        View titleView = inflater.inflate(R.layout.alertdialogbox_title, null);
-//        TextView titleTextView = titleView.findViewById(R.id.title);
-//        ImageButton clear_text = titleView.findViewById(R.id.clear_text);
-//        titleTextView.setText("Enter your Instagram link");
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
-//        dialogBuilder.setCustomTitle(titleView);
-//
-//        final EditText input = new EditText(Settings.this);
-//        input.setText(user.getMembersettings().get(0).getInstagramLink());
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        lp.setMargins(20, 10, 20, 0);
-//        input.setLayoutParams(lp);
-//        dialogBuilder.setView(input);
-//        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                if (input.getText().toString().isEmpty()) {
-//                    Toast.makeText(getBaseContext(), "Enter instagram profile link", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                user.getMembersettings().get(0).setIsInstagramActive("1");
-//                user.getMembersettings().get(0).setInstagramLink(input.getText().toString());
-//                new UpdateInstagram().execute();
-//            }
-//        });
-//
-//        final AlertDialog alertDialog = dialogBuilder.create();
-//        alertDialog.setCancelable(false);
-//        clear_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                instaSwitch.setChecked(false);
-//                alertDialog.dismiss();
-//            }
-//        });
-//
-//        Window window = alertDialog.getWindow();
-//        WindowManager.LayoutParams wlp = window.getAttributes();
-//
-//        wlp.gravity = Gravity.TOP;
-//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-//        window.setAttributes(wlp);
-//        alertDialog.show();
-//    }
 
     private void showPhonenNumberPopup() {
         LayoutInflater inflater = getLayoutInflater();
@@ -1429,6 +1380,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             requestQueue.add(stringObjectRequest);
             return null;
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class BuyPackage extends AsyncTask<Void,Void,Void>{

@@ -3,7 +3,6 @@ package com.neosao.truedates.screens;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.ResponseParser;
-import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.mainfragments.DateBrowser;
 import com.neosao.truedates.mainfragments.Messaging;
 import com.neosao.truedates.mainfragments.MyAccount;
@@ -108,7 +106,6 @@ public class HomeContainer extends AppCompatActivity implements BottomNavigation
                     NetworkResponse networkResponse = error.networkResponse;
                     if (error.networkResponse != null && new String(networkResponse.data) != null) {
                         if (new String(networkResponse.data) != null) {
-                            Log.e("check", new String(networkResponse.data));
                         }
                     }
                 }

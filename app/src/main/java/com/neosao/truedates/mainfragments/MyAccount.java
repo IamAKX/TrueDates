@@ -3,16 +3,14 @@ package com.neosao.truedates.mainfragments;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,13 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.SliderAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
-import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.FeatureSliderModel;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.EditProfile;
@@ -132,7 +128,6 @@ public class MyAccount extends Fragment {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                 }
                             }
                         }
@@ -141,7 +136,6 @@ public class MyAccount extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId", user.getUserId());
-                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };
@@ -181,7 +175,6 @@ public class MyAccount extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
-                                Log.e("check", "LoadFeatureSlider: "+response );
                                 JSONObject object = new JSONObject(response);
                                 if (object.getString("status").equals("200")) {
                                     ArrayList<FeatureSliderModel> list = new ArrayList<>();
@@ -217,7 +210,6 @@ public class MyAccount extends Fragment {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                 }
                             }
                         }
@@ -226,7 +218,6 @@ public class MyAccount extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
 
-                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };

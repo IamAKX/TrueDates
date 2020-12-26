@@ -83,6 +83,8 @@
                 android:layout_marginRight="5dp" />
 
             <RelativeLayout
+                android:visibility="gone"
+
                 android:id="@+id/layout_count_message"
                 android:layout_width="15dp"
                 android:layout_height="15dp"

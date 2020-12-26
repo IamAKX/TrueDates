@@ -3,7 +3,6 @@ package com.neosao.truedates.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,32 +21,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
-import com.chootdev.blurimg.BlurImage;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
-import com.neosao.truedates.model.Like;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.Settings;
-import com.yuyakaido.android.cardstackview.Direction;
-import com.yuyakaido.android.cardstackview.Duration;
-import com.yuyakaido.android.cardstackview.RewindAnimationSetting;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.neosao.truedates.configs.Constants.FEATURE_DISLIKE;
-import static com.neosao.truedates.configs.Constants.FEATURE_LIKE;
-import static com.neosao.truedates.configs.Constants.FEATURE_REWIND;
 
 public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAdapter.LikeViewHolder> {
 
@@ -75,9 +63,7 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
 //                    .load(userModel.getDefaultPhoto())
 //                    .into(holder.item_image);
 
-            BlurImage.withContext(context)
-                    .blurFromUri(userModel.getDefaultPhoto())
-                    .into(holder.item_image);
+
         }
 
 
@@ -161,7 +147,6 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("message") && null != object.getString("message"))
@@ -170,7 +155,6 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
 
                             }
                         }
@@ -182,7 +166,6 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(context, new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -195,7 +178,6 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                     params.put("toUserId", toUserId);
                     params.put("featureType", featureType);
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };

@@ -1,5 +1,16 @@
 package com.neosao.truedates.screens;
 
+import android.Manifest;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,31 +18,36 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-
+import com.github.jksiezni.permissive.PermissionsGrantedListener;
+import com.github.jksiezni.permissive.PermissionsRefusedListener;
+import com.github.jksiezni.permissive.Permissive;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.ChatAdapter;
+import com.neosao.truedates.configs.Constants;
 import com.neosao.truedates.configs.LocalPref;
+import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.ChatMetadataModel;
 import com.neosao.truedates.model.MessageModel;
 import com.neosao.truedates.model.UserBasicDetails;
 import com.neosao.truedates.model.UserModel;
+import com.nguyenhoanglam.imagepicker.model.Image;
+import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Chat extends AppCompatActivity {
 
@@ -47,6 +63,8 @@ public class Chat extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private ChatAdapter chatAdapter;
     private ArrayList<MessageModel> messageList = new ArrayList<>();
+    ArrayList<Image> images = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +150,6 @@ public class Chat extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if (snapshot.getValue() != null) {
                     MessageModel messageModel = snapshot.getValue(MessageModel.class);
-                    Log.e("checking",messageModel.toString());
 
                     messageList.add(messageModel);
                     chatAdapter.notifyDataSetChanged();
@@ -161,13 +178,92 @@ public class Chat extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(chatAdapter);
+
+        picture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Permissive.Request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                        .whenPermissionsGranted(new PermissionsGrantedListener() {
+                            @Override
+                            public void onPermissionsGranted(String[] permissions) throws SecurityException {
+                                ImagePicker.with(Chat.this)
+                                        .setFolderMode(true)
+                                        .setFolderTitle("Album")
+                                        .setDirectoryName("True Dates")
+                                        .setMultipleMode(false)
+                                        .setShowNumberIndicator(true)
+                                        .setMaxSize(1)
+                                        .setBackgroundColor("#ffffff")
+                                        .setStatusBarColor("#E0E0E0")
+                                        .setToolbarColor("#ffffff")
+                                        .setToolbarIconColor("#FF6F8B")
+                                        .setToolbarTextColor("#FF6F8B")
+                                        .setProgressBarColor("#FF6F8B")
+                                        .setIndicatorColor("#FF6F8B")
+                                        .setShowCamera(true)
+                                        .setDoneTitle("Select")
+                                        .setLimitMessage("You can select up to 10 images")
+                                        .setSelectedImages(images)
+                                        .setRequestCode(100)
+                                        .start();
+                            }
+                        })
+                        .whenPermissionsRefused(new PermissionsRefusedListener() {
+                            @Override
+                            public void onPermissionsRefused(String[] permissions) {
+                                Toast.makeText(getBaseContext(), "We need your permission to read the image", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .execute(Chat.this);
+            }
+        });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (ImagePicker.shouldHandleResult(requestCode, resultCode, data, 100)) {
+            images = ImagePicker.getImages(data);
+            Uri imageURI = images.get(0).getUri();
 
+            SweetAlertDialog progressDialog = Utils.getProgress(Chat.this, "Sending image");
+            progressDialog.show();
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = mStorageRef.child("images/"+System.currentTimeMillis()+".jpg");
+            imageRef.putFile(imageURI)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    DatabaseReference chatMessage = chatRoom.child("chats").push();
+                                    MessageModel messageModel = new MessageModel(uri.toString(),myBasicDetails.getUserID(),myBasicDetails.getUserName(), myBasicDetails.getProfileImage(), new Date(),chatMessage.getKey(), Constants.MESSAGE_TYPE_IMAGE);
+                                    chatMessage.setValue(messageModel);
+                                    chatRoom.child("lastUpdateTimeStamp").setValue(messageModel.getMessageTimestamp());
+                                    chatRoom.child("lastMessage").setValue("Image");
+                                    chatRoom.child("lastMessageSentBy").setValue(messageModel.getSenderID());
+                                    messageEditText.setText("");
+                                    progressDialog.dismissWithAnimation();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getBaseContext(),"Error : "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            progressDialog.dismissWithAnimation();
+                        }
+                    });
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
 
     private void sendMessage(String message) {
         DatabaseReference chatMessage = chatRoom.child("chats").push();
-        MessageModel messageModel = new MessageModel(message,myBasicDetails.getUserID(),myBasicDetails.getUserName(), myBasicDetails.getProfileImage(), new Date(),chatMessage.getKey());
+        MessageModel messageModel = new MessageModel(message,myBasicDetails.getUserID(),myBasicDetails.getUserName(), myBasicDetails.getProfileImage(), new Date(),chatMessage.getKey(), Constants.MESSAGE_TYPE_TEXT);
         chatMessage.setValue(messageModel);
         chatRoom.child("lastUpdateTimeStamp").setValue(messageModel.getMessageTimestamp());
         chatRoom.child("lastMessage").setValue(message);

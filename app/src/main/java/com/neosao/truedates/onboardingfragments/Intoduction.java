@@ -7,30 +7,25 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
@@ -47,7 +42,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 
@@ -315,7 +309,6 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         personBirthDate.set(Calendar.DAY_OF_MONTH, day);
 
         int diff = Utils.getDiffYears(personBirthDate, calendar);
-        Log.e("check","Age : "+diff);
         if(diff < 18)
         {
             Toast.makeText(getContext(),"You should be at least 18 years old", Toast.LENGTH_LONG).show();

@@ -1,8 +1,5 @@
 package com.neosao.truedates.screens;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -92,18 +92,15 @@ public class PhoneValidation extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.e("check", "signInWithCredential:success");
                             otp_view.showSuccess();
                             FirebaseUser user = task.getResult().getUser();
                             FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.mobile.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null == user.getPhotoUrl() ? "" : user.getPhotoUrl().toString(), user.getUid());
-                            Log.e("check", userModel.toString());
                             new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
 //                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
                             new CheckForNewUser().execute();
 
                         } else {
                             // Sign in failed, display a message and update the UI
-                            Log.e("check", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 otp_view.showError();
                                 Toast.makeText(getBaseContext(), "OTP is incorrect", Toast.LENGTH_SHORT).show();
@@ -123,21 +120,18 @@ public class PhoneValidation extends AppCompatActivity {
                 new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                        Log.e("check", "onVerificationCompleted:" + phoneAuthCredential.getSmsCode());
                         otp_view.setOTP(phoneAuthCredential.getSmsCode());
 
                     }
 
                     @Override
                     public void onVerificationFailed(@NonNull FirebaseException e) {
-                        Log.e("check", "onVerificationFailed:" + e.getLocalizedMessage());
                         Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         otp_view.showError();
                     }
 
                     @Override
                     public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                        Log.e("check", "onCodeSent:" + verificationId);
                         verificationCodeId = verificationId;
                     }
                 });
@@ -247,7 +241,6 @@ public class PhoneValidation extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
                             }
                         }
                     },
@@ -258,7 +251,6 @@ public class PhoneValidation extends AppCompatActivity {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -268,7 +260,6 @@ public class PhoneValidation extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };

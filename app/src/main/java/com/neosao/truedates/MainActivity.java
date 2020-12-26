@@ -1,7 +1,5 @@
 package com.neosao.truedates;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -11,18 +9,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.HomeContainer;
 import com.neosao.truedates.screens.Login;
-import com.neosao.truedates.screens.OnboardingData;
-import com.neosao.truedates.screens.Otp;
-import com.neosao.truedates.screens.Settings;
 import com.neosao.truedates.screens.UploadProfileImage;
 
 import java.security.MessageDigest;
@@ -80,12 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String hashKey = new String(Base64.encode(md.digest(), 0));
-                Log.e("check", "printHashKey() Hash Key: " + hashKey);
             }
         } catch (NoSuchAlgorithmException e) {
-            Log.e("check", "printHashKey()", e);
         } catch (Exception e) {
-            Log.e("check", "printHashKey()", e);
         }
     }
 }

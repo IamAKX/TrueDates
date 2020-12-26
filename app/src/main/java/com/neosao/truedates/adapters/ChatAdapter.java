@@ -11,7 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.neosao.truedates.R;
+import com.neosao.truedates.configs.Constants;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.model.MessageModel;
 
@@ -23,7 +26,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<MessageModel> list;
     private static final int FREINDS_MESSAGE = 1;
-    private static final int MY_MESSAGE = 2;
+    private static final int FREINDS_IMAGE = 2;
+    private static final int FREINDS_PROFILE_LIKED = 3;
+    private static final int MY_MESSAGE = 4;
+    private static final int MY_IMAGE = 5;
+    private static final int MY_PROFILE_LIKED = 6;
 
     public ChatAdapter(Context context, ArrayList<MessageModel> list) {
         this.context = context;
@@ -33,13 +40,35 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == MY_MESSAGE) {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_message_me, parent, false);
-            return new MyMessageHolder(view);
-        } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_message_other, parent, false);
-            return new FriendMessageHolder(view);
+        View view = null;
+        switch (viewType)
+        {
+            case MY_MESSAGE:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_message_me, parent, false);
+                return new MyMessageHolder(view);
+
+            case MY_IMAGE:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_image_me, parent, false);
+                return new MyMessageImageHolder(view);
+
+            case MY_PROFILE_LIKED:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_profile_liked_me, parent, false);
+                return new MyMessageImageHolder(view);
+
+            case FREINDS_MESSAGE:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_message_other, parent, false);
+                return new MyMessageHolder(view);
+
+            case FREINDS_IMAGE:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_image_other, parent, false);
+                return new FriendMessageImageHolder (view);
+
+            case FREINDS_PROFILE_LIKED:
+                view = LayoutInflater.from(context).inflate(R.layout.chat_profile_liked_other, parent, false);
+                return new FriendMessageImageHolder(view);
+            default: return null;
         }
+
     }
 
     @Override
@@ -75,6 +104,34 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 messageHolder.message.setPadding(100,3,3,3);
             }
         }
+        else  if(holder instanceof MyMessageImageHolder)
+        {
+            MyMessageImageHolder messageHolder = (MyMessageImageHolder) holder;
+            Glide.with(context)
+                    .load(list.get(position).getSenderProfileImage())
+                    .circleCrop()
+                    .into(messageHolder.profileImage);
+            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
+            Glide.with(context)
+                    .load(list.get(position).getMessage())
+                    .transform(new CenterCrop(),new RoundedCorners(25))
+                    .into(messageHolder.message);
+
+        }
+        else if(holder instanceof FriendMessageImageHolder)
+        {
+            FriendMessageImageHolder messageHolder = (FriendMessageImageHolder) holder;
+            Glide.with(context)
+                    .load(list.get(position).getSenderProfileImage())
+                    .circleCrop()
+                    .into(messageHolder.profileImage);
+            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
+            Glide.with(context)
+                    .load(list.get(position).getMessage())
+                    .transform(new CenterCrop(),new RoundedCorners(25))
+                    .into(messageHolder.message);
+        }
+
     }
 
     @Override
@@ -84,7 +141,26 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return list.get(position).getSenderID().equals(new LocalPref(context).getUser().getUserId()) ? MY_MESSAGE : FREINDS_MESSAGE;
+        if(list.get(position).getSenderID().equals(new LocalPref(context).getUser().getUserId())){
+            // Me
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_TEXT))
+                return MY_MESSAGE;
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_IMAGE))
+                return MY_IMAGE;
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_PROFILE_LIKED))
+                return MY_PROFILE_LIKED;
+        }
+        else
+        {
+            // Friend
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_TEXT))
+                return FREINDS_MESSAGE;
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_IMAGE))
+                return FREINDS_IMAGE;
+            if(list.get(position).getMessageType().equals(Constants.MESSAGE_TYPE_PROFILE_LIKED))
+                return FREINDS_PROFILE_LIKED;
+        }
+        return 0;
     }
 
     private class MyMessageHolder extends RecyclerView.ViewHolder {
@@ -103,6 +179,29 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView message, timeStamp;
         ImageView profileImage;
         public FriendMessageHolder(View view) {
+            super(view);
+            message = view.findViewById(R.id.message);
+            timeStamp = view.findViewById(R.id.timeStamp);
+            profileImage = view.findViewById(R.id.profileImage);
+        }
+    }
+
+    private class MyMessageImageHolder extends RecyclerView.ViewHolder {
+        TextView  timeStamp;
+        ImageView message,profileImage;
+
+        public MyMessageImageHolder(View view) {
+            super(view);
+            message = view.findViewById(R.id.message);
+            timeStamp = view.findViewById(R.id.timeStamp);
+            profileImage = view.findViewById(R.id.profileImage);
+        }
+    }
+
+    private class FriendMessageImageHolder extends RecyclerView.ViewHolder {
+        TextView  timeStamp;
+        ImageView message,profileImage;
+        public FriendMessageImageHolder(View view) {
             super(view);
             message = view.findViewById(R.id.message);
             timeStamp = view.findViewById(R.id.timeStamp);
