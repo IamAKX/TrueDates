@@ -1,6 +1,7 @@
 package com.neosao.truedates.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.Constants;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.model.MessageModel;
+import com.neosao.truedates.widgets.FullScreenImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,12 +86,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .load(list.get(position).getSenderProfileImage())
                     .circleCrop()
                     .into(messageHolder.profileImage);
-            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
-            if(list.get(position).getMessage().equals("❤") || list.get(position).getMessage().equals("♥")){
-                messageHolder.message.setBackgroundDrawable(null);
-                messageHolder.message.setTextSize(45);
-                messageHolder.message.setPadding(3,3,100,3);
-            }
+            messageHolder.timeStamp.setText(TimeAgo.using(list.get(position).getMessageTimestamp().getTime()));
+//            if(list.get(position).getMessage().equals("❤") || list.get(position).getMessage().equals("♥")){
+//                messageHolder.message.setBackgroundDrawable(null);
+//                messageHolder.message.setTextSize(45);
+//                messageHolder.message.setPadding(3,3,100,3);
+//            }
         }
         else if(holder instanceof FriendMessageHolder){
             FriendMessageHolder messageHolder = (FriendMessageHolder) holder;
@@ -97,12 +100,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .load(list.get(position).getSenderProfileImage())
                     .circleCrop()
                     .into(messageHolder.profileImage);
-            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
-            if(list.get(position).getMessage().equals("❤") || list.get(position).getMessage().equals("♥")){
-                messageHolder.message.setBackgroundDrawable(null);
-                messageHolder.message.setTextSize(45);
-                messageHolder.message.setPadding(100,3,3,3);
-            }
+            messageHolder.timeStamp.setText(TimeAgo.using(list.get(position).getMessageTimestamp().getTime()));
+//            if(list.get(position).getMessage().equals("❤") || list.get(position).getMessage().equals("♥")){
+//                messageHolder.message.setBackgroundDrawable(null);
+//                messageHolder.message.setTextSize(45);
+//                messageHolder.message.setPadding(100,3,3,3);
+//            }
         }
         else  if(holder instanceof MyMessageImageHolder)
         {
@@ -111,11 +114,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .load(list.get(position).getSenderProfileImage())
                     .circleCrop()
                     .into(messageHolder.profileImage);
-            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
+            messageHolder.timeStamp.setText(TimeAgo.using(list.get(position).getMessageTimestamp().getTime()));
             Glide.with(context)
                     .load(list.get(position).getMessage())
                     .transform(new CenterCrop(),new RoundedCorners(25))
                     .into(messageHolder.message);
+            messageHolder.message.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startActivity(new Intent(context, FullScreenImageView.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messageModel",list.get(position)));
+
+                }
+            });
 
         }
         else if(holder instanceof FriendMessageImageHolder)
@@ -125,11 +135,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .load(list.get(position).getSenderProfileImage())
                     .circleCrop()
                     .into(messageHolder.profileImage);
-            messageHolder.timeStamp.setText(formatter.format(list.get(position).getMessageTimestamp()));
+            messageHolder.timeStamp.setText(TimeAgo.using(list.get(position).getMessageTimestamp().getTime()));
             Glide.with(context)
                     .load(list.get(position).getMessage())
                     .transform(new CenterCrop(),new RoundedCorners(25))
                     .into(messageHolder.message);
+            messageHolder.message.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startActivity(new Intent(context, FullScreenImageView.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("messageModel",list.get(position)));
+
+                }
+            });
         }
 
     }

@@ -31,4 +31,6 @@ public interface API {
     String GET_PROFILE_LIST = BASE_URL + "getListsProfiles";
     String GET_PROFILE_WHO_LIKED_ME_LIST = BASE_URL + "getWhoLikedMeList";
     String GET_MATCHED_PROFILE = BASE_URL + "getMatchingProfiles";
+    String GET_RECENT_MATCHED_PROFILE = BASE_URL + "getRecentMatchingProfiles";
+
 }

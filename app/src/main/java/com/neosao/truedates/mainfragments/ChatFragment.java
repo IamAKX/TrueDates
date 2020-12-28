@@ -37,7 +37,6 @@ import com.neosao.truedates.adapters.MessageListAdapter;
 import com.neosao.truedates.configs.API;
 import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.configs.RequestQueueSingleton;
-import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.Match;
 import com.neosao.truedates.model.MessageItem;
 import com.neosao.truedates.model.UserBasicDetails;
@@ -58,7 +57,6 @@ public class ChatFragment extends Fragment {
 
     View rootLayout;
     private List<MessageItem> messageList = new ArrayList<>();
-    private List<Match> likeList = new ArrayList<>();
     private MessageListAdapter mAdapter;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private EditText edit_name;
@@ -85,10 +83,9 @@ public class ChatFragment extends Fragment {
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
 
-//        prepareMessageList();
 
 
-        contactAdapter = new LikeAdapter(getContext(), likeList);
+        contactAdapter = new LikeAdapter(getContext(), matchList);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerViewContact = rootLayout.findViewById(R.id.recycler_view_likes);
@@ -148,7 +145,6 @@ public class ChatFragment extends Fragment {
                     MessageItem model = snapshot.getValue(MessageItem.class);
                     messageList.add(model);
                     mAdapter.notifyDataSetChanged();
-//                    new LoadMatchedProfiles().execute();
 
                 }
 
@@ -185,12 +181,14 @@ public class ChatFragment extends Fragment {
         super.onResume();
         prepareMessageList();
         user = new LocalPref(getContext()).getUser();
+        matchList.clear();
+        new LoadMatchedProfiles().execute();
     }
 
     private class LoadMatchedProfiles extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_MATCHED_PROFILE,
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_RECENT_MATCHED_PROFILE,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -201,7 +199,6 @@ public class ChatFragment extends Fragment {
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     if (object.has("result") && object.getJSONObject("result").has("matchingProfiles")) {
                                         matchList.clear();
-                                        likeList.clear();
                                         JSONArray array = object.getJSONObject("result").getJSONArray("matchingProfiles");
                                         if(null != array && array.length() > 0) {
                                             for (int i = 0; i < array.length(); i++) {
@@ -209,7 +206,7 @@ public class ChatFragment extends Fragment {
                                                 item = item.getJSONObject("member");
                                                 Match match = new Gson().fromJson(item.toString(), Match.class);
                                                 matchList.add(match);
-                                                likeList.add(match);
+                                                contactAdapter.notifyDataSetChanged();
                                             }
                                             Log.i("check", "onResponse: "+array.length());
 
@@ -223,37 +220,10 @@ public class ChatFragment extends Fragment {
                                     if (object.has("message") && null != object.getString("message"))
                                         Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
-
-                                for(Match mItem : matchList)
-                                {
-                                    for(MessageItem messageItem : messageList)
-                                    {
-                                        UserBasicDetails friend = null;
-                                        for (UserBasicDetails u : messageItem.getParticipants()) {
-                                            if (u.getUserID() != new LocalPref(getContext()).getUser().getUserId()) {
-                                                friend = u;
-
-                                            }
-                                        }
-                                        if(mItem.getUserId().equals(friend.getUserID()))
-                                           deleteLikeAdapterWithId(mItem.getUserId());
-                                        contactAdapter.notifyDataSetChanged();
-
-
-                                    }
-
-//                                    if(!flag)
-//                                    {
-//                                        likeList.add(mItem);
-//                                    }
-
-                                }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             }
-
                         }
                     },
                     new Response.ErrorListener() {
@@ -272,17 +242,6 @@ public class ChatFragment extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId",user.getUserId());
-                    params.put("age",user.getAge());
-                    params.put("gender",user.getGender());
-                    params.put("lookingFor",user.getLookingFor());
-                    params.put("motherTounge",user.getMotherTounge());
-                    params.put("interestCode", Utils.getInterestCodeList(user));
-                    params.put("latitude", user.getMembersettings().get(0).getLatitude());
-                    params.put("longitude", user.getMembersettings().get(0).getLongitude());
-                    params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
-                    params.put("maxDistance", (user.getMembersettings().get(0).getMaxDistance() == null )? "100":user.getMembersettings().get(0).getMaxDistance());
-
-                    params.put("offset","0");
 
                     return params;
                 }
@@ -302,15 +261,5 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    private void deleteLikeAdapterWithId(String userId) {
-        for(Match m : likeList)
-        {
-            if(m.getUserId().equals(userId))
-            {
-                likeList.remove(m);
-                contactAdapter.notifyDataSetChanged();
-                break;
-            }
-        }
-    }
+
 }

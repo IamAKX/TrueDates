@@ -33,6 +33,9 @@
     <string name="callback_url">https://www.neosao.com/testing/dating/instagram/instaLogin</string>
     <string name="base_url">https://api.instagram.com/</string>
     <string name="get_user_info_url"><![CDATA[https://graph.instagram.com/me?fields=id,username&access_token=]]></string>
+    <string name="title_activity_image_viewer_full_sceen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 
 </resources>

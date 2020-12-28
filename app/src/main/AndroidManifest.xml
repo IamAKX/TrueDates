@@ -20,7 +20,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity android:name=".screens.Chat"></activity>
+        <activity android:name=".widgets.FullScreenImageView"></activity>
+        <activity
+            android:name=".widgets.ImageViewerFullSceen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image_viewer_full_sceen"
+            android:theme="@style/AppTheme.Fullscreen" />
+        <activity android:name=".screens.Chat" />
         <activity
             android:name=".screens.ViewMemberProfile"
             android:screenOrientation="portrait" />
