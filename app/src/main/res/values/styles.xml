@@ -36,6 +36,10 @@
         <item name="colorAccent">@color/themePink</item>
     </style>
 
+    <style name="ProgressTheme">
+        <item name="colorAccent">@color/themePink</item>
+    </style>
+
     <style name="Widget.AppTheme.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
     </style>

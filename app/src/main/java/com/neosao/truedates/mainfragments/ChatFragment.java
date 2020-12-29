@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -62,7 +63,7 @@ public class ChatFragment extends Fragment {
     private EditText edit_name;
     public LikeAdapter contactAdapter;
     UserModel user;
-
+    RelativeLayout messageLoader,contactLoader;
     private List<Match> matchList = new ArrayList<>();
 
 
@@ -75,7 +76,8 @@ public class ChatFragment extends Fragment {
         messageList = new ArrayList<>();
         mAdapter = new MessageListAdapter(getContext(), messageList);
         edit_name = rootLayout.findViewById(R.id.edit_name);
-
+        contactLoader = rootLayout.findViewById(R.id.contactLoader);
+        messageLoader = rootLayout.findViewById(R.id.messageLoader);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -138,6 +140,7 @@ public class ChatFragment extends Fragment {
 
     private void prepareMessageList() {
         messageList.clear();
+        messageLoader.setVisibility(View.VISIBLE);
         database.getReference("message").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -145,7 +148,7 @@ public class ChatFragment extends Fragment {
                     MessageItem model = snapshot.getValue(MessageItem.class);
                     messageList.add(model);
                     mAdapter.notifyDataSetChanged();
-
+                    messageLoader.setVisibility(View.GONE);
                 }
 
             }
@@ -183,6 +186,7 @@ public class ChatFragment extends Fragment {
         user = new LocalPref(getContext()).getUser();
         matchList.clear();
         new LoadMatchedProfiles().execute();
+        contactLoader.setVisibility(View.VISIBLE);
     }
 
     private class LoadMatchedProfiles extends AsyncTask<Void,Void,Void> {
@@ -224,18 +228,20 @@ public class ChatFragment extends Fragment {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             }
+                            contactLoader.setVisibility(View.GONE);
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            contactLoader.setVisibility(View.GONE);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
                                     Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
+
                         }
                     }) {
                 @Override
