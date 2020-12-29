@@ -177,7 +177,16 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new FeatureDeductionOnSwipe(FEATURE_LIKE).execute();
                 }
                 else
-                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                {
+//                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                    SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                            .setDirection(Direction.Right)
+                            .setDuration(Duration.Slow.duration)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .build();
+                    manager.setSwipeAnimationSetting(setting);
+                    cardStackView.swipe();
+                }
             }
         });
 
@@ -195,7 +204,16 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new FeatureDeductionOnSwipe(FEATURE_DISLIKE).execute();
                 }
                 else
-                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                {
+                    //                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                    SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                            .setDirection(Direction.Left)
+                            .setDuration(Duration.Slow.duration)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .build();
+                    manager.setSwipeAnimationSetting(setting);
+                    cardStackView.swipe();
+                }
             }
         });
 
@@ -500,6 +518,8 @@ public class DateBrowser extends Fragment implements CardStackListener {
             super.onPreExecute();
             cardStackView.setVisibility(View.GONE);
             progressView.setVisibility(View.VISIBLE);
+//            loadAdInMemberList();
+//            setupCardStackView();
         }
 
         @Override
@@ -593,7 +613,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
     private void loadAdInMemberList() {
         final AdView adView = new AdView(getActivity());
-        adView.setAdSize(AdSize.FLUID);
+        adView.setAdSize(AdSize.WIDE_SKYSCRAPER);
         adView.setAdUnitId("ca-app-pub-7095480517399381/5987791915");
         memberProfileList.add(adView);
     }

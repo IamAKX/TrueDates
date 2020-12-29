@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -118,16 +120,31 @@ public class CardStackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public class AdViewHolder extends RecyclerView.ViewHolder {
         CardView adCard;
+        ProgressBar progressbar;
         public AdViewHolder(View cardView) {
             super(cardView);
             adCard = cardView.findViewById(R.id.adCard);
-            AdView adView = new AdView(context);
-            AdSize adSize = new AdSize(300, 600);
-            adView.setAdSize(adSize);
-            adView.setAdUnitId("ca-app-pub-7095480517399381/5987791915");
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adView.loadAd(adRequest);
-            adCard.addView(adView);
+            progressbar = cardView.findViewById(R.id.progressbar);
+            adCard.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    AdView adView = new AdView(context);
+                    AdSize adSize = new AdSize(400, 700);
+
+//                    DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+//                    int targetAdHeight = (int) (cardView.getHeight() / displayMetrics.density);//targetAdWidth * 50 / 320;
+//                    int targetAdWidth = targetAdHeight * 320 / 50;//(int) (cardView.getWidth() / displayMetrics.density);
+
+//                    AdSize adSize = new AdSize(targetAdWidth, targetAdHeight);
+                    adView.setAdSize(adSize);
+                    adView.setAdUnitId("ca-app-pub-7095480517399381/5987791915");
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    adView.loadAd(adRequest);
+
+                    adCard.addView(adView);
+                }
+            });
+
         }
     }
 }

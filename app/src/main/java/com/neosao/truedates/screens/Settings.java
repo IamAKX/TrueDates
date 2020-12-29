@@ -52,6 +52,7 @@ import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
 import com.google.gson.Gson;
+import com.neosao.truedates.MainActivity;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.SliderAdapterPackage;
 import com.neosao.truedates.configs.API;
@@ -244,7 +245,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             case R.id.logoutBtn:
                 localPref.logOutUser();
                 Toast.makeText(getBaseContext(), "You have been logged out", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(getBaseContext(), MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
                 break;
 
