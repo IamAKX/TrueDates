@@ -54,6 +54,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screens.OnboardingData"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".screens.PhoneValidation"

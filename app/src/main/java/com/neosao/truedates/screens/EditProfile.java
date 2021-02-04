@@ -115,6 +115,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     ImageView tappedImageView, longTappedImageView;
     ArrayList<Image> images = new ArrayList<>();
     PowerMenu powerMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -844,7 +845,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                 JSONObject jsonResp = new JSONObject(response);
                                 if (jsonResp.has("message")) {
 
-                                    Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
                                     localPref.saveUser(user);
                                 } else
                                     Toast.makeText(getBaseContext(), "Response is unparsable", Toast.LENGTH_LONG).show();
@@ -1162,8 +1163,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             super.onPostExecute(responseString);
             try {
                 JSONObject obj = new JSONObject(responseString);
-                if (null != obj && obj.has("message"))
-                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
+//                if (null != obj && obj.has("message"))
+//                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
 
                 if (null != obj && obj.has("status") && obj.getString("status").equals("200")) {
 
@@ -1206,8 +1207,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                if (object.has("message") && null != object.getString("message"))
+//                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -1269,8 +1270,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                if (object.has("message") && null != object.getString("message"))
+//                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 if (object.has("status") && !object.getString("status").equals("200")) {
                                     return;
                                 }

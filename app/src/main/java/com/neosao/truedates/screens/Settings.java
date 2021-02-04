@@ -296,10 +296,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
             quantity.setText(priceDataModel.getQuantity());
             unit.setText(priceDataModel.getUnit());
-            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
-            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
-            DecimalFormat df2 = new DecimalFormat("#.##");
+            double total = Double.parseDouble(priceDataModel.getAmount()) * Double.parseDouble(priceDataModel.getQuantity());
+
+//            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
+            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount());
+            DecimalFormat df2 = new DecimalFormat("#.00");
             amountPerUnit.setText(Utils.CURRENCY_SYMBOL + df2.format(amtPerUnit) + "/" + priceDataModel.getUnit().toLowerCase().substring(0, 2));
+            amount.setText(Utils.CURRENCY_SYMBOL + df2.format( total));
             cardView.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             priceItemView.setOnClickListener(new View.OnClickListener() {
@@ -759,7 +762,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1225,10 +1228,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             CardView cardView = priceItemView.findViewById(R.id.card);
 
             quantity.setText(priceDataModel.getQuantity());
-            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
-            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
-            DecimalFormat df2 = new DecimalFormat("#.##");
+            double total = Double.parseDouble(priceDataModel.getAmount()) * Double.parseDouble(priceDataModel.getQuantity());
+
+//            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
+//            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
+            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount());
+
+            DecimalFormat df2 = new DecimalFormat("#.00");
             amountPerUnit.setText(Utils.CURRENCY_SYMBOL + df2.format(amtPerUnit) + " " + priceDataModel.getUnit());
+            amount.setText(Utils.CURRENCY_SYMBOL + df2.format(total));
             cardView.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             priceItemView.setOnClickListener(new View.OnClickListener() {

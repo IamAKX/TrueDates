@@ -9,6 +9,7 @@
 
 
 
+
     <LinearLayout
         android:id="@+id/button_container"
         android:layout_width="match_parent"
@@ -201,4 +202,32 @@
            />
 
     </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/notfound"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:indeterminate="true"
+
+            android:src="@drawable/ic_people_not_found"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Could not find date nearby!"
+            android:fontFamily="@font/balsamiq_sans"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
+
+
 </RelativeLayout>

@@ -33,4 +33,5 @@ public interface API {
     String GET_MATCHED_PROFILE = BASE_URL + "getMatchingProfiles";
     String GET_RECENT_MATCHED_PROFILE = BASE_URL + "getRecentMatchingProfiles";
 
+    String GET_ADMOB_SETTING = BASE_URL + "getAdmobSettings";
 }

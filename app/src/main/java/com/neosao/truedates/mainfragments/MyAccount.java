@@ -114,8 +114,9 @@ public class MyAccount extends Fragment {
                                     name.setText(user.getName() + ", " + user.getAge());
                                     workIndustry.setText(user.getMemberWork().get(0).getIndustryName());
                                     university.setText(user.getMemberWork().get(0).getUniversityName());
-                                } else
-                                    Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+//                                else
+//                                    Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -196,8 +197,9 @@ public class MyAccount extends Fragment {
                                         sliderView.startAutoCycle();
                                     } else
                                         Toast.makeText(getContext(), "Unable to load feature slider", Toast.LENGTH_SHORT).show();
-                                } else
-                                    Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+//                                else
+//                                    Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

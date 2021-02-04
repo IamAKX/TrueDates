@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -149,12 +148,12 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(context, object.getString("message"), Toast.LENGTH_LONG).show();
+//                                if (object.has("message") && null != object.getString("message"))
+//                                    Toast.makeText(context, object.getString("message"), Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+//                                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
                             }
                         }
@@ -166,7 +165,7 @@ public class MemberLikedYouAdapter extends RecyclerView.Adapter<MemberLikedYouAd
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Toast.makeText(context, new String(networkResponse.data), Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(context, new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }

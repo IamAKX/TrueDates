@@ -140,6 +140,8 @@ public class ChatFragment extends Fragment {
 
     private void prepareMessageList() {
         messageList.clear();
+        contactLoader.setVisibility(View.GONE);
+
         messageLoader.setVisibility(View.VISIBLE);
         database.getReference("message").addChildEventListener(new ChildEventListener() {
             @Override
@@ -150,6 +152,8 @@ public class ChatFragment extends Fragment {
                     mAdapter.notifyDataSetChanged();
                     messageLoader.setVisibility(View.GONE);
                 }
+                contactLoader.setVisibility(View.GONE);
+
 
             }
 
@@ -197,7 +201,7 @@ public class ChatFragment extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             try {
-
+                                Log.e("check", "onResponse: "+response );
                                 JSONObject object = new JSONObject(response);
 
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -217,16 +221,20 @@ public class ChatFragment extends Fragment {
                                         }
                                         else
                                         {
+                                            contactLoader.setVisibility(View.GONE);
+
                                             Toast.makeText(getContext(),"No matching profile found", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    contactLoader.setVisibility(View.GONE);
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                contactLoader.setVisibility(View.GONE);
                             }
                             contactLoader.setVisibility(View.GONE);
                         }
@@ -235,10 +243,11 @@ public class ChatFragment extends Fragment {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             contactLoader.setVisibility(View.GONE);
+
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
 

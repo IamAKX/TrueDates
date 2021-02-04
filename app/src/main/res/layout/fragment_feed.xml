@@ -5,6 +5,33 @@
     android:layout_height="match_parent"
     tools:context=".mainfragments.FeedFragment">
 
+    <LinearLayout
+        android:layout_gravity="center"
+        android:id="@+id/notfound"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:indeterminate="true"
+
+            android:src="@drawable/ic_people_not_found"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You don't have any match!"
+            android:fontFamily="@font/balsamiq_sans"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_matchs"
         android:layout_width="match_parent"

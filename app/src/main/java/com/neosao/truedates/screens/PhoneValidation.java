@@ -3,7 +3,6 @@ package com.neosao.truedates.screens;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -226,17 +225,20 @@ public class PhoneValidation extends AppCompatActivity {
                                         else
                                         {
                                             startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                            finish();
                                         }
                                     }
                                     else
                                     {
                                         startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                        finish();
                                     }
 
                                 } else {
 //                                    if (object.has("message") && null != object.getString("message"))
 //                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                     startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                    finish();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

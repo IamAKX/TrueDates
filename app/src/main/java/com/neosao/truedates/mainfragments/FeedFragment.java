@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -48,7 +49,7 @@ public class FeedFragment extends Fragment {
     private MatchListAdapter mAdapter;
     UserModel user;
     RecyclerView recyclerView;
-
+    LinearLayout notfound;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,9 +58,10 @@ public class FeedFragment extends Fragment {
 
 
         recyclerView = rootLayout.findViewById(R.id.recycler_view_matchs);
+        notfound = rootLayout.findViewById(R.id.notfound);
         matchList = new ArrayList<>();
 
-
+        notfound.setVisibility(View.GONE);
         return rootLayout;
     }
 
@@ -113,12 +115,15 @@ public class FeedFragment extends Fragment {
                                             Toast.makeText(getContext(),"No matching profile found", Toast.LENGTH_LONG).show();
                                         }
                                     }
+                                    notfound.setVisibility(View.GONE);
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    notfound.setVisibility(View.VISIBLE);
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                notfound.setVisibility(View.VISIBLE);
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
@@ -126,7 +131,7 @@ public class FeedFragment extends Fragment {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            notfound.setVisibility(View.VISIBLE);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
