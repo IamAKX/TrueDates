@@ -417,7 +417,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     return;
                 }
 
-                user.getMembersettings().get(0).setContactNumber("+91 " + input.getText().toString());
+                user.getMembersettings().get(0).setContactNumber(input.getText().toString());
                 new UpdateContactNumber().execute();
             }
         });
