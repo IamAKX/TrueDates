@@ -151,7 +151,7 @@
         app:ss_textColor="@color/white"
         app:ss_textSize="12sp"
         app:ss_textVisibility="gone"
-        app:ss_animationType="line"/>
+        app:ss_animationType="curved"/>
 
     <com.yuyakaido.android.cardstackview.CardStackView
         android:layout_below="@+id/feedSwitch"

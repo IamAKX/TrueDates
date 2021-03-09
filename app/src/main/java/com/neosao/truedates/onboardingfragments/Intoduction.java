@@ -1,7 +1,6 @@
 package com.neosao.truedates.onboardingfragments;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.location.Address;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +33,7 @@ import com.neosao.truedates.configs.OptionContants;
 import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.screens.OnboardingData;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -45,7 +44,7 @@ import java.util.Locale;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 
-public class Intoduction extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class Intoduction extends Fragment implements View.OnClickListener, com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener {
 
     public static MaterialEditText name, email, about, gender, dob, location;
     View rootView;
@@ -65,8 +64,8 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         location = rootView.findViewById(R.id.location);
 
         setEditTextListners();
-        name.setText(OnboardingData.firebaseUser.getName());
-        email.setText(OnboardingData.firebaseUser.getEmail());
+//        name.setText(OnboardingData.firebaseUser.getName());
+//        email.setText(OnboardingData.firebaseUser.getEmail());
 
         gender.setOnClickListener(this);
         dob.setOnClickListener(this);
@@ -181,9 +180,19 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
                  showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
                 break;
             case R.id.dob:
-                new DatePickerDialog(getActivity(), R.style.DialogTheme, this,  calendar
-                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+                new SpinnerDatePickerDialogBuilder()
+                        .context(getActivity())
+                        .callback(this)
+                        .spinnerTheme(R.style.DialogTheme)
+                        .showTitle(true)
+                        .showDaySpinner(true)
+                        .defaultDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .maxDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .minDate(1947, 0, 1)
+                        .build()
+                        .show();
+
                 break;
             case R.id.location:
                 getAddress();
@@ -300,13 +309,15 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
         alertDialog.show();
     }
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+    public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Calendar personBirthDate = Calendar.getInstance();
         personBirthDate.set(Calendar.YEAR, year);
-        personBirthDate.set(Calendar.MONTH, month);
-        personBirthDate.set(Calendar.DAY_OF_MONTH, day);
+        personBirthDate.set(Calendar.MONTH, monthOfYear);
+        personBirthDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         int diff = Utils.getDiffYears(personBirthDate, calendar);
         if(diff < 18)
@@ -319,6 +330,5 @@ public class Intoduction extends Fragment implements View.OnClickListener, DateP
             dob.setText(format.format(personBirthDate.getTime()));
             OnboardingData.user.setAge(String.valueOf(diff));
         }
-
     }
 }

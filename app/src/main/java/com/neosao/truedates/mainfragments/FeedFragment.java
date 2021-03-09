@@ -86,6 +86,12 @@ public class FeedFragment extends Fragment {
 
     private class LoadMatchedProfiles extends AsyncTask<Void,Void,Void> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            notfound.setVisibility(View.GONE);
+        }
+
+        @Override
         protected Void doInBackground(Void... voids) {
             StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_MATCHED_PROFILE,
                     new Response.Listener<String>() {

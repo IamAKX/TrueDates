@@ -3,6 +3,7 @@ package com.neosao.truedates.screens;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,7 +65,7 @@ public class PhoneValidation extends AppCompatActivity {
         setContentView(R.layout.activity_phone_validation);
 
         initializeComponent();
-        setupFirebaseAuth();
+//        setupFirebaseAuth();
 
         otp_view.setOtpListener(new OTPListener() {
             @Override
@@ -76,10 +77,12 @@ public class PhoneValidation extends AppCompatActivity {
             public void onOTPComplete(String otp) {
                 if (otp == null || otp.isEmpty())
                     return;
-                if (verificationCodeId == null)
-                    verificationCodeId = "111111";
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCodeId, otp);
-                signInWithPhoneAuthCredential(credential);
+//                if (verificationCodeId == null)
+//                    verificationCodeId = "111111";
+//                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCodeId, otp);
+//                signInWithPhoneAuthCredential(credential);
+
+                new VerifyOTP(otp).execute();
             }
         });
     }
@@ -153,7 +156,9 @@ public class PhoneValidation extends AppCompatActivity {
         resendOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                new SendOTPRequest().execute();
                 runTimerForResendOTP();
+
             }
         });
         runTimerForResendOTP();
@@ -201,17 +206,17 @@ public class PhoneValidation extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog = Utils.getProgress(PhoneValidation.this, "Please wait...");
-            dialog.show();
+//            dialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.CHECK_PROFILE_EXISTS,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            dialog.dismissWithAnimation();
                             try {
+                                Log.e("check", "onResponse: "+response );
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     if (object.has("result") && object.getJSONObject("result").has("member")){
@@ -249,7 +254,7 @@ public class PhoneValidation extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            dialog.dismissWithAnimation();
+//                            dialog.dismissWithAnimation();
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
@@ -261,7 +266,8 @@ public class PhoneValidation extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
+                    params.put("contactNumber","+91"+getIntent().getStringExtra("phone").trim().replace(" ", ""));
+                    Log.e("check", "getParams: "+params );
                     return params;
                 }
             };
@@ -277,6 +283,145 @@ public class PhoneValidation extends AppCompatActivity {
             requestQueue.getCache().clear();
             requestQueue.add(stringObjectRequest);
 
+            return null;
+        }
+    }
+
+    private class VerifyOTP extends AsyncTask<Void,Void,Void>{
+
+        String otp;
+        SweetAlertDialog dialog;
+
+        public VerifyOTP(String otp) {
+            this.otp = otp;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = Utils.getProgress(PhoneValidation.this, "Please wait...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.VERIFY_REG_OTP,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            dialog.dismissWithAnimation();
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    otp_view.showSuccess();
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    new CheckForNewUser().doInBackground();
+
+                                } else {
+                                    otp_view.showError();
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                otp_view.showError();
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            dialog.dismissWithAnimation();
+                            otp_view.showError();
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    params.put("contactNumber",getIntent().getStringExtra("phone").trim().replace(" ", ""));
+                    params.put("otp",otp);
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
+            return null;
+        }
+    }
+
+    private class SendOTPRequest extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.SEND_REG_OTP,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject object = new JSONObject(response);
+                                if (object.has("status") && object.getString("status").equals("200")) {
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                } else {
+                                    if (object.has("message") && null != object.getString("message"))
+                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            NetworkResponse networkResponse = error.networkResponse;
+                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+                                if (new String(networkResponse.data) != null) {
+                                    Toast.makeText(getBaseContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("contactNumber",getIntent().getStringExtra("phone").trim().replace(" ", ""));
+
+                    Log.e("check","Req body : "+params.toString());
+                    return params;
+                }
+            };
+
+            stringObjectRequest.setShouldCache(false);
+            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+                    .getRequestQueue();
+            requestQueue.getCache().clear();
+            requestQueue.add(stringObjectRequest);
             return null;
         }
     }

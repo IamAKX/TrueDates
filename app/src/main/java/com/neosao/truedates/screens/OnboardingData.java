@@ -77,11 +77,13 @@ public class OnboardingData extends AppCompatActivity {
         user.getMembersettings().add(new Membersettings());
         user.getMemberWork().add(new MemberWork());
 
-        user.setName(firebaseUser.getName());
-        user.setEmail(firebaseUser.getEmail());
-        user.setContactNumber(firebaseUser.getPhoneNumber());
-        user.setFirebaseId(firebaseUser.getFirebaseUUID());
-        user.setRegisterType(firebaseUser.getLoginProvider());
+        if(null != firebaseUser) {
+//            user.setName(firebaseUser.getName());
+//            user.setEmail(firebaseUser.getEmail());
+//            user.setContactNumber(firebaseUser.getPhoneNumber());
+//            user.setFirebaseId(firebaseUser.getFirebaseUUID());
+//            user.setRegisterType(firebaseUser.getLoginProvider());
+        }
 
 
         initializeComponents();

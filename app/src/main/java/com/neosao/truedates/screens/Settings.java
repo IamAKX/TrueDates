@@ -9,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -31,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -81,6 +83,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -105,6 +108,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     LinearLayout featureLinearLayout;
     SubscribtionPriceDataModel selectedSubscribtion = null;
     FeaturePriceModel selectedFeaturePriceModel = null;
+    final String SUBSCRIBTION_PURCHASE = "SUBSCRIBTION_PURCHASE";
+    final String PACKAGE_PURCHASE = "PACKAGE_PURCHASE";
+
+    String purchaseType = "";
+    String purchasePackageCode = "";
 
     private AuthenticationDialog authenticationDialog;
     private String token = null;
@@ -336,7 +344,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 else
                 {
                     alertDialog.dismiss();
-                    new BuySubscription(subscription.getPackageCode()).execute();
+                    DecimalFormat df2 = new DecimalFormat("#.00");
+                    double total = Double.parseDouble(selectedSubscribtion.getAmount()) * Double.parseDouble(selectedSubscribtion.getQuantity());
+                    startPayment("Truedates subscription : "+subscription.getPackageCode(),df2.format( total));
+                    purchaseType = SUBSCRIBTION_PURCHASE;
+                    purchasePackageCode = subscription.getPackageCode();
 
                 }
             }
@@ -349,6 +361,68 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             }
         });
         alertDialog.show();
+    }
+
+    private void startPayment(String description, String amount) {
+
+        Uri paymentUri = Uri.parse("upi://pay").buildUpon()
+                .appendQueryParameter("pa",new LocalPref(getBaseContext()).getAppSettings().getUpiId())
+                .appendQueryParameter("pn","Neosao Service Private Limited")
+                .appendQueryParameter("tn",description)
+                .appendQueryParameter("am",amount)
+                .appendQueryParameter("cu","INR")
+                .build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(paymentUri);
+        try{
+            startActivityForResult(intent,101);
+        }catch (Exception e){
+            Toast.makeText(getBaseContext(), "UPI app not found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 101){
+            if(resultCode == RESULT_OK){
+                if(data != null){
+                    String value = data.getStringExtra("response");
+                    if(value!= null)
+                        getStatus(value);
+                    else
+                        Toast.makeText(getBaseContext(),"Payment failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else {
+            Toast.makeText(getBaseContext(),"Payment failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void getStatus(String data) {
+        boolean isPaymentCancelled = false;
+        Log.e("check", "getStatus: "+data );
+        HashMap<String, String> transactionDetails = new HashMap<>();
+        String[] value = data.split("&");
+        for (int i = 0; i < value.length; i++) {
+            String  checkString[] = value[i].split("=");
+            if(checkString.length >= 2){
+                transactionDetails.put(checkString[0],checkString[1]);
+            }
+
+        }
+        if(null != transactionDetails.get("Status"))
+        {
+            Toast.makeText(getBaseContext(),"Payment "+transactionDetails.get("Status"), Toast.LENGTH_SHORT).show();
+            if(purchaseType.equalsIgnoreCase(SUBSCRIBTION_PURCHASE))
+                new BuySubscription(purchasePackageCode, transactionDetails).execute();
+            if(purchaseType.equalsIgnoreCase(PACKAGE_PURCHASE))
+                new BuyPackage(purchasePackageCode,transactionDetails).execute();
+
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(),"Payment cancelled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showOptionPopup(String title, String[] options) {
@@ -1269,7 +1343,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 else
                 {
                     alertDialog.dismiss();
-                    new BuyPackage(featureModel.getPackageCode()).execute();
+                    double total = Double.parseDouble(selectedFeaturePriceModel.getAmount()) * Double.parseDouble(selectedFeaturePriceModel.getQuantity());
+                    DecimalFormat df2 = new DecimalFormat("#.00");
+                    startPayment("Truedates feature : "+featureModel.getPackageCode(),df2.format( total));
+                    purchaseType = PACKAGE_PURCHASE;
+                    purchasePackageCode = featureModel.getPackageCode();
+//                    new BuyPackage(featureModel.getPackageCode()).execute();
 
                 }
             }
@@ -1287,9 +1366,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private class BuySubscription extends AsyncTask<Void,Void,Void>{
         SweetAlertDialog dialog;
         String packageCode;
-
-        public BuySubscription(String packageCode) {
+        HashMap<String, String> transactionDetails;
+        public BuySubscription(String packageCode, HashMap<String, String> transactionDetails) {
             this.packageCode = packageCode;
+            this.transactionDetails = transactionDetails;
         }
 
         @Override
@@ -1366,11 +1446,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     double amtPerUnit = Double.parseDouble(selectedSubscribtion.getAmount()) / Double.parseDouble(selectedSubscribtion.getQuantity());
 
                     params.put("userId",user.getUserId());
-                    params.put("paymentStatus","success");
                     params.put("packageCode",packageCode);
                     params.put("numberOfMonths",selectedSubscribtion.getQuantity());
                     params.put("perMonthAmount", String.valueOf(amtPerUnit));
                     params.put("totalAmount",selectedSubscribtion.getAmount());
+
+                    params.put("paymentStatus",transactionDetails.get("Status"));
+                    params.put("txnId",transactionDetails.get("txnId"));
+                    params.put("responseCode",transactionDetails.get("responseCode"));
+                    params.put("ApprovalRefNo",transactionDetails.get("ApprovalRefNo"));
+                    params.put("timestamp",new Date().toString());
 
                     Log.e("check","Req body : "+params.toString());
                     return params;
@@ -1405,9 +1490,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private class BuyPackage extends AsyncTask<Void,Void,Void>{
         SweetAlertDialog dialog;
         String packageCode;
-
-        public BuyPackage(String packageCode) {
+        HashMap<String, String> transactionDetails;
+        public BuyPackage(String packageCode, HashMap<String, String> transactionDetails) {
             this.packageCode = packageCode;
+            this.transactionDetails = transactionDetails;
         }
 
         @Override
@@ -1484,12 +1570,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     double totalAmt = Double.parseDouble(selectedFeaturePriceModel.getAmount()) * Double.parseDouble(selectedFeaturePriceModel.getQuantity());
 
                     params.put("userId",user.getUserId());
-                    params.put("paymentStatus","success");
                     params.put("featureCode",selectedFeaturePriceModel.getPackagePriceCode());
                     params.put("quantity", selectedFeaturePriceModel.getQuantity());
                     params.put("amount",selectedFeaturePriceModel.getAmount());
                     params.put("packageCode", packageCode);
                     params.put("totalAmount", String.valueOf(totalAmt));
+
+                    params.put("paymentStatus",transactionDetails.get("Status"));
+                    params.put("txnId",transactionDetails.get("txnId"));
+                    params.put("responseCode",transactionDetails.get("responseCode"));
+                    params.put("ApprovalRefNo",transactionDetails.get("ApprovalRefNo"));
+                    params.put("timestamp",new Date().toString());
 
                     Log.e("check","Req body : "+params.toString());
                     return params;

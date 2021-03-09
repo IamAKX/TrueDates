@@ -26,14 +26,14 @@
             android:layout_alignParentTop="true"
             app:srcCompat="@drawable/logo_vertical"/>
 
-        <TextView
-            android:layout_margin="20dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/balsamiq_sans"
-            android:text="\u00A9 2020, Neosao Private Limited"/>
+<!--        <TextView-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:fontFamily="@font/balsamiq_sans"-->
+<!--            android:text="\u00A9 2020, Neosao Private Limited"/>-->
 
     </RelativeLayout>
 

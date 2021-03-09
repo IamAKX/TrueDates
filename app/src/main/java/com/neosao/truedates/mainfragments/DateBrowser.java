@@ -84,6 +84,8 @@ public class DateBrowser extends Fragment implements CardStackListener {
     RecyclerView likeRecyclerView;
     RelativeLayout likedView;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,7 +108,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
         notfound = rootView.findViewById(R.id.notfound);
         notfound.setVisibility(View.GONE);
 
-        button_container.setVisibility(View.GONE);
+        button_container.setVisibility(View.VISIBLE);
 
         setupNavigation();
 //        setupCardStackView();
@@ -125,17 +127,41 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     notfound.setVisibility(View.GONE);
                     button_container.setVisibility(View.GONE);
                     likedView.setVisibility(View.VISIBLE);
+                    if(memberLikedYouList.size() == 0)
+
+                        notfound.setVisibility(View.VISIBLE);
+                    else
+                        notfound.setVisibility(View.GONE);
+
+
                 } else {
-                    notfound.setVisibility(View.VISIBLE);
+                    notfound.setVisibility(View.GONE);
                     cardStackView.setVisibility(View.VISIBLE);
-                    if(memberProfileList.size() > 0)
-                        button_container.setVisibility(View.VISIBLE);
+//                    if(memberProfileList.size() > 0)
+
                     likedView.setVisibility(View.GONE);
+                    if(memberProfileList.size() == 0)
+
+                    {
+                        notfound.setVisibility(View.VISIBLE);
+                        button_container.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        notfound.setVisibility(View.GONE);
+                        button_container.setVisibility(View.VISIBLE);
+                    }
+
                 }
             }
         });
+
+        Log.e("check", "onCreateView: "+memberProfileList.size() );
+
         return rootView;
     }
+
+
 
 
     private void setupCardStackView() {
@@ -526,7 +552,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
             cardStackView.setVisibility(View.GONE);
             progressView.setVisibility(View.VISIBLE);
             notfound.setVisibility(View.GONE);
-            button_container.setVisibility(View.GONE);
+            button_container.setVisibility(View.VISIBLE);
 //            loadAdInMemberList();
 //            setupCardStackView();
         }
@@ -561,21 +587,27 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                                     .setContentText("No dates near your location. Try changing your location or increasing distance range in settings.")
                                                     .setConfirmText("Okay")
                                                     .show();
+                                            notfound.setVisibility(View.VISIBLE);
+                                            button_container.setVisibility(View.GONE);
+
+
                                         } else {
+                                            int addFreq = new LocalPref(getContext()).getAppSettings().getAddAfterProfile();
                                             for (int i = 0; i < array.length(); i++) {
                                                 JSONObject memberObject = array.getJSONObject(i);
                                                 memberObject = memberObject.getJSONObject("member");
                                                 UserModel memberModel = new Gson().fromJson(memberObject.toString(), UserModel.class);
                                                 memberProfileList.add(memberModel);
-                                                loadAdInMemberList();
+                                                if(i!=0 && addFreq !=0 && i%addFreq==0)
+                                                    loadAdInMemberList();
                                             }
                                             setupCardStackView();
+                                            button_container.setVisibility(View.VISIBLE);
+
                                         }
                                     }
 
-                                    button_container.setVisibility(View.VISIBLE);
                                 } else {
-                                    notfound.setVisibility(View.VISIBLE);
                                     button_container.setVisibility(View.GONE);
 //                                    if (object.has("message") && null != object.getString("message"))
 //                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
@@ -583,10 +615,11 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                button_container.setVisibility(View.GONE);
                             }
                             cardStackView.setVisibility(View.VISIBLE);
                             progressView.setVisibility(View.GONE);
-                            button_container.setVisibility(View.GONE);
+
                         }
                     },
                     new Response.ErrorListener() {
@@ -715,4 +748,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
             return null;
         }
     }
+
+
+
 }

@@ -34,4 +34,9 @@ public interface API {
     String GET_RECENT_MATCHED_PROFILE = BASE_URL + "getRecentMatchingProfiles";
 
     String GET_ADMOB_SETTING = BASE_URL + "getAdmobSettings";
+
+    String SEND_REG_OTP = BASE_URL + "sendRegisterOTP";
+    String VERIFY_REG_OTP = BASE_URL + "verifyRegisterOTP";
+    String CHECK_PROFILE_EXISTS = BASE_URL + "checkProfileExists";
+    String GET_APP_SETTINGS = BASE_URL + "getAppSettings";
 }

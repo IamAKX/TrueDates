@@ -1,7 +1,6 @@
 package com.neosao.truedates.screens;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -70,6 +68,7 @@ import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -103,7 +102,7 @@ import mabbas007.tagsedittext.TagsEditText;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 
-public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, OnMenuItemClickListener<PowerMenuItem> {
+public class EditProfile extends AppCompatActivity implements View.OnClickListener, OnMenuItemClickListener<PowerMenuItem>, com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener {
 
     Toolbar toolbar;
     EditText name, email, about, gender, dob, location, university, fieldOfStudy, qualification, workIndustry, experience, motherTongue, zodiac, height, relationshipStatus, maritalStatus, caste, religion, showMe, drinks, smoke, diet, pets, haveKids, wantKids, lookingFor, bodyType;
@@ -273,9 +272,21 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
                 break;
             case R.id.dob:
-                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar
-                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+//                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar
+//                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+//                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+                new SpinnerDatePickerDialogBuilder()
+                        .context(this)
+                        .callback(this)
+                        .spinnerTheme(R.style.DialogTheme)
+                        .showTitle(true)
+                        .showDaySpinner(true)
+                        .defaultDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .maxDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .minDate(1947, 0, 1)
+                        .build()
+                        .show();
                 break;
             case R.id.location:
                 getAddress();
@@ -558,23 +569,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         alertDialog.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-        Calendar personBirthDate = Calendar.getInstance();
-        personBirthDate.set(Calendar.YEAR, year);
-        personBirthDate.set(Calendar.MONTH, month);
-        personBirthDate.set(Calendar.DAY_OF_MONTH, day);
-
-        int diff = Utils.getDiffYears(personBirthDate, calendar);
-        if (diff < 18) {
-            Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            dob.setText(format.format(personBirthDate.getTime()));
-            user.setAge(String.valueOf(diff));
-        }
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    @Override
+//    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+//
+//    }
 
     @Override
     protected void onDestroy() {
@@ -822,6 +821,24 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         if(null != powerMenu && powerMenu.isShowing())
             powerMenu.dismiss();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        Calendar personBirthDate = Calendar.getInstance();
+        personBirthDate.set(Calendar.YEAR, year);
+        personBirthDate.set(Calendar.MONTH, monthOfYear);
+        personBirthDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        int diff = Utils.getDiffYears(personBirthDate, calendar);
+        if (diff < 18) {
+            Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            dob.setText(format.format(personBirthDate.getTime()));
+            user.setAge(String.valueOf(diff));
+        }
     }
 
     private class SaveProfile extends AsyncTask<Void, Void, Void> {
