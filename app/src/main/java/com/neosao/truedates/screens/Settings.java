@@ -474,7 +474,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dialogBuilder.setCustomTitle(titleView);
 
         final EditText input = new EditText(Settings.this);
-        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(13)});
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         input.setText(user.getMembersettings().get(0).getContactNumber());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -486,7 +486,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (input.getText().toString().isEmpty() || input.getText().length() != 10) {
+                if (input.getText().toString().isEmpty() || input.getText().toString().replace("+91","").length() != 10) {
                     Toast.makeText(getBaseContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
                     return;
                 }

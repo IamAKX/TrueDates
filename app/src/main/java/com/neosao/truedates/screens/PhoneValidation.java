@@ -316,7 +316,11 @@ public class PhoneValidation extends AppCompatActivity {
                                     otp_view.showSuccess();
                                     if (object.has("message") && null != object.getString("message"))
                                         Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+
+                                    new LocalPref(getBaseContext()).setContactNumber(getIntent().getStringExtra("phone").trim().replace(" ", ""));
+                                    new LocalPref(getBaseContext()).setRegType("mobile");
                                     new CheckForNewUser().doInBackground();
+
 
                                 } else {
                                     otp_view.showError();

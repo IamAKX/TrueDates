@@ -862,7 +862,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                 JSONObject jsonResp = new JSONObject(response);
                                 if (jsonResp.has("message")) {
 
-//                                    Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), jsonResp.getString("message"), Toast.LENGTH_LONG).show();
                                     localPref.saveUser(user);
                                 } else
                                     Toast.makeText(getBaseContext(), "Response is unparsable", Toast.LENGTH_LONG).show();

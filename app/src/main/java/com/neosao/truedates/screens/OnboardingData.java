@@ -67,6 +67,12 @@ public class OnboardingData extends AppCompatActivity {
         firebaseUser = new LocalPref(getBaseContext()).getFirebaseUser();
         user = new UserModel();
 
+        if(null != new LocalPref(getBaseContext()).getContactNumber())
+            user.setContactNumber(new LocalPref(getBaseContext()).getContactNumber());
+        if(null != new LocalPref(getBaseContext()).getRegType())
+            user.setRegisterType(new LocalPref(getBaseContext()).getRegType());
+        else
+            user.setRegisterType("facebook");
         user.setMemberInterests(new ArrayList<MemberInterests>());
         user.setMemberPhotos(new MemberPhotos[9]);
         user.setMembersettings(new ArrayList<Membersettings>());
@@ -434,7 +440,8 @@ public class OnboardingData extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("registerType", user.getRegisterType());
-                    params.put("firebaseId", user.getFirebaseId());
+                    if(null != user.getFirebaseId())
+                        params.put("firebaseId", user.getFirebaseId());
                     params.put("name", user.getName());
                     params.put("zodiacSign", user.getZodiacSign());
                     params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());
