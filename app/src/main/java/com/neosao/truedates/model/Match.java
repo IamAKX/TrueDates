@@ -41,6 +41,7 @@ public class Match implements Serializable {
     private String defaultPhoto;
     private String registerType;
 
+
     public Match() {
     }
 

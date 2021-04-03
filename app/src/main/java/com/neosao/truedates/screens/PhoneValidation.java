@@ -66,7 +66,7 @@ public class PhoneValidation extends AppCompatActivity {
 
         initializeComponent();
 //        setupFirebaseAuth();
-
+        mAuth = FirebaseAuth.getInstance();
         otp_view.setOtpListener(new OTPListener() {
             @Override
             public void onInteractionListener() {
@@ -199,24 +199,112 @@ public class PhoneValidation extends AppCompatActivity {
 
         thread.start();
     }
+//
+//    private class CheckForNewUser extends AsyncTask<Void, Void, Void> {
+//        SweetAlertDialog dialog;
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            dialog = Utils.getProgress(PhoneValidation.this, "Please wait...");
+////            dialog.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.CHECK_PROFILE_EXISTS,
+//                    new Response.Listener<String>() {
+//                        @Override
+//                        public void onResponse(String response) {
+//                            try {
+//                                Log.e("check", "onResponse: "+response );
+//                                JSONObject object = new JSONObject(response);
+//                                if (object.has("status") && object.getString("status").equals("200")) {
+//                                    if (object.has("result") && object.getJSONObject("result").has("member")){
+//                                        UserModel userModel = new Gson().fromJson(object.getJSONObject("result").getJSONObject("member").toString(),UserModel.class);
+//                                        if(null != userModel)
+//                                        {
+//                                            new LocalPref(getBaseContext()).saveUser(userModel);
+//                                            startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+//                                            finish();
+//                                        }
+//                                        else
+//                                        {
+//                                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+//                                            finish();
+//                                        }
+//                                    }
+//                                    else
+//                                    {
+//                                        startActivity(new Intent(getBaseContext(), OnboardingData.class));
+//                                        finish();
+//                                    }
+//
+//                                } else {
+////                                    if (object.has("message") && null != object.getString("message"))
+////                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+//                                    startActivity(new Intent(getBaseContext(), OnboardingData.class));
+//                                    finish();
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//                    },
+//                    new Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+////                            dialog.dismissWithAnimation();
+//                            NetworkResponse networkResponse = error.networkResponse;
+//                            if (error.networkResponse != null && new String(networkResponse.data) != null) {
+//                                if (new String(networkResponse.data) != null) {
+//                                    Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
+//                                }
+//                            }
+//                        }
+//                    }) {
+//                @Override
+//                protected Map<String, String> getParams() throws AuthFailureError {
+//                    Map<String, String> params = new HashMap<String, String>();
+//                    params.put("contactNumber","+91"+getIntent().getStringExtra("phone").trim().replace(" ", ""));
+//                    Log.e("check", "getParams: "+params );
+//                    return params;
+//                }
+//            };
+//
+//            stringObjectRequest.setShouldCache(false);
+//            stringObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+//                    0,
+//                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+//            ));
+//            RequestQueue requestQueue = RequestQueueSingleton.getInstance(getBaseContext())
+//                    .getRequestQueue();
+//            requestQueue.getCache().clear();
+//            requestQueue.add(stringObjectRequest);
+//
+//            return null;
+//        }
+//    }
 
     private class CheckForNewUser extends AsyncTask<Void, Void, Void> {
         SweetAlertDialog dialog;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = Utils.getProgress(PhoneValidation.this, "Please wait...");
-//            dialog.show();
+            dialog = Utils.getProgress(getBaseContext(), "Please wait...");
+            dialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.CHECK_PROFILE_EXISTS,
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+//                            dialog.dismissWithAnimation();
                             try {
-                                Log.e("check", "onResponse: "+response );
+                                Log.e("check", "onResponse: "+response);
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     if (object.has("result") && object.getJSONObject("result").has("member")){
@@ -230,24 +318,22 @@ public class PhoneValidation extends AppCompatActivity {
                                         else
                                         {
                                             startActivity(new Intent(getBaseContext(), OnboardingData.class));
-                                            finish();
                                         }
                                     }
                                     else
                                     {
                                         startActivity(new Intent(getBaseContext(), OnboardingData.class));
-                                        finish();
                                     }
 
                                 } else {
 //                                    if (object.has("message") && null != object.getString("message"))
 //                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                     startActivity(new Intent(getBaseContext(), OnboardingData.class));
-                                    finish();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
                             }
                         }
                     },
@@ -258,6 +344,7 @@ public class PhoneValidation extends AppCompatActivity {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
+                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -266,8 +353,9 @@ public class PhoneValidation extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("contactNumber","+91"+getIntent().getStringExtra("phone").trim().replace(" ", ""));
-                    Log.e("check", "getParams: "+params );
+                    params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
+//                    params.put("type","facebook");
+                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -319,7 +407,29 @@ public class PhoneValidation extends AppCompatActivity {
 
                                     new LocalPref(getBaseContext()).setContactNumber(getIntent().getStringExtra("phone").trim().replace(" ", ""));
                                     new LocalPref(getBaseContext()).setRegType("mobile");
-                                    new CheckForNewUser().doInBackground();
+
+                                    mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                // Sign in success, update UI with the signed-in user's information
+                                                Log.d("check", "signInAnonymously:success");
+                                                FirebaseUser user = mAuth.getCurrentUser();
+                                                FirebaseUserModel userModel = new FirebaseUserModel(FirebaseLoginProvider.mobile.name(), true, user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), null, user.getUid());
+
+                                                new LocalPref(getBaseContext()).saveFirebaseUser(userModel);
+                                                new CheckForNewUser().doInBackground();
+                                            } else {
+                                                // If sign in fails, display a message to the user.
+                                                Log.w("check", "signInAnonymously:failure", task.getException());
+                                                Toast.makeText(getBaseContext(), "Authentication failed.",
+                                                        Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }
+                                    });
+
+
 
 
                                 } else {

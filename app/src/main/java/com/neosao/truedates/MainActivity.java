@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         Utils.setStatusBarGradiant(this);
         new FetchAdMobData().execute();
-////        printHashKey(getBaseContext());
+        printHashKey(getBaseContext());
         initiateLoginProcess();
     }
 
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String hashKey = new String(Base64.encode(md.digest(), 0));
+                Log.e("check", "hashKey: "+hashKey);
             }
         } catch (NoSuchAlgorithmException e) {
         } catch (Exception e) {

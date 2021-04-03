@@ -44,7 +44,7 @@ public class Otp extends AppCompatActivity {
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                continueBtn.setEnabled(false);
                 if(edtPhoneNumber.getText().toString().replace(" ","").length()!=10)
                     edtPhoneNumber.setError("Enter valid mobile number");
                 else
@@ -66,6 +66,7 @@ public class Otp extends AppCompatActivity {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Log.e("check", "onResponse: "+response );
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -85,7 +86,7 @@ public class Otp extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            continueBtn.setEnabled(true);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {

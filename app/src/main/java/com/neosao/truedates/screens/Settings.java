@@ -623,8 +623,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     protected Map<String, String> getParams() throws AuthFailureError {
 
                         HashMap params = new HashMap();
-                        params.put("client_id", "1632170996964024");
-                        params.put("client_secret", "2b76520b4effda708684d3c12d794c67");
+                        params.put("client_id", "1815567045263359");
+                        params.put("client_secret", "47b804914488287d79d3c254c95f3fb8");
                         params.put("grant_type", "authorization_code" );
                         params.put("redirect_uri", "https://www.neosao.com/testing/dating/instagram/instaLogin");
                         params.put("code", token);
