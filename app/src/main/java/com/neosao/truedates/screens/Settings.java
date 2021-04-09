@@ -641,7 +641,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void getLongLivedToken(String user_id, String access_token) {
-        String longLivedUrlToken = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=2b76520b4effda708684d3c12d794c67&access_token="+access_token;
+        String longLivedUrlToken = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=47b804914488287d79d3c254c95f3fb8&access_token="+access_token;
 
         Volley.newRequestQueue(this).add(
                 new StringRequest(
