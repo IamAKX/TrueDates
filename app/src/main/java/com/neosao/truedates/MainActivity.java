@@ -32,6 +32,7 @@ import com.neosao.truedates.configs.Utils;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.screens.HomeContainer;
 import com.neosao.truedates.screens.Login;
+import com.neosao.truedates.screens.OnboardingData;
 import com.neosao.truedates.screens.UploadProfileImage;
 
 import org.json.JSONException;
@@ -82,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         }
                         else
-                            startActivity(new Intent(getBaseContext(), Login.class));
+//                            startActivity(new Intent(getBaseContext(), Login.class));
+                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
                         finish();
                     }
                 });

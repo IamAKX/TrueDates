@@ -50,6 +50,7 @@
                 android:inputType="textPersonName"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
@@ -63,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
+                android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginBottom="10dp"
@@ -79,6 +81,7 @@
                 android:hint="About"
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
+                android:imeOptions="actionDone"
                 app:met_maxCharacters="512"
                 app:met_underlineColor="@color/hintColor"
                 app:met_primaryColor="@color/gradientCenter"
@@ -125,6 +128,7 @@
                 app:met_floatingLabel="highlight" />
 
             <CheckBox
+                android:id="@+id/agreeCheckBox"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

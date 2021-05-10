@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 public class Intoduction extends Fragment implements View.OnClickListener, com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener {
 
     public static MaterialEditText name, email, about, gender, dob, location;
+    public static CheckBox agreeCheckBox;
     View rootView;
     final Calendar calendar = Calendar.getInstance();
 
@@ -61,6 +63,7 @@ public class Intoduction extends Fragment implements View.OnClickListener, com.t
         about = rootView.findViewById(R.id.about);
         gender = rootView.findViewById(R.id.gender);
         dob = rootView.findViewById(R.id.dob);
+        agreeCheckBox = rootView.findViewById(R.id.agreeCheckBox);
         location = rootView.findViewById(R.id.location);
 
         setEditTextListners();

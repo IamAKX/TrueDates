@@ -63,7 +63,6 @@ import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.Interest;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
 import com.skydoves.powermenu.PowerMenu;
@@ -269,7 +268,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         switch (view.getId()) {
             case R.id.gender:
-                showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
+                showOptionPopup("Gender", (EditText) view, OptionContants.GENDER_OPTIONS);
                 break;
             case R.id.dob:
 //                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar

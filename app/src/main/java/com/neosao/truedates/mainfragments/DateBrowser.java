@@ -575,10 +575,17 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         @Override
                         public void onResponse(String response) {
                             try {
-
+                                Log.e("check", "all member: "+response );
                                 JSONObject object = new JSONObject(response);
 
+                                if (object.has("dataCount") && object.getInt("dataCount") == 0) {
+                                    notfound.setVisibility(View.VISIBLE);
+                                    button_container.setVisibility(View.GONE);
+                                }
+
                                 if (object.has("status") && object.getString("status").equals("200")) {
+
+
 
                                     if (object.has("result") && object.getJSONObject("result").has("membersData")) {
                                         JSONArray array = object.getJSONObject("result").getJSONArray("membersData");

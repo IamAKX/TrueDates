@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class Otp extends AppCompatActivity {
 
     MaterialEditText edtPhoneNumber;
     Button continueBtn;
+    ProgressBar progress_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,11 @@ public class Otp extends AppCompatActivity {
                     edtPhoneNumber.setError("Enter valid mobile number");
                 else
 //                    startActivity(new Intent(getBaseContext(), PhoneValidation.class).putExtra("phone",edtPhoneNumber.getText().toString()));\
-                new SendOTPRequest().execute();
+                {
+                    progress_bar.setVisibility(View.VISIBLE);
+                    new SendOTPRequest().execute();
+
+                }
             }
         });
     }
@@ -57,6 +63,8 @@ public class Otp extends AppCompatActivity {
     private void initializeComponents() {
         edtPhoneNumber = findViewById(R.id.phone_number_edt);
         continueBtn = findViewById(R.id.continueBtn);
+        progress_bar = findViewById(R.id.progress_bar);
+        progress_bar.setVisibility(View.GONE);
     }
 
     private class SendOTPRequest extends AsyncTask<Void,Void,Void> {
@@ -66,6 +74,7 @@ public class Otp extends AppCompatActivity {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            progress_bar.setVisibility(View.GONE);
                             Log.e("check", "onResponse: "+response );
                             try {
                                 JSONObject object = new JSONObject(response);
@@ -87,6 +96,7 @@ public class Otp extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             continueBtn.setEnabled(true);
+                            progress_bar.setVisibility(View.GONE);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import com.neosao.truedates.onboardingfragments.Intoduction;
 import com.neosao.truedates.onboardingfragments.Others;
 import com.neosao.truedates.onboardingfragments.Personal;
 import com.neosao.truedates.onboardingfragments.Work;
+import com.neosao.truedates.widgets.NonSwipeableViewPager;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.json.JSONException;
@@ -51,7 +53,7 @@ import java.util.Map;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class OnboardingData extends AppCompatActivity {
-    ViewPager viewpager;
+    NonSwipeableViewPager viewpager;
     Button nextBtn;
     Button prevBtn;
     SpringDotsIndicator springDotsIndicator;
@@ -113,6 +115,13 @@ public class OnboardingData extends AppCompatActivity {
         adapter.addFrag(new Others());
 //        adapter.addFrag(new Photos());
         viewpager.setAdapter(adapter);
+        viewpager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                viewpager.setCurrentItem(viewpager.getCurrentItem());
+                return true;
+            }
+        });
 
         springDotsIndicator.setViewPager(viewpager);
         viewpager.setOnPageChangeListener(new PageListener());
@@ -148,36 +157,40 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getName() || user.getName().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.name.setError("Enter name");
-                return false;
+
             }
             if (null == user.getEmail() || user.getEmail().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.email.setError("Enter email");
-                return false;
             }
             if (!Utils.isValid(user.getEmail())) {
                 viewpager.setCurrentItem(0);
                 Intoduction.email.setError("Invalid email");
-                return false;
             }
             if (null == user.getAbout() || user.getAbout().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.about.setError("Write about yourself");
-                return false;
+
             }
             if (null == user.getGender() || user.getGender().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.gender.setError("Enter gender");
-                return false;
+
             }
             if (null == user.getBirthDate() || user.getBirthDate().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.dob.setError("Enter date of birth");
-                return false;
+
             }
             if (null == user.getMembersettings().get(0).getCurrentLocation() || user.getMembersettings().get(0).getCurrentLocation().isEmpty()) {
                 viewpager.setCurrentItem(0);
                 Intoduction.location.setError("Enter location");
+
+            }
+            if(!Intoduction.agreeCheckBox.isChecked())
+            {
+                viewpager.setCurrentItem(0);
+                Intoduction.agreeCheckBox.setError("Accept terms and conditions");
                 return false;
             }
         }
@@ -192,12 +205,10 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getMemberWork().get(0).getFieldName() || user.getMemberWork().get(0).getFieldName().isEmpty()) {
                 viewpager.setCurrentItem(1);
                 Work.fieldOfStudy.setError("Enter field of study");
-                return false;
             }
             if (null == user.getMemberWork().get(0).getHighestQualification() || user.getMemberWork().get(0).getHighestQualification().isEmpty()) {
                 viewpager.setCurrentItem(1);
                 Work.qualification.setError("Enter qualification");
-                return false;
             }
 //        if (null == user.getMemberWork().get(0).getIndustryName() || user.getMemberWork().get(0).getIndustryName().isEmpty()) {
 //            viewpager.setCurrentItem(1);
@@ -221,7 +232,7 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getZodiacSign() || user.getZodiacSign().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.zodiac.setError("Enter zodiac sign");
-                return false;
+
             }
 //        if (null == user.getHeight() || user.getHeight().isEmpty()) {
 //            viewpager.setCurrentItem(2);
@@ -231,23 +242,23 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getMaritalStatus() || user.getMaritalStatus().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.maritalStatus.setError("Enter marital status");
-                return false;
+
             }
 
             if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.relationshipStatus.setError("Enter relationship status");
-                return false;
+
             }
             if (null == user.getCaste() || user.getCaste().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.caste.setError("Enter caste");
-                return false;
+
             }
             if (null == user.getReligion() || user.getReligion().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.religion.setError("Enter religion");
-                return false;
+
             }
             if (null == user.getMembersettings().get(0).getShowMe() || user.getMembersettings().get(0).getShowMe().isEmpty()) {
                 viewpager.setCurrentItem(2);
@@ -261,25 +272,25 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getDrink() || user.getDrink().isEmpty()) {
                 viewpager.setCurrentItem(3);
                 Habits.drinks.setError("Enter drink");
-                return false;
+
             }
 
             if (null == user.getSmoke() || user.getSmoke().isEmpty()) {
                 viewpager.setCurrentItem(3);
                 Habits.smoke.setError("Enter smoke");
-                return false;
+
             }
 
             if (null == user.getDiet() || user.getDiet().isEmpty()) {
                 viewpager.setCurrentItem(3);
                 Habits.diet.setError("Enter deit");
-                return false;
+
             }
 
             if (null == user.getPets() || user.getPets().isEmpty()) {
                 viewpager.setCurrentItem(3);
                 Habits.pets.setError("Enter pets");
-                return false;
+
             }
 
             if (null == user.getMemberInterests() || user.getMemberInterests().isEmpty()) {
@@ -294,17 +305,14 @@ public class OnboardingData extends AppCompatActivity {
             if (null == user.getHaveKids() || user.getHaveKids().isEmpty()) {
                 viewpager.setCurrentItem(4);
                 Others.haveKids.setError("Enter have kids");
-                return false;
             }
             if (null == user.getWantKids() || user.getWantKids().isEmpty()) {
                 viewpager.setCurrentItem(4);
                 Others.wantKids.setError("Enter want kids");
-                return false;
             }
             if (null == user.getLookingFor() || user.getLookingFor().isEmpty()) {
                 viewpager.setCurrentItem(4);
                 Others.lookingFor.setError("Enter looking for");
-                return false;
             }
             if (null == user.getBodyType() || user.getBodyType().isEmpty()) {
                 viewpager.setCurrentItem(4);
@@ -442,6 +450,8 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("registerType", user.getRegisterType());
                     if(null != user.getFirebaseId())
                         params.put("firebaseId", user.getFirebaseId());
+                    else
+                        params.put("firebaseId", "");
                     params.put("name", user.getName());
                     params.put("zodiacSign", user.getZodiacSign());
                     params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());

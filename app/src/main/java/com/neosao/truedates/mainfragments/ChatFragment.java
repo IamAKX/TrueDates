@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -64,6 +65,7 @@ public class ChatFragment extends Fragment {
     public LikeAdapter contactAdapter;
     UserModel user;
     RelativeLayout messageLoader,contactLoader;
+    ProgressBar progress_bar;
     private List<Match> matchList = new ArrayList<>();
 
 
@@ -78,7 +80,7 @@ public class ChatFragment extends Fragment {
         edit_name = rootLayout.findViewById(R.id.edit_name);
         contactLoader = rootLayout.findViewById(R.id.contactLoader);
         messageLoader = rootLayout.findViewById(R.id.messageLoader);
-
+        progress_bar = rootLayout.findViewById(R.id.progress_bar);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -141,8 +143,8 @@ public class ChatFragment extends Fragment {
     private void prepareMessageList() {
         messageList.clear();
         contactLoader.setVisibility(View.GONE);
+        messageLoader.setVisibility(View.GONE);
 
-        messageLoader.setVisibility(View.VISIBLE);
         database.getReference("message").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -151,30 +153,41 @@ public class ChatFragment extends Fragment {
                     messageList.add(model);
                     mAdapter.notifyDataSetChanged();
                     messageLoader.setVisibility(View.GONE);
+                    progress_bar.setVisibility(View.GONE);
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"You have not chats yet!", Toast.LENGTH_SHORT).show();
+                    messageLoader.setVisibility(View.GONE);
+                    progress_bar.setVisibility(View.GONE);
                 }
                 contactLoader.setVisibility(View.GONE);
-
+                messageLoader.setVisibility(View.GONE);
 
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                contactLoader.setVisibility(View.GONE);
+                messageLoader.setVisibility(View.GONE);
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
+                contactLoader.setVisibility(View.GONE);
+                messageLoader.setVisibility(View.GONE);
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                contactLoader.setVisibility(View.GONE);
+                messageLoader.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                contactLoader.setVisibility(View.GONE);
+                messageLoader.setVisibility(View.GONE);
             }
         });
 //        new LoadMatchedProfiles().execute();
@@ -191,6 +204,7 @@ public class ChatFragment extends Fragment {
         matchList.clear();
         new LoadMatchedProfiles().execute();
         contactLoader.setVisibility(View.VISIBLE);
+        messageLoader.setVisibility(View.VISIBLE);
     }
 
     private class LoadMatchedProfiles extends AsyncTask<Void,Void,Void> {

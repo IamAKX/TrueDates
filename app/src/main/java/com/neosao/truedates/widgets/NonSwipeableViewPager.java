@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2019. Variance technologies. All rights reserved.
- * Created By TEKOMBO Gabriel <tekombo.gabriel@gmail.com> on 07/10/19 13:42.
- */
-
 package com.neosao.truedates.widgets;
 
 import android.content.Context;
@@ -53,7 +48,7 @@ public class NonSwipeableViewPager extends ViewPager {
     }
 
     public class MyScroller extends Scroller {
-        MyScroller(Context context) {
+        public MyScroller(Context context) {
             super(context, new DecelerateInterpolator());
         }
 

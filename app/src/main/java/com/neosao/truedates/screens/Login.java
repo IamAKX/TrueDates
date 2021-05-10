@@ -234,7 +234,7 @@ public class Login extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.CHECK_PROFILE_EXISTS,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -253,18 +253,18 @@ public class Login extends AppCompatActivity {
                                         }
                                         else
                                         {
-                                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                            startActivity(new Intent(getBaseContext(), Otp.class));
                                         }
                                     }
                                     else
                                     {
-                                        startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                        startActivity(new Intent(getBaseContext(), Otp.class));
                                     }
 
                                 } else {
 //                                    if (object.has("message") && null != object.getString("message"))
 //                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
-                                    startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                    startActivity(new Intent(getBaseContext(), Otp.class));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

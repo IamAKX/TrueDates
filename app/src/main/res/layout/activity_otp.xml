@@ -92,5 +92,12 @@
 
     </com.github.florent37.shapeofview.shapes.RoundRectView>
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar"
+        android:layout_margin="20dp"
+        android:layout_gravity="center"
+        />
 
 </LinearLayout>

@@ -48,6 +48,7 @@
                 android:layout_marginBottom="10dp"
                 app:met_baseColor="@color/colorAccent"
                 app:met_underlineColor="@color/hintColor"
+                android:imeOptions="actionDone"
                 app:met_primaryColor="@color/gradientCenter"
                 app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
