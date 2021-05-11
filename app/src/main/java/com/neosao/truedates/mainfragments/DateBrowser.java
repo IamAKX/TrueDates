@@ -2,13 +2,6 @@ package com.neosao.truedates.mainfragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -37,13 +35,9 @@ import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.CardStackAdapter;
 import com.neosao.truedates.adapters.MemberLikedYouAdapter;
 import com.neosao.truedates.configs.API;
-import com.neosao.truedates.configs.DummyProfile;
 import com.neosao.truedates.configs.LocalPref;
-import com.neosao.truedates.configs.ProfileDiffCallback;
 import com.neosao.truedates.configs.RequestQueueSingleton;
 import com.neosao.truedates.configs.Utils;
-import com.neosao.truedates.model.AdModel;
-import com.neosao.truedates.model.Profile;
 import com.neosao.truedates.model.UserModel;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -80,7 +74,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
     CardStackLayoutManager manager;
     CardStackAdapter adapter;
     View rootView;
-    LinearLayout progressView, button_container;
+    LinearLayout progressView, button_container,notfound;
     FloatingActionButton fabBack, fabDislike, fabLike, fabSuperLike, fabBoost;
     UserModel user;
     ArrayList<Object> memberProfileList = new ArrayList<>();
@@ -89,6 +83,8 @@ public class DateBrowser extends Fragment implements CardStackListener {
     StickySwitch feedSwitch;
     RecyclerView likeRecyclerView;
     RelativeLayout likedView;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,6 +105,10 @@ public class DateBrowser extends Fragment implements CardStackListener {
         likeRecyclerView = rootView.findViewById(R.id.likeRecyclerView);
         likedView = rootView.findViewById(R.id.likedView);
         user = new LocalPref(getContext()).getUser();
+        notfound = rootView.findViewById(R.id.notfound);
+        notfound.setVisibility(View.GONE);
+
+        button_container.setVisibility(View.VISIBLE);
 
         setupNavigation();
 //        setupCardStackView();
@@ -124,17 +124,44 @@ public class DateBrowser extends Fragment implements CardStackListener {
             public void onSelectedChange(@NotNull StickySwitch.Direction direction, @NotNull String s) {
                 if (direction == StickySwitch.Direction.RIGHT) {
                     cardStackView.setVisibility(View.GONE);
+                    notfound.setVisibility(View.GONE);
                     button_container.setVisibility(View.GONE);
                     likedView.setVisibility(View.VISIBLE);
+                    if(memberLikedYouList.size() == 0)
+
+                        notfound.setVisibility(View.VISIBLE);
+                    else
+                        notfound.setVisibility(View.GONE);
+
+
                 } else {
+                    notfound.setVisibility(View.GONE);
                     cardStackView.setVisibility(View.VISIBLE);
-                    button_container.setVisibility(View.VISIBLE);
+//                    if(memberProfileList.size() > 0)
+
                     likedView.setVisibility(View.GONE);
+                    if(memberProfileList.size() == 0)
+
+                    {
+                        notfound.setVisibility(View.VISIBLE);
+                        button_container.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        notfound.setVisibility(View.GONE);
+                        button_container.setVisibility(View.VISIBLE);
+                    }
+
                 }
             }
         });
+
+        Log.e("check", "onCreateView: "+memberProfileList.size() );
+
         return rootView;
     }
+
+
 
 
     private void setupCardStackView() {
@@ -183,7 +210,16 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new FeatureDeductionOnSwipe(FEATURE_LIKE).execute();
                 }
                 else
-                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                {
+//                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                    SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                            .setDirection(Direction.Right)
+                            .setDuration(Duration.Slow.duration)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .build();
+                    manager.setSwipeAnimationSetting(setting);
+                    cardStackView.swipe();
+                }
             }
         });
 
@@ -201,7 +237,16 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new FeatureDeductionOnSwipe(FEATURE_DISLIKE).execute();
                 }
                 else
-                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                {
+                    //                    Toast.makeText(getContext(),"Swipe the ad card", Toast.LENGTH_SHORT).show();
+                    SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                            .setDirection(Direction.Left)
+                            .setDuration(Duration.Slow.duration)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .build();
+                    manager.setSwipeAnimationSetting(setting);
+                    cardStackView.swipe();
+                }
             }
         });
 
@@ -322,7 +367,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -368,13 +412,12 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                             break;
                                     }
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -385,7 +428,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -398,7 +440,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     params.put("toUserId", toUserId);
                     params.put("featureType", featureType);
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -436,7 +477,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", "Response : " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -450,14 +490,13 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                         cardStackView.rewind();
                                     }
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
 
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                                 RewindAnimationSetting rewindSetting = new RewindAnimationSetting.Builder()
                                         .setDirection(Direction.Bottom)
                                         .setDuration(Duration.Normal.duration)
@@ -475,7 +514,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -488,7 +526,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     params.put("toUserId", toUserId);
                     params.put("featureType", featureType);
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -514,6 +551,10 @@ public class DateBrowser extends Fragment implements CardStackListener {
             super.onPreExecute();
             cardStackView.setVisibility(View.GONE);
             progressView.setVisibility(View.VISIBLE);
+            notfound.setVisibility(View.GONE);
+            button_container.setVisibility(View.VISIBLE);
+//            loadAdInMemberList();
+//            setupCardStackView();
         }
 
         @Override
@@ -528,18 +569,23 @@ public class DateBrowser extends Fragment implements CardStackListener {
             params.put("maxAgeFilter", user.getMembersettings().get(0).getMaxAgeFilter());
             params.put("offset", String.valueOf(profileOffset));
 
-            Log.e("check getlist", "doInBackground: " + API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params));
 
             StringRequest stringObjectRequest = new StringRequest(Request.Method.GET, API.GET_PROFILE_LIST + Utils.buildQueryFromMap(params),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             try {
-
+                                Log.e("check", "all member: "+response );
                                 JSONObject object = new JSONObject(response);
-                                Log.e("check", "onResponse: " + object.toString(4));
+
+                                if (object.has("dataCount") && object.getInt("dataCount") == 0) {
+                                    notfound.setVisibility(View.VISIBLE);
+                                    button_container.setVisibility(View.GONE);
+                                }
 
                                 if (object.has("status") && object.getString("status").equals("200")) {
+
+
 
                                     if (object.has("result") && object.getJSONObject("result").has("membersData")) {
                                         JSONArray array = object.getJSONObject("result").getJSONArray("membersData");
@@ -548,29 +594,39 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                                     .setContentText("No dates near your location. Try changing your location or increasing distance range in settings.")
                                                     .setConfirmText("Okay")
                                                     .show();
+                                            notfound.setVisibility(View.VISIBLE);
+                                            button_container.setVisibility(View.GONE);
+
+
                                         } else {
+                                            int addFreq = new LocalPref(getContext()).getAppSettings().getAddAfterProfile();
                                             for (int i = 0; i < array.length(); i++) {
                                                 JSONObject memberObject = array.getJSONObject(i);
                                                 memberObject = memberObject.getJSONObject("member");
                                                 UserModel memberModel = new Gson().fromJson(memberObject.toString(), UserModel.class);
                                                 memberProfileList.add(memberModel);
-                                                loadAdInMemberList();
+                                                if(i!=0 && addFreq !=0 && i%addFreq==0)
+                                                    loadAdInMemberList();
                                             }
                                             setupCardStackView();
+                                            button_container.setVisibility(View.VISIBLE);
+
                                         }
                                     }
 
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+                                    button_container.setVisibility(View.GONE);
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
+                                button_container.setVisibility(View.GONE);
                             }
                             cardStackView.setVisibility(View.VISIBLE);
                             progressView.setVisibility(View.GONE);
+
                         }
                     },
                     new Response.ErrorListener() {
@@ -578,10 +634,10 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         public void onErrorResponse(VolleyError error) {
                             cardStackView.setVisibility(View.VISIBLE);
                             progressView.setVisibility(View.GONE);
+                            notfound.setVisibility(View.VISIBLE);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -611,7 +667,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
 
     private void loadAdInMemberList() {
         final AdView adView = new AdView(getActivity());
-        adView.setAdSize(AdSize.FLUID);
+        adView.setAdSize(AdSize.WIDE_SKYSCRAPER);
         adView.setAdUnitId("ca-app-pub-7095480517399381/5987791915");
         memberProfileList.add(adView);
     }
@@ -632,7 +688,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                         @Override
                         public void onResponse(String response) {
 
-                            Log.e("check", "onResponse: " + response);
                             try {
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
@@ -657,13 +712,12 @@ public class DateBrowser extends Fragment implements CardStackListener {
                                     }
 
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -674,7 +728,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -685,7 +738,6 @@ public class DateBrowser extends Fragment implements CardStackListener {
                     Map<String, String> params = new HashMap<String, String>();
 
 
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -703,4 +755,7 @@ public class DateBrowser extends Fragment implements CardStackListener {
             return null;
         }
     }
+
+
+
 }

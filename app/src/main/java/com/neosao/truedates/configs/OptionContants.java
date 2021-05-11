@@ -10,13 +10,13 @@ public interface OptionContants {
             "4'10\"",
             "4'11\"",
             "5'0\"",
-            "4'1\"",
-            "4'2\"",
-            "4'3\"",
-            "4'4\"",
-            "4'5\"",
-            "4'6\"",
-            "4'7\"",
+            "5'1\"",
+            "5'2\"",
+            "5'3\"",
+            "5'4\"",
+            "5'5\"",
+            "5'6\"",
+            "5'7\"",
             "5'8\"",
             "5'9\"",
             "5'10\"",
@@ -47,13 +47,25 @@ public interface OptionContants {
             "Widowed with kids",
             "Seperated",
             "Seperated with kids",
-    };
-
-    public static final String[] MARITAL_OPTIONS = {
             "Married",
             "Unmarried",
             "Divorced",
             "Widow"
+    };
+
+    public static final String[] MARITAL_OPTIONS = {
+            "Single",
+            "Single with kids",
+            "Divorced",
+            "Divorced with kids",
+            "Widowed",
+            "Widowed with kids",
+            "Seperated",
+            "Seperated with kids",
+            "Married",
+            "Unmarried",
+            "Divorced",
+            "Widow",
     };
 
     public static final String[] SHOW_ME_OPTIONS = {
@@ -64,7 +76,8 @@ public interface OptionContants {
             "Occasionally",
             "Socially",
             "Regular",
-            "Planning to quit"
+            "Planning to quit",
+            "Never"
     };
     public static final String[] SMOKE_OPTIONS = {
             "Yes",
@@ -101,7 +114,8 @@ public interface OptionContants {
             "Flirt",
             "Long-term",
             "New friends",
-            "Date"
+            "Date",
+            "Hookup"
     };
     public static final String[] BODY_TYPE_OPTIONS = {
             "Average",

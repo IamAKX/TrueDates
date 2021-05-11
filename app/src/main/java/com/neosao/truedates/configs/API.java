@@ -2,7 +2,7 @@ package com.neosao.truedates.configs;
 
 public interface API {
 
-    String BASE_URL = "http://neosao.com/testing/dating/Api/Api/";
+    String BASE_URL = "https://truedates.in/Api/Api/";
     String TEST_BASE_URL = "http://neosao.com/testing/dating/Api/TestApi/";
 
     String GET_ALL_OPTIONS_LIST = BASE_URL + "getAllOptionsList";
@@ -31,4 +31,12 @@ public interface API {
     String GET_PROFILE_LIST = BASE_URL + "getListsProfiles";
     String GET_PROFILE_WHO_LIKED_ME_LIST = BASE_URL + "getWhoLikedMeList";
     String GET_MATCHED_PROFILE = BASE_URL + "getMatchingProfiles";
+    String GET_RECENT_MATCHED_PROFILE = BASE_URL + "getRecentMatchingProfiles";
+
+    String GET_ADMOB_SETTING = BASE_URL + "getAdmobSettings";
+
+    String SEND_REG_OTP = BASE_URL + "sendRegisterOTP";
+    String VERIFY_REG_OTP = BASE_URL + "verifyRegisterOTP";
+    String CHECK_PROFILE_EXISTS = BASE_URL + "checkProfileExists";
+    String GET_APP_SETTINGS = BASE_URL + "getAppSettings";
 }

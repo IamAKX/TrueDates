@@ -21,7 +21,7 @@
     <color name="darkRed">#C53E3E</color>
 
     <color name="whiteGray">#F6F7FB</color>
-    <color name="transparent">#00000000 </color>
+    <color name="transparent">#00000000</color>
 
     <color name="divider">#E2E0E0</color>
     <color name="darkGray">#333333</color>
@@ -326,4 +326,9 @@
     <color name="md_blue_grey_700">#455A64</color>
     <color name="md_blue_grey_800">#37474F</color>
     <color name="md_blue_grey_900">#263238</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

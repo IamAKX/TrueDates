@@ -23,6 +23,11 @@ public class OnboardingAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public int getCount() {
         return mFragmentList.size();
     }

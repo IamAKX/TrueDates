@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".screens.Chat">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_alignParentTop="true"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#ffffff"
+        android:elevation="10dp"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_margin="10dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottomLayout"/>
+
+
+    <RelativeLayout
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:elevation="10dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@android:color/white"
+            app:fabSize="mini"
+            app:rippleColor="@null"
+            app:borderWidth="0dp"
+            app:srcCompat="@drawable/picture"/>
+
+
+        <EditText
+            android:layout_toRightOf="@+id/picture"
+            android:layout_toLeftOf="@+id/send"
+            android:id="@+id/messageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:inputType="textCapSentences"
+            android:layout_centerVertical="true"
+            android:background="@drawable/chat_text_background"
+            android:hint="Type a message"/>
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@android:color/white"
+            app:fabSize="mini"
+            app:rippleColor="@null"
+            app:borderWidth="0dp"
+            app:srcCompat="@drawable/send"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -3,11 +3,9 @@ package com.neosao.truedates.configs;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -29,14 +27,11 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
 
 public class Utils {
 
@@ -188,7 +183,6 @@ public class Utils {
         if (null == userModel.getMemberInterests() || userModel.getMemberInterests().isEmpty())
             return new String[]{" "};
         for (MemberInterests interest : userModel.getMemberInterests()) {
-            Log.e("check", interest.toString());
             if (null != interest.getInterestName())
                 idList.add(interest.getInterestName());
         }
@@ -204,6 +198,19 @@ public class Utils {
         }
         query = "?"+TextUtils.join("&",list);
         return query;
+    }
+
+    public String generateChatRoomId(String userId1, String userId2){
+        String chatRoomId = "";
+        ArrayList<Character> charList = new ArrayList<Character>();
+        for(char c : userId1.toCharArray())
+            charList.add(c);
+        for(char c : userId2.toCharArray())
+            charList.add(c);
+        Collections.sort(charList);
+        for(char c : charList)
+            chatRoomId += c;
+        return chatRoomId;
     }
 
 }

@@ -2,17 +2,17 @@ package com.neosao.truedates.mainfragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 
 public class FeedFragment extends Fragment {
@@ -50,7 +49,7 @@ public class FeedFragment extends Fragment {
     private MatchListAdapter mAdapter;
     UserModel user;
     RecyclerView recyclerView;
-
+    LinearLayout notfound;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,9 +58,10 @@ public class FeedFragment extends Fragment {
 
 
         recyclerView = rootLayout.findViewById(R.id.recycler_view_matchs);
+        notfound = rootLayout.findViewById(R.id.notfound);
         matchList = new ArrayList<>();
 
-
+        notfound.setVisibility(View.GONE);
         return rootLayout;
     }
 
@@ -86,13 +86,18 @@ public class FeedFragment extends Fragment {
 
     private class LoadMatchedProfiles extends AsyncTask<Void,Void,Void> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            notfound.setVisibility(View.GONE);
+        }
+
+        @Override
         protected Void doInBackground(Void... voids) {
             StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.GET_MATCHED_PROFILE,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             try {
-                                Log.e("LoadMatchedProfiles", "onResponse: "+response );
 
                                 JSONObject object = new JSONObject(response);
 
@@ -116,26 +121,26 @@ public class FeedFragment extends Fragment {
                                             Toast.makeText(getContext(),"No matching profile found", Toast.LENGTH_LONG).show();
                                         }
                                     }
+                                    notfound.setVisibility(View.GONE);
                                 } else {
-                                    if (object.has("message") && null != object.getString("message"))
-                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
+                                    notfound.setVisibility(View.VISIBLE);
+//                                    if (object.has("message") && null != object.getString("message"))
+//                                        Toast.makeText(getContext(),object.getString("message"), Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                notfound.setVisibility(View.VISIBLE);
                                 Toast.makeText(getContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check","Error in response catch: "+e.getLocalizedMessage());
                             }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("check", "onErrorResponse: ", error);
-
+                            notfound.setVisibility(View.VISIBLE);
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getContext(),new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -153,11 +158,10 @@ public class FeedFragment extends Fragment {
                     params.put("latitude", user.getMembersettings().get(0).getLatitude());
                     params.put("longitude", user.getMembersettings().get(0).getLongitude());
                     params.put("currentLocation", user.getMembersettings().get(0).getCurrentLocation());
-                    params.put("maxDistance", user.getMembersettings().get(0).getMaxDistance());
+                    params.put("maxDistance", (user.getMembersettings().get(0).getMaxDistance() == null )? "100":user.getMembersettings().get(0).getMaxDistance());
 
                     params.put("offset","0");
 
-                    Log.e("check","Req body : "+params.toString());
                     return params;
                 }
             };

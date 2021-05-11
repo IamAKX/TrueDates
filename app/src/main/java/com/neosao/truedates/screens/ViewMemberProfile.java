@@ -1,11 +1,6 @@
 package com.neosao.truedates.screens;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +9,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,7 +23,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.InstagramMediaAdapter;
-import com.neosao.truedates.configs.LocalPref;
 import com.neosao.truedates.model.InstagramMediaModel;
 import com.neosao.truedates.model.UserModel;
 
@@ -105,7 +103,7 @@ public class ViewMemberProfile extends AppCompatActivity {
         });
 
         // Instagram Logic
-        if(null != userModel.getMembersettings().get(0).getIsInstagramActive() && null != userModel.getMembersettings().get(0).getInstagramDetails() && userModel.getMembersettings().get(0).getIsInstagramActive().equals("1"))
+        if(null != userModel.getMembersettings() && null != userModel.getMembersettings().get(0).getIsInstagramActive() && null != userModel.getMembersettings().get(0).getInstagramDetails() && userModel.getMembersettings().get(0).getIsInstagramActive().equals("1"))
         {
             instagramMediaArrayList.clear();
             instagramLayout.setVisibility(View.VISIBLE);

@@ -1,8 +1,5 @@
 package com.neosao.truedates.screens;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -18,6 +15,9 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
@@ -102,6 +103,11 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onError(FacebookException error) {
                         Log.e("check", "facebook:onError", error);
+                        if (error instanceof FacebookAuthorizationException) {
+                            if (AccessToken.getCurrentAccessToken() != null) {
+                                LoginManager.getInstance().logOut();
+                            }
+                        }
                         Toast.makeText(getBaseContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -228,12 +234,13 @@ public class Login extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.LOGIN_PROCESS,
+            StringRequest stringObjectRequest = new StringRequest(Request.Method.POST, API.CHECK_PROFILE_EXISTS,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             dialog.dismissWithAnimation();
                             try {
+                                Log.e("check", "onResponse: "+response);
                                 JSONObject object = new JSONObject(response);
                                 if (object.has("status") && object.getString("status").equals("200")) {
                                     if (object.has("result") && object.getJSONObject("result").has("member")){
@@ -246,18 +253,18 @@ public class Login extends AppCompatActivity {
                                         }
                                         else
                                         {
-                                            startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                            startActivity(new Intent(getBaseContext(), Otp.class));
                                         }
                                     }
                                     else
                                     {
-                                        startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                        startActivity(new Intent(getBaseContext(), Otp.class));
                                     }
 
                                 } else {
 //                                    if (object.has("message") && null != object.getString("message"))
 //                                        Toast.makeText(getBaseContext(),object.getString("message"), Toast.LENGTH_LONG).show();
-                                    startActivity(new Intent(getBaseContext(), OnboardingData.class));
+                                    startActivity(new Intent(getBaseContext(), Otp.class));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -283,6 +290,7 @@ public class Login extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("firebaseId",new LocalPref(getBaseContext()).getFirebaseUser().getFirebaseUUID());
+//                    params.put("type","facebook");
                     Log.e("check", "Req body : " + params.toString());
                     return params;
                 }

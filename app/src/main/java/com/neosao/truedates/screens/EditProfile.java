@@ -1,7 +1,6 @@
 package com.neosao.truedates.screens;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,16 +15,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -65,18 +61,13 @@ import com.neosao.truedates.model.MemberInterests;
 import com.neosao.truedates.model.MemberPhotos;
 import com.neosao.truedates.model.UserModel;
 import com.neosao.truedates.model.options.Interest;
-import com.neosao.truedates.onboardingfragments.Habits;
-import com.neosao.truedates.onboardingfragments.Intoduction;
-import com.neosao.truedates.onboardingfragments.Others;
-import com.neosao.truedates.onboardingfragments.Personal;
-import com.neosao.truedates.onboardingfragments.Work;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -110,7 +101,7 @@ import mabbas007.tagsedittext.TagsEditText;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.neosao.truedates.configs.Utils.getIndexOfImageView;
 
-public class EditProfile extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, OnMenuItemClickListener<PowerMenuItem> {
+public class EditProfile extends AppCompatActivity implements View.OnClickListener, OnMenuItemClickListener<PowerMenuItem>, com.tsongkha.spinnerdatepicker.DatePickerDialog.OnDateSetListener {
 
     Toolbar toolbar;
     EditText name, email, about, gender, dob, location, university, fieldOfStudy, qualification, workIndustry, experience, motherTongue, zodiac, height, relationshipStatus, maritalStatus, caste, religion, showMe, drinks, smoke, diet, pets, haveKids, wantKids, lookingFor, bodyType;
@@ -122,6 +113,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     ImageView tappedImageView, longTappedImageView;
     ArrayList<Image> images = new ArrayList<>();
     PowerMenu powerMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +152,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue = findViewById(R.id.motherTongue);
         zodiac = findViewById(R.id.zodiac);
         height = findViewById(R.id.height);
-        relationshipStatus = findViewById(R.id.relationshipStatus);
+//        relationshipStatus = findViewById(R.id.relationshipStatus);
         maritalStatus = findViewById(R.id.maritalStatus);
         caste = findViewById(R.id.caste);
         religion = findViewById(R.id.religion);
@@ -196,7 +188,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue.setOnClickListener(this);
         zodiac.setOnClickListener(this);
         height.setOnClickListener(this);
-        relationshipStatus.setOnClickListener(this);
+//        relationshipStatus.setOnClickListener(this);
         maritalStatus.setOnClickListener(this);
         caste.setOnClickListener(this);
         religion.setOnClickListener(this);
@@ -276,12 +268,27 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         switch (view.getId()) {
             case R.id.gender:
-                showOptionPopup("Gender", (MaterialEditText) view, OptionContants.GENDER_OPTIONS);
+                showOptionPopup("Gender", (EditText) view, OptionContants.GENDER_OPTIONS);
                 break;
             case R.id.dob:
-                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar
-                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+//                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar
+//                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+//                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                 Calendar oldCalendar = Calendar.getInstance();
+                 String[] selectedDate = dob.getText().toString().split("-");
+                 oldCalendar.set(Integer.parseInt(selectedDate[0]),Integer.parseInt(selectedDate[1]),Integer.parseInt(selectedDate[2]));
+
+                new SpinnerDatePickerDialogBuilder()
+                        .context(this)
+                        .callback(this)
+                        .spinnerTheme(R.style.DialogTheme)
+                        .showTitle(true)
+                        .showDaySpinner(true)
+                        .defaultDate(oldCalendar.get(Calendar.YEAR), oldCalendar.get(Calendar.MONTH), oldCalendar.get(Calendar.DAY_OF_MONTH))
+                        .maxDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .minDate(1947, 0, 1)
+                        .build()
+                        .show();
                 break;
             case R.id.location:
                 getAddress();
@@ -307,9 +314,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             case R.id.height:
                 showOptionPopup("Height", (EditText) view, OptionContants.HEIGHT_OPTIONS);
                 break;
-            case R.id.relationshipStatus:
-                showOptionPopup("Relationship Status", (EditText) view, OptionContants.RELATIONSHIP_OPTIONS);
-                break;
+//            case R.id.relationshipStatus:
+//                showOptionPopup("Relationship Status", (EditText) view, OptionContants.RELATIONSHIP_OPTIONS);
+//                break;
             case R.id.maritalStatus:
                 showOptionPopup("Marital Status", (EditText) view, OptionContants.MARITAL_OPTIONS);
                 break;
@@ -371,7 +378,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             public void onPermissionsGranted(String[] permissions) throws SecurityException {
                                 if(null == tappedImageView)
                                 {
-                                    Log.e("check","Tapped image in null");
                                     return;
                                 }
                                 ImagePicker.with(EditProfile.this)
@@ -565,24 +571,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         alertDialog.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-        Calendar personBirthDate = Calendar.getInstance();
-        personBirthDate.set(Calendar.YEAR, year);
-        personBirthDate.set(Calendar.MONTH, month);
-        personBirthDate.set(Calendar.DAY_OF_MONTH, day);
-
-        int diff = Utils.getDiffYears(personBirthDate, calendar);
-        Log.e("check", "Age : " + diff);
-        if (diff < 18) {
-            Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            dob.setText(format.format(personBirthDate.getTime()));
-            user.setAge(String.valueOf(diff));
-        }
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    @Override
+//    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+//
+//    }
 
     @Override
     protected void onDestroy() {
@@ -602,21 +595,30 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
-            Log.e("check", resultUri.getPath());
-            Glide.with(getBaseContext())
-                    .load(resultUri.getPath())
-                    .into(tappedImageView);
+//            Glide.with(getBaseContext())
+//                    .load(resultUri.getPath())
+//                    .into(tappedImageView);
 
             if (null != resultUri) {
                 File imageToBeUploaded = new File(resultUri.getPath());
                 if (null != imageToBeUploaded)
-                    new UploadImageTask(imageToBeUploaded).execute();
+                {
+                    Log.e("check","Lenght : "+(imageToBeUploaded.length()/(1024*1024)));
+                    if((imageToBeUploaded.length()/(1024*1024)) > 5)
+                        Toast.makeText(getBaseContext(),"Please select a file less than 5 MB", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        new UploadImageTask(imageToBeUploaded).execute();
+                        Glide.with(getBaseContext())
+                                .load(resultUri.getPath())
+                                .into(tappedImageView);
+                    }
+                }
             }
 
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
-            Log.e("check", cropError.getLocalizedMessage());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -689,7 +691,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue.setText(user.getMotherTounge());
         zodiac.setText(user.getZodiacSign());
         height.setText(user.getHeight());
-        relationshipStatus.setText(user.getRelationshipStatus());
+//        relationshipStatus.setText(user.getRelationshipStatus());
         maritalStatus.setText(user.getMaritalStatus());
         caste.setText(user.getCaste());
         religion.setText(user.getReligion());
@@ -740,7 +742,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         user.setMotherTounge(motherTongue.getText().toString());
         user.setZodiacSign(zodiac.getText().toString());
         user.setHeight(height.getText().toString());
-        user.setRelationshipStatus(relationshipStatus.getText().toString());
+//        user.setRelationshipStatus(relationshipStatus.getText().toString());
         user.setMaritalStatus(maritalStatus.getText().toString());
         user.setCaste(caste.getText().toString());
         user.setReligion(religion.getText().toString());
@@ -834,6 +836,24 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             powerMenu.dismiss();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        Calendar personBirthDate = Calendar.getInstance();
+        personBirthDate.set(Calendar.YEAR, year);
+        personBirthDate.set(Calendar.MONTH, monthOfYear);
+        personBirthDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        int diff = Utils.getDiffYears(personBirthDate, calendar);
+        if (diff < 18) {
+            Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            dob.setText(format.format(personBirthDate.getTime()));
+            user.setAge(String.valueOf(diff));
+        }
+    }
+
     private class SaveProfile extends AsyncTask<Void, Void, Void> {
         SweetAlertDialog dialog;
 
@@ -873,7 +893,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                 }
                             }
                         }
@@ -910,7 +929,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("universityName", user.getMemberWork().get(0).getUniversityName());
 
                     params.put("about", user.getAbout());
-                    params.put("relationshipStatus", user.getRelationshipStatus());
+//                    params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
                     params.put("interestCode", Utils.getInterestCodeList(user));
@@ -918,7 +937,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("wantKids", user.getWantKids());
 
 
-                    Log.e("check", "Reg req body : " + params.toString());
                     return params;
                 }
             };
@@ -1024,11 +1042,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             return false;
         }
 
-        if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
-
-            relationshipStatus.setError("Enter relationship status");
-            return false;
-        }
+//        if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
+//
+//            relationshipStatus.setError("Enter relationship status");
+//            return false;
+//        }
         if (null == user.getCaste() || user.getCaste().isEmpty()) {
 
             caste.setError("Enter caste");
@@ -1143,7 +1161,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         new StringBody(user.getUserId()));
                 entity.addPart("index",
                         new StringBody(String.valueOf(getIndexOfImageView(tappedImageView))));
-                Log.e("check","Index : "+String.valueOf(getIndexOfImageView(tappedImageView)));
                 httppost.setEntity(entity);
 
                 // Making server call
@@ -1167,7 +1184,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 dialog.dismissWithAnimation();
 
             }
-            Log.e("check", "upload response : " + responseString);
 
             return responseString;
         }
@@ -1177,14 +1193,13 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             super.onPostExecute(responseString);
             try {
                 JSONObject obj = new JSONObject(responseString);
-                if (null != obj && obj.has("message"))
-                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
+//                if (null != obj && obj.has("message"))
+//                    Toast.makeText(getBaseContext(), obj.getString("message"), Toast.LENGTH_LONG).show();
 
                 if (null != obj && obj.has("status") && obj.getString("status").equals("200")) {
 
                     if (null != obj && obj.has("result") && obj.getJSONObject("result").has("memberPhoto")) {
                         MemberPhotos photos = new Gson().fromJson(obj.getJSONObject("result").getJSONObject("memberPhoto").toString(), MemberPhotos.class);
-                        Log.e("check","MemberPhotos : "+photos.toString());
                         photos.setIndex(String.valueOf(getIndexOfImageView(tappedImageView)));
                         user.getMemberPhotos()[getIndexOfImageView(tappedImageView)] = photos;
                         Glide.with(getBaseContext())
@@ -1198,7 +1213,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             } catch (JSONException e) {
-                Log.e("check", "upload response : " + responseString);
                 Toast.makeText(getBaseContext(),"Upload response : " + responseString,Toast.LENGTH_LONG).show();
                 Glide.with(getBaseContext())
                         .load(R.drawable.dashed_border)
@@ -1223,12 +1237,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                if (object.has("message") && null != object.getString("message"))
+//                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1239,7 +1252,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -1250,7 +1262,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("userId", user.getUserId());
                     params.put("photoCode", photoCode);
-                    Log.e("check", "Req body : " + params.toString());
                     return params;
                 }
             };
@@ -1287,11 +1298,10 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.e("check", response);
                             try {
                                 JSONObject object = new JSONObject(response);
-                                if (object.has("message") && null != object.getString("message"))
-                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
+//                                if (object.has("message") && null != object.getString("message"))
+//                                    Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_LONG).show();
                                 if (object.has("status") && !object.getString("status").equals("200")) {
                                     return;
                                 }
@@ -1306,7 +1316,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getBaseContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("check", "Error in response catch: " + e.getLocalizedMessage());
                             }
                         }
                     },
@@ -1317,7 +1326,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                             NetworkResponse networkResponse = error.networkResponse;
                             if (error.networkResponse != null && new String(networkResponse.data) != null) {
                                 if (new String(networkResponse.data) != null) {
-                                    Log.e("check", new String(networkResponse.data));
                                     Toast.makeText(getBaseContext(), new String(networkResponse.data), Toast.LENGTH_LONG).show();
                                 }
                             }

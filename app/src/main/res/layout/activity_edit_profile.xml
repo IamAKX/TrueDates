@@ -285,6 +285,7 @@
                 android:padding="10dp"/>
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Location"
@@ -294,6 +295,7 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="1dp"/>
             <EditText
+                android:visibility="gone"
                 android:id="@+id/location"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
@@ -459,24 +461,24 @@
                 android:hint="Your Height"
                 android:padding="10dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Relationship Status"
-                android:fontFamily="@font/balsamiq_sans"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:paddingLeft="10dp"
-                android:layout_marginBottom="1dp"/>
-            <EditText
-                android:id="@+id/relationshipStatus"
-                android:layout_marginBottom="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:focusable="false"
-                android:hint="Your Relationship Status"
-                android:padding="10dp"/>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Relationship Status"-->
+<!--                android:fontFamily="@font/balsamiq_sans"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="16sp"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:layout_marginBottom="1dp"/>-->
+<!--            <EditText-->
+<!--                android:id="@+id/relationshipStatus"-->
+<!--                android:layout_marginBottom="15dp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@color/white"-->
+<!--                android:focusable="false"-->
+<!--                android:hint="Your Relationship Status"-->
+<!--                android:padding="10dp"/>-->
 
             <TextView
                 android:layout_width="wrap_content"

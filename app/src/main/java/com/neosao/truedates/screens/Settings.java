@@ -5,10 +5,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -16,11 +18,13 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -51,6 +56,7 @@ import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
 import com.google.gson.Gson;
+import com.neosao.truedates.MainActivity;
 import com.neosao.truedates.R;
 import com.neosao.truedates.adapters.SliderAdapterPackage;
 import com.neosao.truedates.configs.API;
@@ -79,6 +85,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -103,6 +110,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     LinearLayout featureLinearLayout;
     SubscribtionPriceDataModel selectedSubscribtion = null;
     FeaturePriceModel selectedFeaturePriceModel = null;
+    final String SUBSCRIBTION_PURCHASE = "SUBSCRIBTION_PURCHASE";
+    final String PACKAGE_PURCHASE = "PACKAGE_PURCHASE";
+
+    String purchaseType = "";
+    String purchasePackageCode = "";
 
     private AuthenticationDialog authenticationDialog;
     private String token = null;
@@ -169,7 +181,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     authenticationDialog = new AuthenticationDialog(Settings.this, new AuthenticationListener() {
                         @Override
                         public void onTokenReceived(String auth_token) {
-                            Log.e("checking", "onTokenReceived: "+auth_token);
                             getInstagramTemporaryToken(auth_token);
                         }
                     });
@@ -244,7 +255,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             case R.id.logoutBtn:
                 localPref.logOutUser();
                 Toast.makeText(getBaseContext(), "You have been logged out", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getBaseContext(), HomeContainer.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(getBaseContext(), MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
                 break;
 
@@ -295,10 +306,13 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
             quantity.setText(priceDataModel.getQuantity());
             unit.setText(priceDataModel.getUnit());
-            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
-            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
-            DecimalFormat df2 = new DecimalFormat("#.##");
+            double total = Double.parseDouble(priceDataModel.getAmount()) * Double.parseDouble(priceDataModel.getQuantity());
+
+//            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
+            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount());
+            DecimalFormat df2 = new DecimalFormat("#.00");
             amountPerUnit.setText(Utils.CURRENCY_SYMBOL + df2.format(amtPerUnit) + "/" + priceDataModel.getUnit().toLowerCase().substring(0, 2));
+            amount.setText(Utils.CURRENCY_SYMBOL + df2.format( total));
             cardView.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             priceItemView.setOnClickListener(new View.OnClickListener() {
@@ -332,7 +346,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 else
                 {
                     alertDialog.dismiss();
-                    new BuySubscription(subscription.getPackageCode()).execute();
+                    DecimalFormat df2 = new DecimalFormat("#.00");
+                    double total = Double.parseDouble(selectedSubscribtion.getAmount()) * Double.parseDouble(selectedSubscribtion.getQuantity());
+                    startPayment("Truedates subscription : "+subscription.getPackageCode(),df2.format( total));
+                    purchaseType = SUBSCRIBTION_PURCHASE;
+                    purchasePackageCode = subscription.getPackageCode();
 
                 }
             }
@@ -347,6 +365,68 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         alertDialog.show();
     }
 
+    private void startPayment(String description, String amount) {
+
+        Uri paymentUri = Uri.parse("upi://pay").buildUpon()
+                .appendQueryParameter("pa",new LocalPref(getBaseContext()).getAppSettings().getUpiId())
+                .appendQueryParameter("pn","Neosao Service Private Limited")
+                .appendQueryParameter("tn",description)
+                .appendQueryParameter("am",amount)
+                .appendQueryParameter("cu","INR")
+                .build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(paymentUri);
+        try{
+            startActivityForResult(intent,101);
+        }catch (Exception e){
+            Toast.makeText(getBaseContext(), "UPI app not found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 101){
+            if(resultCode == RESULT_OK){
+                if(data != null){
+                    String value = data.getStringExtra("response");
+                    if(value!= null)
+                        getStatus(value);
+                    else
+                        Toast.makeText(getBaseContext(),"Payment failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else {
+            Toast.makeText(getBaseContext(),"Payment failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void getStatus(String data) {
+        boolean isPaymentCancelled = false;
+        Log.e("check", "getStatus: "+data );
+        HashMap<String, String> transactionDetails = new HashMap<>();
+        String[] value = data.split("&");
+        for (int i = 0; i < value.length; i++) {
+            String  checkString[] = value[i].split("=");
+            if(checkString.length >= 2){
+                transactionDetails.put(checkString[0],checkString[1]);
+            }
+
+        }
+        if(null != transactionDetails.get("Status"))
+        {
+            Toast.makeText(getBaseContext(),"Payment "+transactionDetails.get("Status"), Toast.LENGTH_SHORT).show();
+            if(purchaseType.equalsIgnoreCase(SUBSCRIBTION_PURCHASE))
+                new BuySubscription(purchasePackageCode, transactionDetails).execute();
+            if(purchaseType.equalsIgnoreCase(PACKAGE_PURCHASE))
+                new BuyPackage(purchasePackageCode,transactionDetails).execute();
+
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(),"Payment cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showOptionPopup(String title, String[] options) {
         LayoutInflater inflater = getLayoutInflater();
 
@@ -356,8 +436,38 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         ImageButton clear_text = titleView.findViewById(R.id.clear_text);
         View dialogView = inflater.inflate(R.layout.listview_option, null);
         ListView listView = dialogView.findViewById(R.id.select_dialog_listview);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, options);
+//        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(),
+//                android.R.layout.simple_list_item_1, android.R.id.text1, options);
+
+        BaseAdapter adapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return options.length;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return options[i];
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View row = LayoutInflater.from(viewGroup.getContext()).inflate(android.R.layout.simple_list_item_1, viewGroup, false);
+                TextView textView = row.findViewById( android.R.id.text1);
+                textView.setText(String.valueOf(getItem(i)));
+                if(!showMe.getText().toString().isEmpty() && showMe.getText().toString().equals(getItem(i)))
+                {
+                    textView.setTextColor(getBaseContext().getResources().getColor(R.color.themePink));
+                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
+                }
+                return row;
+            }
+        };
         listView.setAdapter(adapter);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
@@ -375,8 +485,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showMe.setText(adapter.getItem(i));
-                user.getMembersettings().get(0).setShowMe(adapter.getItem(i));
+                showMe.setText(String.valueOf(adapter.getItem(i)));
+                user.getMembersettings().get(0).setShowMe(String.valueOf(adapter.getItem(i)));
                 alertDialog.dismiss();
                 new UpdateShowMe().execute();
             }
@@ -385,55 +495,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
         alertDialog.show();
     }
-
-//    private void showInstaPopup() {
-//        LayoutInflater inflater = getLayoutInflater();
-//        View titleView = inflater.inflate(R.layout.alertdialogbox_title, null);
-//        TextView titleTextView = titleView.findViewById(R.id.title);
-//        ImageButton clear_text = titleView.findViewById(R.id.clear_text);
-//        titleTextView.setText("Enter your Instagram link");
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Settings.this);
-//        dialogBuilder.setCustomTitle(titleView);
-//
-//        final EditText input = new EditText(Settings.this);
-//        input.setText(user.getMembersettings().get(0).getInstagramLink());
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        lp.setMargins(20, 10, 20, 0);
-//        input.setLayoutParams(lp);
-//        dialogBuilder.setView(input);
-//        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                if (input.getText().toString().isEmpty()) {
-//                    Toast.makeText(getBaseContext(), "Enter instagram profile link", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                user.getMembersettings().get(0).setIsInstagramActive("1");
-//                user.getMembersettings().get(0).setInstagramLink(input.getText().toString());
-//                new UpdateInstagram().execute();
-//            }
-//        });
-//
-//        final AlertDialog alertDialog = dialogBuilder.create();
-//        alertDialog.setCancelable(false);
-//        clear_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                instaSwitch.setChecked(false);
-//                alertDialog.dismiss();
-//            }
-//        });
-//
-//        Window window = alertDialog.getWindow();
-//        WindowManager.LayoutParams wlp = window.getAttributes();
-//
-//        wlp.gravity = Gravity.TOP;
-//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-//        window.setAttributes(wlp);
-//        alertDialog.show();
-//    }
 
     private void showPhonenNumberPopup() {
         LayoutInflater inflater = getLayoutInflater();
@@ -445,7 +506,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dialogBuilder.setCustomTitle(titleView);
 
         final EditText input = new EditText(Settings.this);
-        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(13)});
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         input.setText(user.getMembersettings().get(0).getContactNumber());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -457,12 +518,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (input.getText().toString().isEmpty() || input.getText().length() != 10) {
+                if (input.getText().toString().isEmpty() || input.getText().toString().replace("+91","").length() != 10) {
                     Toast.makeText(getBaseContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                user.getMembersettings().get(0).setContactNumber("+91 " + input.getText().toString());
+                user.getMembersettings().get(0).setContactNumber(input.getText().toString());
                 new UpdateContactNumber().execute();
             }
         });
@@ -594,8 +655,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     protected Map<String, String> getParams() throws AuthFailureError {
 
                         HashMap params = new HashMap();
-                        params.put("client_id", "1632170996964024");
-                        params.put("client_secret", "2b76520b4effda708684d3c12d794c67");
+                        params.put("client_id", "1815567045263359");
+                        params.put("client_secret", "47b804914488287d79d3c254c95f3fb8");
                         params.put("grant_type", "authorization_code" );
                         params.put("redirect_uri", "https://www.neosao.com/testing/dating/instagram/instaLogin");
                         params.put("code", token);
@@ -612,7 +673,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void getLongLivedToken(String user_id, String access_token) {
-        String longLivedUrlToken = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=2b76520b4effda708684d3c12d794c67&access_token="+access_token;
+        String longLivedUrlToken = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=47b804914488287d79d3c254c95f3fb8&access_token="+access_token;
 
         Volley.newRequestQueue(this).add(
                 new StringRequest(
@@ -807,7 +868,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         public void onResponse(String response) {
                             try {
                                 JSONObject object = new JSONObject(response);
-                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                 localPref.saveUser(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1273,10 +1334,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             CardView cardView = priceItemView.findViewById(R.id.card);
 
             quantity.setText(priceDataModel.getQuantity());
-            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
-            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
-            DecimalFormat df2 = new DecimalFormat("#.##");
+            double total = Double.parseDouble(priceDataModel.getAmount()) * Double.parseDouble(priceDataModel.getQuantity());
+
+//            amount.setText(Utils.CURRENCY_SYMBOL + priceDataModel.getAmount());
+//            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount()) / Double.parseDouble(priceDataModel.getQuantity());
+            double amtPerUnit = Double.parseDouble(priceDataModel.getAmount());
+
+            DecimalFormat df2 = new DecimalFormat("#.00");
             amountPerUnit.setText(Utils.CURRENCY_SYMBOL + df2.format(amtPerUnit) + " " + priceDataModel.getUnit());
+            amount.setText(Utils.CURRENCY_SYMBOL + df2.format(total));
             cardView.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             priceItemView.setOnClickListener(new View.OnClickListener() {
@@ -1309,7 +1375,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 else
                 {
                     alertDialog.dismiss();
-                    new BuyPackage(featureModel.getPackageCode()).execute();
+                    double total = Double.parseDouble(selectedFeaturePriceModel.getAmount()) * Double.parseDouble(selectedFeaturePriceModel.getQuantity());
+                    DecimalFormat df2 = new DecimalFormat("#.00");
+                    startPayment("Truedates feature : "+featureModel.getPackageCode(),df2.format( total));
+                    purchaseType = PACKAGE_PURCHASE;
+                    purchasePackageCode = featureModel.getPackageCode();
+//                    new BuyPackage(featureModel.getPackageCode()).execute();
 
                 }
             }
@@ -1327,9 +1398,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private class BuySubscription extends AsyncTask<Void,Void,Void>{
         SweetAlertDialog dialog;
         String packageCode;
-
-        public BuySubscription(String packageCode) {
+        HashMap<String, String> transactionDetails;
+        public BuySubscription(String packageCode, HashMap<String, String> transactionDetails) {
             this.packageCode = packageCode;
+            this.transactionDetails = transactionDetails;
         }
 
         @Override
@@ -1406,11 +1478,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     double amtPerUnit = Double.parseDouble(selectedSubscribtion.getAmount()) / Double.parseDouble(selectedSubscribtion.getQuantity());
 
                     params.put("userId",user.getUserId());
-                    params.put("paymentStatus","success");
                     params.put("packageCode",packageCode);
                     params.put("numberOfMonths",selectedSubscribtion.getQuantity());
                     params.put("perMonthAmount", String.valueOf(amtPerUnit));
                     params.put("totalAmount",selectedSubscribtion.getAmount());
+
+                    params.put("paymentStatus",transactionDetails.get("Status"));
+                    params.put("txnId",transactionDetails.get("txnId"));
+                    params.put("responseCode",transactionDetails.get("responseCode"));
+                    params.put("ApprovalRefNo",transactionDetails.get("ApprovalRefNo"));
+                    params.put("timestamp",new Date().toString());
 
                     Log.e("check","Req body : "+params.toString());
                     return params;
@@ -1431,12 +1508,24 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private class BuyPackage extends AsyncTask<Void,Void,Void>{
         SweetAlertDialog dialog;
         String packageCode;
-
-        public BuyPackage(String packageCode) {
+        HashMap<String, String> transactionDetails;
+        public BuyPackage(String packageCode, HashMap<String, String> transactionDetails) {
             this.packageCode = packageCode;
+            this.transactionDetails = transactionDetails;
         }
 
         @Override
@@ -1513,12 +1602,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     double totalAmt = Double.parseDouble(selectedFeaturePriceModel.getAmount()) * Double.parseDouble(selectedFeaturePriceModel.getQuantity());
 
                     params.put("userId",user.getUserId());
-                    params.put("paymentStatus","success");
                     params.put("featureCode",selectedFeaturePriceModel.getPackagePriceCode());
                     params.put("quantity", selectedFeaturePriceModel.getQuantity());
                     params.put("amount",selectedFeaturePriceModel.getAmount());
                     params.put("packageCode", packageCode);
                     params.put("totalAmount", String.valueOf(totalAmt));
+
+                    params.put("paymentStatus",transactionDetails.get("Status"));
+                    params.put("txnId",transactionDetails.get("txnId"));
+                    params.put("responseCode",transactionDetails.get("responseCode"));
+                    params.put("ApprovalRefNo",transactionDetails.get("ApprovalRefNo"));
+                    params.put("timestamp",new Date().toString());
 
                     Log.e("check","Req body : "+params.toString());
                     return params;

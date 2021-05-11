@@ -3,23 +3,19 @@ package com.neosao.truedates.onboardingfragments;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.DynamicOptionConstants;
@@ -139,7 +135,6 @@ public class Habits extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                Log.e("check",charSequence.toString());
 
                 ArrayList<String> interestArrayList;
                 if(charSequence.toString().isEmpty())
@@ -164,7 +159,6 @@ public class Habits extends Fragment implements View.OnClickListener {
                     }
                 }
 
-                Log.e("check","Interest length : "+ OnboardingData.user.getMemberInterests());
 
             }
 

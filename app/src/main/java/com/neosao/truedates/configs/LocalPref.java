@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
+import com.neosao.truedates.model.AppSettings;
 import com.neosao.truedates.model.FirebaseUserModel;
 import com.neosao.truedates.model.UserModel;
 
@@ -67,5 +68,41 @@ public class LocalPref {
     public boolean getLoginStatus()
     {
         return preferences.getBoolean(LocalPrefKey.LOGIN_STATUS, false);
+    }
+
+    public boolean saveAppSettings(AppSettings settings){
+        editor = preferences.edit();
+        editor.putString(LocalPrefKey.APP_SETTINGS,new Gson().toJson(settings));
+        return editor.commit();
+    }
+
+    public AppSettings getAppSettings()
+    {
+        AppSettings settings = new Gson().fromJson(preferences.getString(LocalPrefKey.APP_SETTINGS,null),AppSettings.class);
+        return settings;
+    }
+
+    public boolean setContactNumber(String number)
+    {
+        editor = preferences.edit();
+        editor.putString(LocalPrefKey.CONTACT_NUMBER,number);
+        return editor.commit();
+    }
+
+    public String getContactNumber()
+    {
+        return preferences.getString(LocalPrefKey.CONTACT_NUMBER, null);
+    }
+
+    public boolean setRegType(String type)
+    {
+        editor = preferences.edit();
+        editor.putString(LocalPrefKey.REG_TYPE,type);
+        return editor.commit();
+    }
+
+    public String getRegType()
+    {
+        return preferences.getString(LocalPrefKey.REG_TYPE, null);
     }
 }
