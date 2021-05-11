@@ -157,15 +157,24 @@ public class UploadProfileImage extends AppCompatActivity implements View.OnClic
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
             Log.e("check", resultUri.getPath());
-            Glide.with(getBaseContext())
-                    .load(resultUri.getPath())
-                    .into(tappedImageView);
+
 
             if(null != resultUri)
             {
                 File imageToBeUploaded = new File(resultUri.getPath());
-                if(null != imageToBeUploaded)
-                    new UploadImageTask(imageToBeUploaded).execute();
+                if(null != imageToBeUploaded )
+                {
+                    Log.e("check","Lenght : "+(imageToBeUploaded.length()/(1024*1024)));
+                    if((imageToBeUploaded.length()/(1024*1024)) > 5)
+                        Toast.makeText(getBaseContext(),"Please select a file less than 5 MB", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        new UploadImageTask(imageToBeUploaded).execute();
+                        Glide.with(getBaseContext())
+                                .load(resultUri.getPath())
+                                .into(tappedImageView);
+                    }
+                }
             }
 
 

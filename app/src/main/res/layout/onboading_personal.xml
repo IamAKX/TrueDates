@@ -66,18 +66,18 @@
                 app:met_floatingLabelTextColor="@color/gradientEnd"
                 app:met_floatingLabel="highlight" />
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/relationshipStatus"
-                android:focusable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Relationship Status"
-                android:layout_marginBottom="10dp"
-                app:met_baseColor="@color/colorAccent"
-                app:met_underlineColor="@color/hintColor"
-                app:met_primaryColor="@color/gradientCenter"
-                app:met_floatingLabelTextColor="@color/gradientEnd"
-                app:met_floatingLabel="highlight" />
+<!--            <com.rengwuxian.materialedittext.MaterialEditText-->
+<!--                android:id="@+id/relationshipStatus"-->
+<!--                android:focusable="false"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:hint="Relationship Status"-->
+<!--                android:layout_marginBottom="10dp"-->
+<!--                app:met_baseColor="@color/colorAccent"-->
+<!--                app:met_underlineColor="@color/hintColor"-->
+<!--                app:met_primaryColor="@color/gradientCenter"-->
+<!--                app:met_floatingLabelTextColor="@color/gradientEnd"-->
+<!--                app:met_floatingLabel="highlight" />-->
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/maritalStatus"

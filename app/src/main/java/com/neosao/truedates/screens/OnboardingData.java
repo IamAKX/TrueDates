@@ -132,7 +132,11 @@ public class OnboardingData extends AppCompatActivity {
                 if (viewpager.getCurrentItem() < 4)
                 {
                     if(validateInputs())
-                    viewpager.setCurrentItem(viewpager.getCurrentItem() + 1);
+                    {
+                        Intoduction.agreeCheckBox.setError(null);
+                        viewpager.setCurrentItem(viewpager.getCurrentItem() + 1);
+
+                    }
                 }
                 else {
                     if (validateInputs())
@@ -245,11 +249,11 @@ public class OnboardingData extends AppCompatActivity {
 
             }
 
-            if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
-                viewpager.setCurrentItem(2);
-                Personal.relationshipStatus.setError("Enter relationship status");
-
-            }
+//            if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
+//                viewpager.setCurrentItem(2);
+//                Personal.relationshipStatus.setError("Enter relationship status");
+//
+//            }
             if (null == user.getCaste() || user.getCaste().isEmpty()) {
                 viewpager.setCurrentItem(2);
                 Personal.caste.setError("Enter caste");
@@ -287,11 +291,11 @@ public class OnboardingData extends AppCompatActivity {
 
             }
 
-            if (null == user.getPets() || user.getPets().isEmpty()) {
-                viewpager.setCurrentItem(3);
-                Habits.pets.setError("Enter pets");
-
-            }
+//            if (null == user.getPets() || user.getPets().isEmpty()) {
+//                viewpager.setCurrentItem(3);
+//                Habits.pets.setError("Enter pets");
+//
+//            }
 
             if (null == user.getMemberInterests() || user.getMemberInterests().isEmpty()) {
                 viewpager.setCurrentItem(3);
@@ -306,10 +310,10 @@ public class OnboardingData extends AppCompatActivity {
                 viewpager.setCurrentItem(4);
                 Others.haveKids.setError("Enter have kids");
             }
-            if (null == user.getWantKids() || user.getWantKids().isEmpty()) {
-                viewpager.setCurrentItem(4);
-                Others.wantKids.setError("Enter want kids");
-            }
+//            if (null == user.getWantKids() || user.getWantKids().isEmpty()) {
+//                viewpager.setCurrentItem(4);
+//                Others.wantKids.setError("Enter want kids");
+//            }
             if (null == user.getLookingFor() || user.getLookingFor().isEmpty()) {
                 viewpager.setCurrentItem(4);
                 Others.lookingFor.setError("Enter looking for");
@@ -451,7 +455,7 @@ public class OnboardingData extends AppCompatActivity {
                     if(null != user.getFirebaseId())
                         params.put("firebaseId", user.getFirebaseId());
                     else
-                        params.put("firebaseId", "");
+                        params.put("firebaseId", " ");
                     params.put("name", user.getName());
                     params.put("zodiacSign", user.getZodiacSign());
                     params.put("contactNumber", user.getContactNumber() == null ? "" : user.getContactNumber());
@@ -478,7 +482,8 @@ public class OnboardingData extends AppCompatActivity {
                     params.put("universityName", user.getMemberWork().get(0).getUniversityName());
 
                     params.put("about", user.getAbout());
-                    params.put("relationshipStatus", user.getRelationshipStatus());
+
+                    params.put("relationshipStatus", user.getRelationshipStatus()==null?" ": user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
                     params.put("interestCode", Utils.getInterestCodeList(user));

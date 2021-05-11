@@ -2,21 +2,19 @@ package com.neosao.truedates.onboardingfragments;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.neosao.truedates.R;
 import com.neosao.truedates.configs.DynamicOptionConstants;
@@ -37,7 +35,7 @@ public class Personal extends Fragment implements View.OnClickListener {
 
         zodiac = rootView.findViewById(R.id.zodiac);
         height = rootView.findViewById(R.id.height);
-        relationshipStatus = rootView.findViewById(R.id.relationshipStatus);
+//        relationshipStatus = rootView.findViewById(R.id.relationshipStatus);
         caste = rootView.findViewById(R.id.caste);
         religion = rootView.findViewById(R.id.religion);
         showMe = rootView.findViewById(R.id.showMe);
@@ -47,7 +45,7 @@ public class Personal extends Fragment implements View.OnClickListener {
 
         zodiac.setOnClickListener(this);
         height.setOnClickListener(this);
-        relationshipStatus.setOnClickListener(this);
+//        relationshipStatus.setOnClickListener(this);
         caste.setOnClickListener(this);
         religion.setOnClickListener(this);
         showMe.setOnClickListener(this);
@@ -89,22 +87,22 @@ public class Personal extends Fragment implements View.OnClickListener {
 
             }
         });
-        relationshipStatus.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                OnboardingData.user.setRelationshipStatus(charSequence.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+//        relationshipStatus.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                OnboardingData.user.setRelationshipStatus(charSequence.toString());
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
         caste.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -180,9 +178,9 @@ public class Personal extends Fragment implements View.OnClickListener {
             case R.id.height:
                 showOptionPopup("Height", (MaterialEditText) view, OptionContants.HEIGHT_OPTIONS);
                 break;
-            case R.id.relationshipStatus:
-                showOptionPopup("Relationship Status", (MaterialEditText) view, OptionContants.RELATIONSHIP_OPTIONS);
-                break;
+//            case R.id.relationshipStatus:
+//                showOptionPopup("Relationship Status", (MaterialEditText) view, OptionContants.RELATIONSHIP_OPTIONS);
+//                break;
             case R.id.maritalStatus:
                 showOptionPopup("Marital Status", (MaterialEditText) view, OptionContants.MARITAL_OPTIONS);
                 break;

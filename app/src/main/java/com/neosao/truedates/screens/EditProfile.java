@@ -152,7 +152,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue = findViewById(R.id.motherTongue);
         zodiac = findViewById(R.id.zodiac);
         height = findViewById(R.id.height);
-        relationshipStatus = findViewById(R.id.relationshipStatus);
+//        relationshipStatus = findViewById(R.id.relationshipStatus);
         maritalStatus = findViewById(R.id.maritalStatus);
         caste = findViewById(R.id.caste);
         religion = findViewById(R.id.religion);
@@ -188,7 +188,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue.setOnClickListener(this);
         zodiac.setOnClickListener(this);
         height.setOnClickListener(this);
-        relationshipStatus.setOnClickListener(this);
+//        relationshipStatus.setOnClickListener(this);
         maritalStatus.setOnClickListener(this);
         caste.setOnClickListener(this);
         religion.setOnClickListener(this);
@@ -274,6 +274,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 //                new DatePickerDialog(EditProfile.this, R.style.DialogTheme, this, calendar
 //                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
 //                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                 Calendar oldCalendar = Calendar.getInstance();
+                 String[] selectedDate = dob.getText().toString().split("-");
+                 oldCalendar.set(Integer.parseInt(selectedDate[0]),Integer.parseInt(selectedDate[1]),Integer.parseInt(selectedDate[2]));
 
                 new SpinnerDatePickerDialogBuilder()
                         .context(this)
@@ -281,7 +284,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                         .spinnerTheme(R.style.DialogTheme)
                         .showTitle(true)
                         .showDaySpinner(true)
-                        .defaultDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .defaultDate(oldCalendar.get(Calendar.YEAR), oldCalendar.get(Calendar.MONTH), oldCalendar.get(Calendar.DAY_OF_MONTH))
                         .maxDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
                         .minDate(1947, 0, 1)
                         .build()
@@ -311,9 +314,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             case R.id.height:
                 showOptionPopup("Height", (EditText) view, OptionContants.HEIGHT_OPTIONS);
                 break;
-            case R.id.relationshipStatus:
-                showOptionPopup("Relationship Status", (EditText) view, OptionContants.RELATIONSHIP_OPTIONS);
-                break;
+//            case R.id.relationshipStatus:
+//                showOptionPopup("Relationship Status", (EditText) view, OptionContants.RELATIONSHIP_OPTIONS);
+//                break;
             case R.id.maritalStatus:
                 showOptionPopup("Marital Status", (EditText) view, OptionContants.MARITAL_OPTIONS);
                 break;
@@ -592,14 +595,25 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
-            Glide.with(getBaseContext())
-                    .load(resultUri.getPath())
-                    .into(tappedImageView);
+//            Glide.with(getBaseContext())
+//                    .load(resultUri.getPath())
+//                    .into(tappedImageView);
 
             if (null != resultUri) {
                 File imageToBeUploaded = new File(resultUri.getPath());
                 if (null != imageToBeUploaded)
-                    new UploadImageTask(imageToBeUploaded).execute();
+                {
+                    Log.e("check","Lenght : "+(imageToBeUploaded.length()/(1024*1024)));
+                    if((imageToBeUploaded.length()/(1024*1024)) > 5)
+                        Toast.makeText(getBaseContext(),"Please select a file less than 5 MB", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        new UploadImageTask(imageToBeUploaded).execute();
+                        Glide.with(getBaseContext())
+                                .load(resultUri.getPath())
+                                .into(tappedImageView);
+                    }
+                }
             }
 
 
@@ -677,7 +691,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         motherTongue.setText(user.getMotherTounge());
         zodiac.setText(user.getZodiacSign());
         height.setText(user.getHeight());
-        relationshipStatus.setText(user.getRelationshipStatus());
+//        relationshipStatus.setText(user.getRelationshipStatus());
         maritalStatus.setText(user.getMaritalStatus());
         caste.setText(user.getCaste());
         religion.setText(user.getReligion());
@@ -728,7 +742,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         user.setMotherTounge(motherTongue.getText().toString());
         user.setZodiacSign(zodiac.getText().toString());
         user.setHeight(height.getText().toString());
-        user.setRelationshipStatus(relationshipStatus.getText().toString());
+//        user.setRelationshipStatus(relationshipStatus.getText().toString());
         user.setMaritalStatus(maritalStatus.getText().toString());
         user.setCaste(caste.getText().toString());
         user.setReligion(religion.getText().toString());
@@ -834,7 +848,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         if (diff < 18) {
             Toast.makeText(getBaseContext(), "You should be at least 18 years old", Toast.LENGTH_LONG).show();
         } else {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             dob.setText(format.format(personBirthDate.getTime()));
             user.setAge(String.valueOf(diff));
         }
@@ -915,7 +929,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     params.put("universityName", user.getMemberWork().get(0).getUniversityName());
 
                     params.put("about", user.getAbout());
-                    params.put("relationshipStatus", user.getRelationshipStatus());
+//                    params.put("relationshipStatus", user.getRelationshipStatus());
                     params.put("diet", user.getDiet());
                     params.put("pets", user.getPets());
                     params.put("interestCode", Utils.getInterestCodeList(user));
@@ -1028,11 +1042,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             return false;
         }
 
-        if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
-
-            relationshipStatus.setError("Enter relationship status");
-            return false;
-        }
+//        if (null == user.getRelationshipStatus() || user.getRelationshipStatus().isEmpty()) {
+//
+//            relationshipStatus.setError("Enter relationship status");
+//            return false;
+//        }
         if (null == user.getCaste() || user.getCaste().isEmpty()) {
 
             caste.setError("Enter caste");
